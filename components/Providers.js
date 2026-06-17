@@ -55,11 +55,24 @@ function CartProvider({ children }) {
     setLines([]);
   }
 
+  // Total quantity of an item across all its variants (for the menu steppers).
+  function qtyOf(itemId) {
+    return lines.filter((l) => l.id === itemId).reduce((s, l) => s + l.qty, 0);
+  }
+
+  // Decrement the default variant of an item (falls back to any variant).
+  function dec(item) {
+    const size = item.sizes?.[0]?.name || "Regular";
+    const key = lineKey(item, { size, milk: null });
+    const line = lines.find((l) => l.key === key) || lines.find((l) => l.id === item.id);
+    if (line) setQty(line.key, line.qty - 1);
+  }
+
   const count = lines.reduce((s, l) => s + l.qty, 0);
   const subtotal = lines.reduce((s, l) => s + l.unit * l.qty, 0);
 
   return (
-    <CartCtx.Provider value={{ lines, add, setQty, clear, count, subtotal, ready }}>
+    <CartCtx.Provider value={{ lines, add, dec, setQty, clear, qtyOf, count, subtotal, ready }}>
       {children}
     </CartCtx.Provider>
   );

@@ -11,10 +11,7 @@ function VegBadge({ veg }) {
         className="inline-grid h-3 w-3 place-items-center rounded-sm border-[1.5px]"
         style={{ borderColor: veg ? "#2e9e54" : "#c0392b" }}
       >
-        <span
-          className="h-[5px] w-[5px] rounded-full"
-          style={{ background: veg ? "#2e9e54" : "#c0392b" }}
-        />
+        <span className="h-[5px] w-[5px] rounded-full" style={{ background: veg ? "#2e9e54" : "#c0392b" }} />
       </span>
       {veg ? "Veg" : "Non-veg"}
     </span>
@@ -23,7 +20,8 @@ function VegBadge({ veg }) {
 
 // Full-width list row
 export function ListItem({ item }) {
-  const { add } = useCart();
+  const { add, dec, qtyOf } = useCart();
+  const qty = qtyOf(item.id);
   return (
     <div className="flex items-center gap-3 border-b border-line py-3.5">
       <Link href={`/item/${item.id}`} className="shrink-0">
@@ -34,9 +32,7 @@ export function ListItem({ item }) {
           <div className="flex items-center gap-1.5 text-[15px] font-semibold leading-tight">
             {item.name}
             {item.signature && (
-              <span className="rounded-full bg-brand-tint px-1.5 py-0.5 text-[9px] font-bold text-brand-dark">
-                ★ SIGNATURE
-              </span>
+              <span className="rounded-full bg-brand-tint px-1.5 py-0.5 text-[9px] font-bold text-brand-dark">★ SIGNATURE</span>
             )}
           </div>
           <p className="mt-0.5 line-clamp-2 text-xs text-muted">{item.desc}</p>
@@ -48,12 +44,20 @@ export function ListItem({ item }) {
           </div>
           <div className="flex items-center gap-3">
             <span className="text-sm font-bold">{formatINR(item.price)}</span>
-            <button
-              onClick={() => add(item)}
-              className="rounded-lg border border-brand bg-brand-tint px-4 py-1.5 text-xs font-bold text-brand-dark active:scale-95"
-            >
-              ADD +
-            </button>
+            {qty > 0 ? (
+              <div className="flex items-center gap-3 rounded-lg border border-brand bg-brand-tint px-2.5 py-1.5">
+                <button onClick={() => dec(item)} className="w-4 text-base font-bold leading-none text-brand-dark" aria-label="Remove one">−</button>
+                <span className="min-w-4 text-center text-sm font-bold text-brand-dark">{qty}</span>
+                <button onClick={() => add(item)} className="w-4 text-base font-bold leading-none text-brand-dark" aria-label="Add one">+</button>
+              </div>
+            ) : (
+              <button
+                onClick={() => add(item)}
+                className="rounded-lg border border-brand bg-brand-tint px-4 py-1.5 text-xs font-bold text-brand-dark active:scale-95"
+              >
+                ADD +
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -63,16 +67,15 @@ export function ListItem({ item }) {
 
 // Horizontal rail card
 export function RailCard({ item, badge }) {
-  const { add } = useCart();
+  const { add, dec, qtyOf } = useCart();
+  const qty = qtyOf(item.id);
   return (
     <div className="w-40 shrink-0 overflow-hidden rounded-2xl border border-line bg-white shadow-card">
       <Link href={`/item/${item.id}`} className="block">
         <div className="relative h-28">
           <img src={item.img} alt={item.name} className="h-full w-full object-cover" />
           {badge && (
-            <span className="absolute left-2 top-2 rounded-full bg-white px-2 py-1 text-[10px] font-bold text-brand-dark shadow-card">
-              {badge}
-            </span>
+            <span className="absolute left-2 top-2 rounded-full bg-white px-2 py-1 text-[10px] font-bold text-brand-dark shadow-card">{badge}</span>
           )}
         </div>
       </Link>
@@ -82,12 +85,21 @@ export function RailCard({ item, badge }) {
         </Link>
         <div className="mt-2 flex items-center justify-between">
           <span className="text-sm font-bold">{formatINR(item.price)}</span>
-          <button
-            onClick={() => add(item)}
-            className="grid h-8 w-8 place-items-center rounded-lg bg-brand text-lg leading-none text-white active:scale-90"
-          >
-            +
-          </button>
+          {qty > 0 ? (
+            <div className="flex items-center gap-2 rounded-lg bg-brand px-1.5 py-1 text-white">
+              <button onClick={() => dec(item)} className="w-4 text-base font-bold leading-none" aria-label="Remove one">−</button>
+              <span className="min-w-4 text-center text-sm font-bold">{qty}</span>
+              <button onClick={() => add(item)} className="w-4 text-base font-bold leading-none" aria-label="Add one">+</button>
+            </div>
+          ) : (
+            <button
+              onClick={() => add(item)}
+              className="grid h-8 w-8 place-items-center rounded-lg bg-brand text-lg leading-none text-white active:scale-90"
+              aria-label="Add to bag"
+            >
+              +
+            </button>
+          )}
         </div>
       </div>
     </div>
