@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { SectionCard, formatINR } from "@/components/AdminUI";
 
 const BASE = process.env.NEXT_PUBLIC_BASE_DOMAIN || "pista.maplestudios.co.in";
-const BLANK = { name: "", slug: "", plan: "growth", ownerName: "", ownerEmail: "", ownerPassword: "" };
+const BLANK = { name: "", slug: "", plan: "growth", ownerName: "", ownerEmail: "", ownerPassword: "", brandHex: "#7AB04A", darkHex: "#36511F" };
 
 export default function CafesPage() {
   const [rows, setRows] = useState([]);
@@ -111,6 +111,18 @@ export default function CafesPage() {
                 <select className={inp} value={creating.plan} onChange={(e) => setCreating({ ...creating, plan: e.target.value })}>
                   <option value="starter">Starter</option><option value="growth">Growth</option><option value="enterprise">Enterprise</option>
                 </select>
+              </F>
+              <F label="Brand colour">
+                <div className="flex items-center gap-2">
+                  <input type="color" value={creating.brandHex} onChange={(e) => setCreating({ ...creating, brandHex: e.target.value })} className="h-9 w-10 cursor-pointer rounded-lg border border-line bg-transparent p-0.5" />
+                  <span className="text-[12px] font-semibold uppercase text-muted">{creating.brandHex}</span>
+                </div>
+              </F>
+              <F label="Heading colour">
+                <div className="flex items-center gap-2">
+                  <input type="color" value={creating.darkHex} onChange={(e) => setCreating({ ...creating, darkHex: e.target.value })} className="h-9 w-10 cursor-pointer rounded-lg border border-line bg-transparent p-0.5" />
+                  <span className="text-[12px] font-semibold uppercase text-muted">{creating.darkHex}</span>
+                </div>
               </F>
               <F label="Owner name"><input className={inp} value={creating.ownerName} onChange={(e) => setCreating({ ...creating, ownerName: e.target.value })} /></F>
               <F label="Owner email"><input className={inp} type="email" value={creating.ownerEmail} onChange={(e) => setCreating({ ...creating, ownerEmail: e.target.value })} /></F>

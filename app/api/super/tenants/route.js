@@ -56,7 +56,11 @@ export async function POST(req) {
   if (!ownerEmail || ownerPassword.length < 6) return NextResponse.json({ error: "Owner email and a 6+ char password are required." }, { status: 400 });
 
   const tenant = await prisma.tenant.create({
-    data: { name, slug, plan: b.plan || "growth", storeName: name, brandHex: b.brandHex || "#7AB04A" },
+    data: {
+      name, slug, plan: b.plan || "growth", storeName: name,
+      brandHex: b.brandHex || "#7AB04A",
+      darkHex: b.darkHex || "#36511F",
+    },
   });
 
   // Seed default (empty) categories so the owner can start adding items.

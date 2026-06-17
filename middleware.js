@@ -17,6 +17,14 @@ export function middleware(req) {
   if (slug) requestHeaders.set("x-tenant-slug", slug);
   else requestHeaders.delete("x-tenant-slug");
 
+  // On a café subdomain, the root shows THAT café's storefront (its menu),
+  // not Pista's marketing landing. The apex/www still shows the platform site.
+  if (slug && req.nextUrl.pathname === "/") {
+    const url = req.nextUrl.clone();
+    url.pathname = "/menu";
+    return NextResponse.rewrite(url, { request: { headers: requestHeaders } });
+  }
+
   return NextResponse.next({ request: { headers: requestHeaders } });
 }
 
