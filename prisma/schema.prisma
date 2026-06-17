@@ -1,0 +1,105 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Single white-label brand config (id = "default" for this demo tenant).
+model Brand {
+  id          String  @id @default("default")
+  name        String  @default("Pista")
+  brandHex    String  @default("#7AB04A")
+  darkHex     String  @default("#36511F")
+  font        String  @default("Inter")
+  subdomain   String  @default("pista.app")
+  aiAssistant Boolean @default(true)
+  aiCards     Boolean @default(true)
+  aiUpsell    Boolean @default(true)
+  aiLoyalty   Boolean @default(false)
+}
+
+model Category {
+  id    String @id
+  label String
+  sort  Int    @default(0)
+  items Item[]
+}
+
+model Item {
+  id          String      @id
+  name        String
+  categoryId  String
+  category    Category    @relation(fields: [categoryId], references: [id])
+  price       Int
+  img         String
+  desc        String
+  veg         Boolean     @default(true)
+  kcal        Int         @default(0)
+  caffeine    Int         @default(0)
+  protein     Int         @default(0)
+  sugar       Int         @default(0)
+  signature   Boolean     @default(false)
+  rating      Float       @default(0)
+  reviews     Int         @default(0)
+  origin      String      @default("")
+  ingredients String      @default("[]") // JSON array
+  allergens   String      @default("[]") // JSON array
+  tags        String      @default("[]") // JSON array
+  sizes       String      @default("[]") // JSON array of {name,price}
+  aiTip       String      @default("")
+  live        Boolean     @default(true)
+  sort        Int         @default(0)
+  orderItems  OrderItem[]
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String?
+  email     String   @unique
+  password  String
+  role      String   @default("customer") // "customer" | "admin"
+  points    Int      @default(120)
+  createdAt DateTime @default(now())
+  orders    Order[]
+}
+
+model Discount {
+  id        String   @id @default(cuid())
+  code      String   @unique
+  percent   Int
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
+
+model Order {
+  id         String      @id @default(cuid())
+  userId     String
+  user       User        @relation(fields: [userId], references: [id])
+  subtotal     Int
+  tax          Int
+  reward       Int
+  discount     Int        @default(0)
+  discountCode String?
+  total        Int
+  fulfilment String      @default("pickup")
+  payment    String      @default("upi")
+  status     String      @default("preparing")
+  createdAt  DateTime    @default(now())
+  items      OrderItem[]
+}
+
+model OrderItem {
+  id      String  @id @default(cuid())
+  orderId String
+  order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  itemId  String
+  item    Item    @relation(fields: [itemId], references: [id])
+  name    String
+  size    String  @default("Regular")
+  milk    String?
+  unit    Int
+  qty     Int
+}

@@ -1,0 +1,54 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* ----- White-label brand tokens (RGB channels) ----- */
+  /* Pista green */
+  --brand: 122 176 74;        /* #7AB04A — pistachio */
+  --brand-dark: 54 81 31;     /* #36511F — deep pistachio */
+  --brand-tint: 233 242 222;  /* #E9F2DE */
+
+  --canvas: 247 250 242;      /* pale pista cream */
+  --ink: 24 28 22;
+  --muted: 110 118 104;
+  --line: 232 236 226;
+
+  --font-sans: "Inter", system-ui, sans-serif;
+}
+
+* { -webkit-tap-highlight-color: transparent; }
+
+html, body { height: 100%; }
+
+body {
+  background: rgb(var(--canvas));
+  color: rgb(var(--ink));
+  font-feature-settings: "cv11", "ss01";
+}
+
+/* Hide scrollbars on horizontal rails */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* App is mobile-first: center a max-width column on larger screens */
+.app-shell {
+  max-width: 480px;
+  margin: 0 auto;
+  background: #fff;
+  min-height: 100vh;
+  position: relative;
+  box-shadow: 0 0 0 1px rgb(var(--line)), 0 30px 80px rgba(16,24,40,.08);
+}
+
+.veg-dot {
+  width: 14px; height: 14px; border: 1.5px solid #2e9e54; border-radius: 3px;
+  display: inline-grid; place-items: center;
+}
+.veg-dot::after { content: ""; width: 6px; height: 6px; border-radius: 50%; background: #2e9e54; }
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+.fade-up { animation: fade-up .25s ease both; }

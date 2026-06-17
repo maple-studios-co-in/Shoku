@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pista Docs — Developer & User Guides</title>
+<meta name="description" content="Documentation for Pista, the AI-powered white-label ordering platform: setup, architecture, API reference, and user guides.">
+<style>
+  :root{
+    --pista:#7AB04A; --pista-d:#36511F; --pista-dd:#2b4a1c;
+    --tint:#E9F2DE; --tint2:#f4f8ee;
+    --ink:#1b2417; --muted:#5d6b50; --line:#e4ead9;
+    --cream:#f7faf2; --code-bg:#1d2a14; --code-ink:#e8f0dd;
+    --font:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:"SFMono-Regular",ui-monospace,"JetBrains Mono",Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--font);color:var(--ink);background:#fff;line-height:1.65;font-size:15px}
+  a{color:var(--pista-d);text-decoration:none}
+  a:hover{text-decoration:underline}
+  code{font-family:var(--mono);font-size:.86em;background:var(--tint);color:var(--pista-dd);padding:2px 6px;border-radius:5px}
+  pre{background:var(--code-bg);color:var(--code-ink);padding:16px 18px;border-radius:12px;overflow-x:auto;margin:14px 0;font-size:13px;line-height:1.6}
+  pre code{background:none;color:inherit;padding:0}
+  h1{font-size:34px;letter-spacing:-.02em;margin-bottom:6px}
+  h2{font-size:24px;letter-spacing:-.01em;margin:38px 0 12px;padding-top:14px}
+  h3{font-size:17px;margin:24px 0 8px}
+  p{margin:10px 0}
+  ul,ol{margin:10px 0 10px 22px}
+  li{margin:5px 0}
+  table{border-collapse:collapse;width:100%;margin:16px 0;font-size:13.5px}
+  th,td{border:1px solid var(--line);padding:9px 12px;text-align:left;vertical-align:top}
+  th{background:var(--tint2);font-weight:700}
+  .layout{display:grid;grid-template-columns:264px 1fr;max-width:1180px;margin:0 auto}
+  /* Sidebar */
+  .side{position:sticky;top:0;height:100vh;overflow-y:auto;border-right:1px solid var(--line);padding:22px 18px;background:var(--cream)}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px;margin-bottom:6px}
+  .brand .mark{width:30px;height:30px;border-radius:8px;background:var(--pista);color:#fff;display:grid;place-items:center;font-weight:900}
+  .side .tag{font-size:12px;color:var(--muted);margin-bottom:18px}
+  .side .grp{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin:18px 0 7px}
+  .side a{display:block;color:var(--muted);font-size:13.5px;font-weight:500;padding:5px 10px;border-radius:8px;text-decoration:none}
+  .side a:hover{background:var(--tint);color:var(--ink)}
+  .side a.active{background:var(--pista);color:#fff;font-weight:600}
+  .content{padding:42px 56px 120px;min-width:0}
+  .lead{font-size:18px;color:var(--muted);margin:8px 0 18px}
+  .pill{display:inline-flex;align-items:center;gap:7px;background:var(--tint);color:var(--pista-d);font-size:12px;font-weight:700;padding:5px 12px;border-radius:999px}
+  .note{background:var(--tint2);border:1px solid var(--line);border-left:3px solid var(--pista);border-radius:10px;padding:13px 16px;margin:16px 0;font-size:14px}
+  .note b{color:var(--pista-dd)}
+  .method{font-family:var(--mono);font-size:12px;font-weight:700;padding:2px 8px;border-radius:6px;color:#fff;margin-right:8px}
+  .get{background:#3b82f6}.post{background:#16a34a}.put{background:#d97706}.patch{background:#9333ea}.delete{background:#dc2626}
+  .endpoint{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:10px 0;font-size:13.5px}
+  .endpoint .path{font-family:var(--mono);font-weight:700;font-size:13px}
+  .endpoint .d{color:var(--muted);margin-top:4px;font-size:13px}
+  hr{border:none;border-top:1px solid var(--line);margin:34px 0}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .card{border:1px solid var(--line);border-radius:12px;padding:16px}
+  .card h3{margin-top:0}
+  .topbar{display:none}
+  @media(max-width:880px){
+    .layout{grid-template-columns:1fr}
+    .side{display:none}
+    .content{padding:24px 20px 80px}
+    .grid2{grid-template-columns:1fr}
+    .topbar{display:flex;align-items:center;gap:10px;position:sticky;top:0;background:#fff;border-bottom:1px solid var(--line);padding:12px 16px;z-index:10;font-weight:800}
+    .topbar .mark{width:28px;height:28px;border-radius:7px;background:var(--pista);color:#fff;display:grid;place-items:center;font-weight:900}
+  }
+</style>
+</head>
+<body>
+<div class="topbar"><span class="mark">P</span> Pista Docs</div>
+<div class="layout">
+  <!-- SIDEBAR -->
+  <aside class="side">
+    <div class="brand"><span class="mark">P</span> Pista Docs</div>
+    <div class="tag">AI white-label ordering platform</div>
+
+    <div class="grp">Developer</div>
+    <a href="#intro">Introduction</a>
+    <a href="#getting-started">Getting started</a>
+    <a href="#architecture">Architecture</a>
+    <a href="#structure">Project structure</a>
+    <a href="#data-model">Data model</a>
+    <a href="#api">API reference</a>
+    <a href="#auth">Auth & roles</a>
+    <a href="#theming">White-label theming</a>
+    <a href="#ai">AI recommender</a>
+    <a href="#deployment">Deployment</a>
+
+    <div class="grp">User guides</div>
+    <a href="#guide-customer">For customers</a>
+    <a href="#guide-owner">For cafe owners</a>
+    <a href="#faq">FAQ & troubleshooting</a>
+  </aside>
+
+  <!-- CONTENT -->
+  <main class="content">
+    <section id="intro">
+      <span class="pill">✨ Documentation</span>
+      <h1>Pista</h1>
+      <p class="lead">Pista is an AI-powered, white-label ordering platform for cafés and restaurant chains. A brand configures its identity and menu once, and gets a polished mobile-first ordering app with AI recommendations, food intelligence, orders, loyalty and an admin dashboard.</p>
+      <p>This site has two parts: <b>Developer docs</b> (how Pista is built and how to run, extend and deploy it) and <b>User guides</b> (how customers order and how café owners run the admin dashboard).</p>
+      <div class="note">⚡ <b>Quick links:</b> <a href="#getting-started">Run it locally</a> · <a href="#api">API reference</a> · <a href="#guide-owner">Cafe-owner guide</a></div>
+      <h3>What's included</h3>
+      <div class="grid2">
+        <div class="card"><h3>🛍️ Customer app</h3><p>Menu, item detail with AI "Know your cup", AI assistant, cart, checkout, orders, rewards.</p></div>
+        <div class="card"><h3>📊 Admin dashboard</h3><p>Analytics, orders, menu CRUD, customers, discounts, branding and settings.</p></div>
+        <div class="card"><h3>🎨 White-label engine</h3><p>Brand name, colours, font and AI flags — re-theme the whole app live.</p></div>
+        <div class="card"><h3>🔐 Real backend</h3><p>Prisma + SQLite, NextAuth email/password auth, REST API routes.</p></div>
+      </div>
+    </section>
+
+    <hr>
+    <section id="getting-started">
+      <h2>Getting started</h2>
+      <h3>Prerequisites</h3>
+      <ul>
+        <li>Node.js 18.18+ (Node 20 LTS recommended)</li>
+        <li>npm 9+</li>
+      </ul>
+      <h3>Install & run</h3>
+      <pre><code>cd pista
+npm install        # also runs `prisma generate`
+npm run setup      # creates the SQLite DB (prisma db push) + seeds data
+npm run dev        # http://localhost:3000</code></pre>
+      <p>Open <code>http://localhost:3000</code>. The marketing site is at <code>/</code>; click <b>View live demo</b> to open the ordering app at <code>/menu</code>. The app is mobile-first — narrow your window or use device emulation.</p>
+      <div class="note">🔑 <b>Demo admin login:</b> <code>demo@pista.app</code> / <code>password</code>. This account has the <code>admin</code> role, so it can open the dashboard at <code>/admin</code>. New sign-ups are customers.</div>
+      <h3>Useful scripts</h3>
+      <table>
+        <tr><th>Script</th><th>What it does</th></tr>
+        <tr><td><code>npm run dev</code></td><td>Start the dev server with hot reload</td></tr>
+        <tr><td><code>npm run setup</code></td><td><code>prisma db push</code> + seed menu, users, sample orders</td></tr>
+        <tr><td><code>npm run seed</code></td><td>Re-seed the database</td></tr>
+        <tr><td><code>npm run build</code></td><td><code>prisma generate</code> + production build</td></tr>
+        <tr><td><code>npm start</code></td><td>Run the production build</td></tr>
+      </table>
+    </section>
+
+    <hr>
+    <section id="architecture">
+      <h2>Architecture</h2>
+      <p>Pista is a single Next.js 14 (App Router) application. The customer app and admin dashboard are route groups in the same project; both talk to the database through API route handlers (and a few server reads).</p>
+      <pre><code>Browser (customer app / admin dashboard)
+        │  fetch()
+        ▼
+Next.js App Router  ── pages (client components)
+        │
+        ├─ /api/menu, /api/menu/[id]      → read menu (public)
+        ├─ /api/ai                        → scripted recommender
+        ├─ /api/orders, /api/orders/[id]  → place / list / update orders
+        ├─ /api/brand                     → white-label config
+        ├─ /api/items, /api/items/[id]    → menu CRUD (admin)
+        ├─ /api/discounts/*               → promo codes
+        ├─ /api/admin/*                   → analytics, all-orders, customers
+        └─ /api/auth/[...nextauth]        → NextAuth
+        │
+        ▼
+   Prisma Client ──► SQLite (prisma/dev.db)</code></pre>
+      <h3>Tech stack</h3>
+      <table>
+        <tr><th>Layer</th><th>Choice</th></tr>
+        <tr><td>Framework</td><td>Next.js 14 (App Router), React 18</td></tr>
+        <tr><td>Styling</td><td>Tailwind CSS; brand colours via CSS variables</td></tr>
+        <tr><td>Database</td><td>SQLite via Prisma ORM</td></tr>
+        <tr><td>Auth</td><td>NextAuth (credentials, JWT sessions), bcrypt</td></tr>
+        <tr><td>AI</td><td>Rule-based recommender (swappable for an LLM)</td></tr>
+      </table>
+    </section>
+
+    <hr>
+    <section id="structure">
+      <h2>Project structure</h2>
+      <pre><code>pista/
+├─ app/
+│  ├─ layout.js              # root layout + providers + fonts
+│  ├─ globals.css            # design tokens (white-label CSS vars)
+│  ├─ page.js                # marketing landing (/)
+│  ├─ menu/page.js           # ordering app home
+│  ├─ item/[id]/page.js      # item detail + AI info
+│  ├─ ai/page.js             # Pista AI assistant
+│  ├─ cart, checkout, success, account, login, register
+│  ├─ admin/                 # dashboard (layout + sub-pages)
+│  │  ├─ layout.js           # sidebar + admin-role guard
+│  │  ├─ page.js             # Overview (analytics)
+│  │  ├─ orders, menu, customers, discounts, branding, settings
+│  └─ api/                   # route handlers (REST)
+├─ components/               # Providers, Header, BottomNav, ProductCard, AdminUI
+├─ lib/                      # db.js, auth.js, admin.js, ai.js, menu.js
+├─ prisma/                   # schema.prisma, seed.js, dev.db
+└─ public/docs/              # this documentation site</code></pre>
+    </section>
+
+    <hr>
+    <section id="data-model">
+      <h2>Data model</h2>
+      <p>Defined in <code>prisma/schema.prisma</code>. Array fields on <code>Item</code> (ingredients, allergens, tags, sizes) are stored as JSON strings and parsed by <code>parseItem()</code> in <code>lib/db.js</code>.</p>
+      <table>
+        <tr><th>Model</th><th>Key fields</th></tr>
+        <tr><td><b>Brand</b></td><td><code>name</code>, <code>brandHex</code>, <code>darkHex</code>, <code>font</code>, <code>subdomain</code>, <code>aiAssistant</code>, <code>aiCards</code>, <code>aiUpsell</code>, <code>aiLoyalty</code></td></tr>
+        <tr><td><b>Category</b></td><td><code>id</code>, <code>label</code>, <code>sort</code></td></tr>
+        <tr><td><b>Item</b></td><td><code>name</code>, <code>categoryId</code>, <code>price</code>, <code>img</code>, <code>desc</code>, <code>kcal</code>, <code>caffeine</code>, <code>protein</code>, <code>sugar</code>, <code>origin</code>, <code>ingredients</code>, <code>allergens</code>, <code>tags</code>, <code>sizes</code>, <code>aiTip</code>, <code>live</code></td></tr>
+        <tr><td><b>User</b></td><td><code>name</code>, <code>email</code>, <code>password</code> (bcrypt), <code>role</code> (customer/admin), <code>points</code></td></tr>
+        <tr><td><b>Order</b></td><td><code>userId</code>, <code>subtotal</code>, <code>tax</code>, <code>reward</code>, <code>discount</code>, <code>discountCode</code>, <code>total</code>, <code>fulfilment</code>, <code>payment</code>, <code>status</code></td></tr>
+        <tr><td><b>OrderItem</b></td><td><code>orderId</code>, <code>itemId</code>, <code>name</code>, <code>size</code>, <code>milk</code>, <code>unit</code>, <code>qty</code></td></tr>
+        <tr><td><b>Discount</b></td><td><code>code</code>, <code>percent</code>, <code>active</code></td></tr>
+      </table>
+    </section>
+
+    <hr>
+    <section id="api">
+      <h2>API reference</h2>
+      <p>All routes live under <code>/api</code>. Auth is via the NextAuth session cookie. "Admin" routes require a user with <code>role: "admin"</code> and return <code>403</code> otherwise.</p>
+
+      <h3>Menu</h3>
+      <div class="endpoint"><span class="method get">GET</span><span class="path">/api/menu?all=0|1</span><div class="d">Public. Returns <code>{ categories, items }</code>. <code>all=1</code> (admin UI) includes hidden items.</div></div>
+      <div class="endpoint"><span class="method get">GET</span><span class="path">/api/menu/[id]</span><div class="d">Public. A single parsed item.</div></div>
+
+      <h3>AI</h3>
+      <div class="endpoint"><span class="method post">POST</span><span class="path">/api/ai</span><div class="d">Public. Body <code>{ query }</code>. Returns <code>{ intro, picks:[{ item, why }] }</code> scored over live items.</div></div>
+
+      <h3>Orders</h3>
+      <div class="endpoint"><span class="method get">GET</span><span class="path">/api/orders</span><div class="d">Auth. The signed-in user's orders.</div></div>
+      <div class="endpoint"><span class="method post">POST</span><span class="path">/api/orders</span><div class="d">Auth. Body <code>{ lines, fulfilment, payment, discountCode? }</code>. Recomputes totals server-side, applies promo, awards points.</div></div>
+      <div class="endpoint"><span class="method patch">PATCH</span><span class="path">/api/orders/[id]</span><div class="d">Admin. Body <code>{ status }</code> — preparing → ready → completed → cancelled.</div></div>
+
+      <h3>Menu management (admin)</h3>
+      <div class="endpoint"><span class="method post">POST</span><span class="path">/api/items</span><div class="d">Admin. Create an item.</div></div>
+      <div class="endpoint"><span class="method put">PUT</span><span class="path">/api/items/[id]</span><div class="d">Admin. Full update.</div></div>
+      <div class="endpoint"><span class="method patch">PATCH</span><span class="path">/api/items/[id]</span><div class="d">Admin. Quick update of <code>live</code> / <code>price</code>.</div></div>
+      <div class="endpoint"><span class="method delete">DELETE</span><span class="path">/api/items/[id]</span><div class="d">Admin. Deletes if not referenced by past orders (else <code>409</code> — hide it instead).</div></div>
+
+      <h3>Brand, discounts & admin data</h3>
+      <div class="endpoint"><span class="method get">GET</span><span class="path">/api/brand</span><div class="d">Public. White-label config.</div></div>
+      <div class="endpoint"><span class="method put">PUT</span><span class="path">/api/brand</span><div class="d">Admin. Update brand config.</div></div>
+      <div class="endpoint"><span class="method post">POST</span><span class="path">/api/discounts/validate</span><div class="d">Public. Body <code>{ code }</code> → <code>{ valid, percent }</code> for checkout.</div></div>
+      <div class="endpoint"><span class="method get">GET</span> <span class="method post">POST</span><span class="path">/api/discounts</span><div class="d">Admin. List / create promo codes. <code>PATCH|DELETE /api/discounts/[id]</code> to toggle / remove.</div></div>
+      <div class="endpoint"><span class="method get">GET</span><span class="path">/api/admin/stats</span><div class="d">Admin. KPIs, 14-day series, top items, recent orders.</div></div>
+      <div class="endpoint"><span class="method get">GET</span><span class="path">/api/admin/orders?status=</span><div class="d">Admin. All orders with customer + line items.</div></div>
+      <div class="endpoint"><span class="method get">GET</span><span class="path">/api/admin/customers</span><div class="d">Admin. Users with order count, spend and points.</div></div>
+
+      <h3>Auth</h3>
+      <div class="endpoint"><span class="method post">POST</span><span class="path">/api/register</span><div class="d">Public. Body <code>{ name, email, password }</code> — creates a customer.</div></div>
+      <div class="endpoint"><span class="method get">GET</span> <span class="method post">POST</span><span class="path">/api/auth/[...nextauth]</span><div class="d">NextAuth sign-in / session / sign-out.</div></div>
+    </section>
+
+    <hr>
+    <section id="auth">
+      <h2>Auth & roles</h2>
+      <p>Authentication is handled by NextAuth's Credentials provider (<code>lib/auth.js</code>). Passwords are hashed with bcrypt; sessions are JWTs. The user's <code>role</code> is embedded in the JWT and exposed on <code>session.user.role</code>.</p>
+      <ul>
+        <li><b>customer</b> — default for sign-ups. Can order, view their orders and earn points.</li>
+        <li><b>admin</b> — can open <code>/admin</code> and call admin APIs. The seeded <code>demo@pista.app</code> is an admin.</li>
+      </ul>
+      <p>Server routes guard with <code>requireAdmin()</code> (<code>lib/admin.js</code>), which returns <code>401</code> when signed out and <code>403</code> for non-admins. The admin UI is additionally guarded in <code>app/admin/layout.js</code>.</p>
+      <div class="note">🔒 To promote a user to admin, set <code>role = "admin"</code> in the database (e.g. via <code>npx prisma studio</code>).</div>
+    </section>
+
+    <hr>
+    <section id="theming">
+      <h2>White-label theming</h2>
+      <p>Brand colours are CSS variables (RGB channels) defined in <code>app/globals.css</code> and consumed by Tailwind (<code>bg-brand</code>, <code>text-brand-dark</code>, <code>bg-brand-tint</code>). The <code>BrandProvider</code> in <code>components/Providers.js</code> loads the brand from <code>/api/brand</code>, applies the variables to <code>:root</code>, and the admin "Publish" button persists changes.</p>
+      <pre><code>:root {
+  --brand: 122 176 74;       /* pistachio */
+  --brand-dark: 54 81 31;
+  --brand-tint: ...;         /* derived */
+}</code></pre>
+      <p>Because every brand-coloured element reads these variables, changing the primary colour in <b>Admin → Branding</b> re-themes the entire customer app instantly.</p>
+    </section>
+
+    <hr>
+    <section id="ai">
+      <h2>AI recommender</h2>
+      <p>The assistant is a transparent, rule-based recommender in <code>lib/ai.js</code>, served from <code>POST /api/ai</code>. It maps the user's free-text intent to scoring rules over item metadata (tags, caffeine, calories, protein, rating) and returns the top picks with a human-readable reason for each.</p>
+      <p>The return shape is <code>{ intro, picks: [{ item, why }] }</code>. To switch to a real LLM, replace <code>recommend()</code> with an API call (e.g. the Claude API) that returns the same shape — no UI changes needed.</p>
+    </section>
+
+    <hr>
+    <section id="deployment">
+      <h2>Deployment</h2>
+      <h3>Hosting the app</h3>
+      <p>Pista runs anywhere Next.js does. For Vercel:</p>
+      <ol>
+        <li>Push the repo to GitHub and import it into Vercel.</li>
+        <li>SQLite isn't suitable for serverless — switch <code>DATABASE_URL</code> to a hosted Postgres and change the Prisma <code>provider</code> to <code>postgresql</code>.</li>
+        <li>Set env vars: <code>DATABASE_URL</code>, <code>NEXTAUTH_URL</code>, <code>NEXTAUTH_SECRET</code> (<code>openssl rand -base64 32</code>).</li>
+        <li>Run <code>prisma migrate deploy</code> and seed once.</li>
+      </ol>
+      <h3>Hosting these docs</h3>
+      <p>This docs site is a self-contained static page (<code>public/docs/index.html</code>). When the app runs it is served at <code>/docs</code>. To host it on its own, deploy the <code>public/docs</code> folder to any static host:</p>
+      <pre><code># preview locally
+npx serve public/docs
+
+# or drop public/docs into Netlify / GitHub Pages / Vercel</code></pre>
+      <div class="note">⚠️ <b>Before production:</b> change <code>NEXTAUTH_SECRET</code>, move off SQLite, and review the demo credentials.</div>
+    </section>
+
+    <hr>
+    <!-- ===================== USER GUIDES ===================== -->
+    <section id="guide-customer">
+      <h2>User guide — for customers</h2>
+      <p class="lead">How to order on a Pista-powered café app.</p>
+      <h3>1. Browse the menu</h3>
+      <p>Open the app and browse by category (Ice Blended, Hot Coffee, Tea, Food). The <b>✨ Picked for you</b> row highlights signature and top-rated items. Tap any item to see details.</p>
+      <h3>2. Know what you're ordering</h3>
+      <p>Each item has a <b>"Know your cup"</b> card: bean origin, ingredients, allergens and nutrition (calories, protein, sugar, caffeine), plus an AI tip. Choose a size and milk, then <b>Add to bag</b>.</p>
+      <h3>3. Ask Pista AI</h3>
+      <p>Not sure what to get? Open <b>Pista AI</b> and tap a mood ("Cold &amp; refreshing", "High protein", "Low caffeine") or type your own. It ranks the menu and explains why each pick fits — add any suggestion straight to your bag.</p>
+      <h3>4. Checkout</h3>
+      <p>Review your bag (with an AI pairing suggestion), then check out: choose pickup / dine-in / delivery, add a promo code, pick a payment method and place the order. You'll need an account — sign up takes a moment.</p>
+      <h3>5. Track orders & earn rewards</h3>
+      <p>Your <b>Account</b> shows order history, status and loyalty points (earned on every order).</p>
+    </section>
+
+    <hr>
+    <section id="guide-owner">
+      <h2>User guide — for café owners</h2>
+      <p class="lead">Running your store from the Pista admin dashboard at <code>/admin</code> (admin login required).</p>
+      <h3>Overview</h3>
+      <p>Your home screen: revenue, order count, average order value and customer count, a 14-day revenue chart, your top sellers, and the latest orders.</p>
+      <h3>Orders</h3>
+      <p>See every order, filter by status, and advance them: <b>Preparing → Ready → Completed</b>. Updates are saved instantly and reflected in the customer's account.</p>
+      <h3>Menu</h3>
+      <p>Add, edit and delete items. Set price, photo, description, nutrition, origin, ingredients, allergens, tags and an AI tip. Toggle an item <b>live</b> to show/hide it without deleting. (Items with past orders can be hidden but not deleted, to preserve history.)</p>
+      <h3>Customers</h3>
+      <p>Your registered customers with order counts, lifetime spend and points.</p>
+      <h3>Discounts</h3>
+      <p>Create promo codes (e.g. <code>WELCOME10</code> for 10% off). Enable, disable or delete them; customers apply them at checkout.</p>
+      <h3>Branding</h3>
+      <p>Set your brand name, subdomain, colours and font. The live preview updates as you edit; click <b>Publish</b> to apply it to your whole customer app.</p>
+      <h3>Settings</h3>
+      <p>Store details and AI feature flags — turn the assistant, food-intelligence cards, smart upsells and AI loyalty on or off.</p>
+    </section>
+
+    <hr>
+    <section id="faq">
+      <h2>FAQ & troubleshooting</h2>
+      <h3>I can't open /admin</h3>
+      <p>The dashboard requires the <code>admin</code> role. Sign in with <code>demo@pista.app</code> / <code>password</code>, or promote your user in the database.</p>
+      <h3>The menu is empty</h3>
+      <p>Run <code>npm run setup</code> (or <code>npm run seed</code>) to create and populate the database.</p>
+      <h3>Login fails right after install</h3>
+      <p>Make sure the database is seeded and <code>NEXTAUTH_SECRET</code> is set in <code>.env</code>. Restart <code>npm run dev</code> after changing env vars.</p>
+      <h3>Build warns about Prisma / Next versions</h3>
+      <p>Informational only. Versions are pinned for stability; upgrade deliberately.</p>
+      <h3>How do I reset the data?</h3>
+      <p>Delete <code>prisma/dev.db</code> and run <code>npm run setup</code> again.</p>
+      <div class="note">Need more? See the <a href="#api">API reference</a> or the source in <code>lib/</code> and <code>app/api/</code>.</div>
+    </section>
+  </main>
+</div>
+
+<script>
+  // Scrollspy: highlight the active section in the sidebar
+  const links = [...document.querySelectorAll('.side a')];
+  const map = {};
+  links.forEach(a => { const id = a.getAttribute('href').slice(1); map[id] = a; });
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const a = map[e.target.id];
+        if (a) a.classList.add('active');
+      }
+    });
+  }, { rootMargin: "-20% 0px -70% 0px", threshold: 0 });
+  document.querySelectorAll('main section[id]').forEach(s => obs.observe(s));
+</script>
+</body>
+</html>
