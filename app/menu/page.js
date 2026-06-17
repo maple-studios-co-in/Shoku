@@ -88,7 +88,7 @@ export default function MenuPage() {
           </div>
         ))}
 
-      <div className="h-6" />
+      <div className="h-28" />
     </AppShell>
   );
 }
