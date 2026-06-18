@@ -121,6 +121,19 @@ async function main() {
     await prisma.reward.create({ data: { tenantId: cbtl.id, title: "Free Café Latte", type: "freeItem", cost: 150, itemId: "cbtl-cafe-latte", itemName: "Café Latte" } });
   }
   const o1 = await seedOrders(cbtl, [owner1, ...c1]);
+  if ((await prisma.feedback.count({ where: { tenantId: cbtl.id } })) === 0) {
+    const fb = [
+      ["Aarav Sharma", 5, "Loved the Original Ice Blended — perfectly balanced!"],
+      ["Diya Patel", 5, "AI suggestion was spot on. Quick pickup too."],
+      ["Aarav Sharma", 4, "Great app, super easy to reorder."],
+      ["Diya Patel", 3, "Coffee was a touch cold today."],
+      ["Aarav Sharma", 5, ""],
+      ["Diya Patel", 4, "Loyalty points are a nice touch."],
+    ];
+    for (const [name, rating, comment] of fb) {
+      await prisma.feedback.create({ data: { tenantId: cbtl.id, name, rating, comment: comment || null } });
+    }
+  }
 
   // ---- Tenant 2: Blue Tokai (a second demo café) ----
   const bt = await prisma.tenant.upsert({

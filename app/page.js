@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect } from "react";
 
 export default function LandingPage() {
   function handleDemo(e) {
@@ -9,6 +10,44 @@ export default function LandingPage() {
     if (input) input.value = "";
     alert("Thanks! We'll be in touch shortly to schedule your Pista demo.");
   }
+
+  // Scroll-triggered reveals + animated stat counters (no deps, reduced-motion safe)
+  useEffect(() => {
+    const root = document.querySelector(".landing");
+    if (!root) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const targets = [...root.querySelectorAll(".card,.feat,.step,.price,.center-head,.showcard,.cta-band,.stats,.logo-row")];
+    root.classList.add("anim");
+    targets.forEach((e) => e.classList.add("reveal"));
+
+    const animateNum = (el) => {
+      if (el.dataset.done) return;
+      const m = el.textContent.match(/^(\D*)(\d+)(.*)$/);
+      if (!m) return;
+      el.dataset.done = "1";
+      const pre = m[1], to = parseInt(m[2], 10), suf = m[3], dur = 1100, t0 = performance.now();
+      const step = (t) => {
+        const p = Math.min(1, (t - t0) / dur);
+        el.textContent = pre + Math.round(to * (1 - Math.pow(1 - p, 3))) + suf;
+        if (p < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    };
+
+    const io = new IntersectionObserver(
+      (ents) => {
+        ents.forEach((en) => {
+          if (!en.isIntersecting) return;
+          en.target.classList.add("in");
+          if (en.target.classList.contains("stats")) en.target.querySelectorAll(".s b").forEach(animateNum);
+          io.unobserve(en.target);
+        });
+      },
+      { threshold: 0.15, rootMargin: "0px 0px -8% 0px" }
+    );
+    targets.forEach((e) => io.observe(e));
+    return () => io.disconnect();
+  }, []);
 
   return (
     <div className="landing">
@@ -31,6 +70,10 @@ export default function LandingPage() {
 
       {/* HERO */}
       <header className="hero" id="top">
+        <video className="hero-vid" autoPlay muted loop playsInline preload="auto" poster="">
+          <source src="/hero.mp4" type="video/mp4" />
+        </video>
+        <div className="hero-veil" />
         <div className="wrap hero-grid">
           <div>
             <span className="pill">✨ AI-powered · white-label ordering</span>
@@ -105,13 +148,13 @@ export default function LandingPage() {
           <div className="center-head">
             <span className="eyebrow">Why Pista</span>
             <h2>Everything you need to sell direct — minus the dev team.</h2>
-            <p>Most cafés lose 20–30% to third-party delivery apps and never see their own customer data. Pista puts you back in control with a branded app that&apos;s smarter than the marketplaces.</p>
+            <p>Most cafés lose 20–30% to third-party delivery apps and never see their own customer data. Pista puts you back in control with a branded ordering channel you own outright — brand, customers and data.</p>
           </div>
           <div className="cards">
-            <div className="card"><div className="ic">🎨</div><h3>100% your brand</h3><p>Your logo, colours, fonts and menu on your own subdomain. No &quot;Pista&quot; in sight — it&apos;s your app.</p></div>
-            <div className="card"><div className="ic">✨</div><h3>Built-in AI ordering</h3><p>A chat assistant that recommends the right item by mood, diet, time of day and caffeine.</p></div>
-            <div className="card"><div className="ic">🧾</div><h3>Food intelligence</h3><p>Auto-generated origin, ingredients, allergens and nutrition for every item builds trust and sales.</p></div>
-            <div className="card"><div className="ic">📊</div><h3>You own the data</h3><p>Every order, customer and insight is yours — power loyalty, repeat visits and smarter menus.</p></div>
+            <div className="card"><div className="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0l-7-7V3.6h9.8l7.2 7.2a2 2 0 0 1 0 2.6Z"/><circle cx="8" cy="8" r="1.2"/></svg></div><h3>100% your brand</h3><p>Your logo, colours, fonts and menu on your own subdomain. No &quot;Pista&quot; in sight — it&apos;s your app.</p></div>
+            <div className="card"><div className="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3l1.7 4.3L18 9l-4.3 1.7L12 15l-1.7-4.3L6 9l4.3-1.7z"/><path d="M18.5 14.5l.6 1.6 1.6.6-1.6.6-.6 1.6-.6-1.6-1.6-.6 1.6-.6z"/></svg></div><h3>Built-in AI ordering</h3><p>A chat assistant that recommends the right item by mood, diet, time of day and caffeine.</p></div>
+            <div className="card"><div className="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M11 20A7 7 0 0 1 4 13C4 7.5 9 4 13.5 4c1.4 0 3.5.4 3.5.4S17 7 17 9a7 7 0 0 1-6 11Z"/><path d="M11 20c0-4 1.5-7 5-9"/></svg></div><h3>Food intelligence</h3><p>Auto-generated origin, ingredients, allergens and nutrition for every item builds trust and sales.</p></div>
+            <div className="card"><div className="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M4 21h16"/><path d="M7 21v-6M12 21V8M17 21v-9"/></svg></div><h3>You own the data</h3><p>Every order, customer and insight is yours — power loyalty, repeat visits and smarter menus.</p></div>
           </div>
         </div>
       </section>
@@ -324,7 +367,7 @@ export default function LandingPage() {
       </footer>
 
       <style jsx global>{`
-        .landing { --pista:#7AB04A; --pista-d:#36511f; --pista-dd:#2b4a1c; --tint:#E9F2DE; --tint2:#f4f8ee; --ink:#1b2417; --muted:#5d6b50; --line:#e4ead9; --cream:#f7faf2; --white:#fff; --radius:20px; --shadow:0 1px 2px rgba(20,40,10,.04), 0 14px 40px rgba(20,40,10,.08); --lfont:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; font-family:var(--lfont); color:var(--ink); background:var(--white); line-height:1.6; -webkit-font-smoothing:antialiased; }
+        .landing { --pista:#7AB04A; --pista-d:#36511f; --pista-dd:#2b4a1c; --tint:#E9F2DE; --tint2:#f4f8ee; --ink:#1b2417; --muted:#5d6b50; --line:#e4ead9; --cream:#f7faf2; --white:#fff; --radius:20px; --shadow:0 1px 2px rgba(20,40,10,.03), 0 22px 54px rgba(20,40,10,.06); --lfont:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; font-family:var(--lfont); color:var(--ink); background:var(--white); line-height:1.6; -webkit-font-smoothing:antialiased; }
         html { scroll-behavior:smooth; }
         .landing * { box-sizing:border-box; }
         .landing img { display:block; max-width:100%; }
@@ -337,6 +380,8 @@ export default function LandingPage() {
         .landing .btn-ghost:hover { border-color:var(--pista); color:var(--pista-d); }
         .landing .eyebrow { font-size:13px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:var(--pista-d); }
         .landing h1, .landing h2, .landing h3 { letter-spacing:-.02em; line-height:1.12; }
+        .landing h1, .landing .center-head h2, .landing .ftext h2, .landing .cta-band h2, .landing .show-l .quote { font-family:var(--font-serif), "Georgia", serif; font-weight:600; letter-spacing:-.022em; }
+        .landing .hero h1 { line-height:1.04; }
         .landing section { padding:96px 0; }
 
         .landing nav { position:sticky; top:0; z-index:50; background:rgba(255,255,255,.85); backdrop-filter:blur(12px); border-bottom:1px solid var(--line); }
@@ -349,7 +394,29 @@ export default function LandingPage() {
         .landing .nav-cta { margin-left:auto; display:flex; gap:10px; align-items:center; }
         @media(max-width:860px){ .landing .nav-links{display:none} .landing .nav-cta .btn-ghost{display:none} }
 
-        .landing .hero { background:radial-gradient(1100px 520px at 70% -10%, var(--tint) 0%, transparent 60%), var(--white); padding:74px 0 60px; overflow:hidden; }
+        .landing .hero { position:relative; background:radial-gradient(1100px 520px at 70% -10%, var(--tint) 0%, transparent 60%), var(--white); padding:74px 0 60px; overflow:hidden; }
+        .landing .hero-vid { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0; }
+        .landing .hero-veil { position:absolute; inset:0; z-index:1; background:linear-gradient(90deg,#ffffff 0%,#ffffff 34%,rgba(247,250,242,.62) 66%,rgba(247,250,242,.32) 100%); }
+        .landing .hero .wrap { position:relative; z-index:2; }
+        /* Hero: the branded app "self-assembles" on load */
+        @keyframes pista-pop { from { opacity:0; transform: translateY(12px) scale(.97); } to { opacity:1; transform:none; } }
+        @keyframes pista-float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+        .landing .phone { animation: pista-pop .55s cubic-bezier(.2,.7,.3,1) both; }
+        .landing .phone > * { animation: pista-pop .5s cubic-bezier(.2,.7,.3,1) both; }
+        .landing .phone > *:nth-child(1){ animation-delay:.15s; }
+        .landing .phone > *:nth-child(2){ animation-delay:.27s; }
+        .landing .phone > *:nth-child(3){ animation-delay:.39s; }
+        .landing .phone > *:nth-child(4){ animation-delay:.51s; }
+        .landing .phone > *:nth-child(5){ animation-delay:.63s; }
+        .landing .phone > *:nth-child(6){ animation-delay:.75s; }
+        .landing .phone > *:nth-child(7){ animation-delay:.87s; }
+        .landing .ftag { opacity:0; animation: pista-pop .6s ease both, pista-float 5s ease-in-out infinite; }
+        .landing .ftag.t1 { animation-delay: 1.0s, 1.6s; }
+        .landing .ftag.t2 { animation-delay: 1.2s, 1.8s; }
+        @media (prefers-reduced-motion: reduce) {
+          .landing .hero-vid { display:none; }
+          .landing .phone, .landing .phone > *, .landing .ftag { animation: none !important; opacity:1 !important; transform:none !important; }
+        }
         .landing .hero-grid { display:grid; grid-template-columns:1.05fr .95fr; gap:48px; align-items:center; }
         @media(max-width:900px){ .landing .hero-grid{grid-template-columns:1fr;gap:40px} }
         .landing .pill { display:inline-flex; align-items:center; gap:8px; background:var(--tint); color:var(--pista-d); font-size:13px; font-weight:700; padding:7px 14px; border-radius:999px; margin-bottom:22px; }
@@ -364,6 +431,25 @@ export default function LandingPage() {
         .landing .phone-stage { position:relative; display:flex; justify-content:center; }
         .landing .glow { position:absolute; inset:-10% 5%; background:radial-gradient(closest-side, rgba(122,176,74,.28), transparent); filter:blur(10px); }
         .landing .phone { position:relative; width:300px; background:#fff; border-radius:38px; box-shadow:0 0 0 10px #1d2a14, 0 40px 80px rgba(20,40,10,.28); overflow:hidden; }
+        @media (prefers-reduced-motion: no-preference) {
+          .landing .phone { animation: phFrame .6s cubic-bezier(.2,.8,.2,1) both; }
+          .landing .phone > * { animation: phPiece .55s cubic-bezier(.2,.8,.2,1) both; }
+          .landing .phone > *:nth-child(1){ animation-delay:.30s }
+          .landing .phone > *:nth-child(2){ animation-delay:.42s }
+          .landing .phone > *:nth-child(3){ animation-delay:.54s }
+          .landing .phone > *:nth-child(4){ animation-delay:.66s }
+          .landing .phone > *:nth-child(5){ animation-delay:.78s }
+          .landing .phone > *:nth-child(6){ animation-delay:.90s }
+          .landing .phone > *:nth-child(7){ animation-delay:1.02s }
+          .landing .ftag { animation: phFade .6s ease both; }
+          .landing .ftag.t1 { animation-delay:1.15s }
+          .landing .ftag.t2 { animation-delay:1.30s }
+        }
+        @keyframes phFrame { from { opacity:0; transform:translateY(18px) scale(.95) } to { opacity:1; transform:none } }
+        @keyframes phPiece { from { opacity:0; transform:translateY(12px) scale(.98) } to { opacity:1; transform:none } }
+        @keyframes phFade { from { opacity:0; transform:translateY(8px) } to { opacity:1; transform:none } }
+        .landing.anim .reveal { opacity:0; transform:translateY(24px); transition:opacity .7s cubic-bezier(.2,.8,.2,1), transform .7s cubic-bezier(.2,.8,.2,1); will-change:opacity,transform; }
+        .landing.anim .reveal.in { opacity:1; transform:none; }
         .landing .ph-status { display:flex; justify-content:space-between; font-size:11px; font-weight:600; padding:12px 22px 6px; }
         .landing .ph-head { display:flex; align-items:center; gap:9px; padding:4px 16px 12px; }
         .landing .ph-badge { width:34px; height:34px; border-radius:10px; background:var(--pista-d); color:#fff; display:grid; place-items:center; font-weight:800; font-size:13px; }

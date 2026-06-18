@@ -1,11 +1,55 @@
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import AppShell from "@/components/AppShell";
 import { BRAND } from "@/lib/menu";
 import { useBrand } from "@/components/Providers";
+
+function FeedbackCard({ orderId }) {
+  const [rating, setRating] = useState(0);
+  const [hover, setHover] = useState(0);
+  const [comment, setComment] = useState("");
+  const [done, setDone] = useState(false);
+
+  async function submit() {
+    if (!rating) return;
+    await fetch("/api/feedback", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ rating, comment, orderId }),
+    }).catch(() => {});
+    setDone(true);
+  }
+
+  if (done) {
+    return (
+      <div className="mx-auto mt-6 max-w-xs rounded-2xl border border-line bg-white p-4 text-[13px]">
+        <div className="text-[15px] font-bold text-brand-dark">Thanks for the feedback! 💚</div>
+        <div className="mt-1 text-muted">It helps us serve you better.</div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mx-auto mt-6 max-w-xs rounded-2xl border border-line bg-white p-4">
+      <div className="text-[14px] font-bold">How was your experience?</div>
+      <div className="mt-2 flex justify-center gap-1.5">
+        {[1, 2, 3, 4, 5].map((n) => (
+          <button key={n} onMouseEnter={() => setHover(n)} onMouseLeave={() => setHover(0)} onClick={() => setRating(n)}
+            className="text-2xl leading-none" style={{ color: (hover || rating) >= n ? "#e8a33d" : "#d9e4cc" }} aria-label={`${n} star`}>★</button>
+        ))}
+      </div>
+      {rating > 0 && (
+        <>
+          <textarea value={comment} onChange={(e) => setComment(e.target.value)} rows={2} placeholder="Tell us more (optional)"
+            className="mt-3 w-full rounded-lg border border-line px-3 py-2 text-[13px] outline-none focus:border-brand" />
+          <button onClick={submit} className="mt-2 w-full rounded-xl bg-brand py-2.5 text-[13px] font-bold text-white">Submit feedback</button>
+        </>
+      )}
+    </div>
+  );
+}
 
 function SuccessInner() {
   const params = useSearchParams();
@@ -22,7 +66,7 @@ function SuccessInner() {
         <div className="mt-1 text-muted">Pickup · {brand.address || BRAND.address}</div>
         <div className="mt-1 text-muted">Order #PS-{shortId}</div>
       </div>
-      <div className="mt-7 flex flex-col items-center gap-3">
+      <div className="mt-8 flex flex-col items-center gap-3">
         <Link href="/menu" className="inline-block rounded-xl bg-brand px-7 py-3.5 text-[15px] font-bold text-white">Back to menu</Link>
         <Link href="/account" className="text-sm font-semibold text-brand">View your orders →</Link>
       </div>
