@@ -37,6 +37,21 @@ model Tenant {
   discounts  Discount[]
   users      User[]
   rewards    Reward[]
+  feedback   Feedback[]
+}
+
+model Feedback {
+  id        String   @id @default(cuid())
+  tenantId  String?
+  tenant    Tenant?  @relation(fields: [tenantId], references: [id])
+  userId    String?
+  orderId   String?
+  name      String?
+  rating    Int
+  comment   String?
+  createdAt DateTime @default(now())
+
+  @@index([tenantId])
 }
 
 model Reward {
