@@ -274,3 +274,18 @@ model AuditLog {
 
   @@index([createdAt])
 }
+
+
+model PitchDeck {
+  id         String   @id @default(cuid())
+  kind       String   @default("pdf") // pdf | pptx
+  version    Int      @default(1)
+  filename   String
+  mime       String   @default("application/pdf")
+  size       Int      @default(0)
+  data       Bytes
+  uploadedBy String?
+  createdAt  DateTime @default(now())
+
+  @@index([createdAt])
+}
