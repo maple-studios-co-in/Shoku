@@ -164,11 +164,11 @@ export default function PitchPage() {
           <div className="eyebrow">Market size</div>
           <h2>Monetize the operators, not the orders.</h2>
           <div className="stats3">
-            <div><b>$32B → $140B+</b><span>India online food ordering &amp; delivery (2024→2030, ~28% CAGR).</span></div>
-            <div><b>$254M → $848M</b><span>India restaurant-tech SaaS — Pista’s TAM (2024→2030, 22.8% CAGR).</span></div>
+            <div><b>₹2.7L Cr → ₹11.7L Cr</b><span>India online food ordering &amp; delivery (2024→2030, ~28% CAGR). [≈ $32B→$140B]</span></div>
+            <div><b>₹2,100 Cr → ₹7,050 Cr</b><span>India restaurant-tech SaaS — Pista’s TAM (2024→2030, ~23% CAGR).</span></div>
             <div><b>₹18–54 Cr</b><span>5-yr SOM ARR — 2,000–6,000 outlets at our price points.</span></div>
           </div>
-          <p className="note">Market figures are industry estimates; SOM is bottoms-up on our pricing.</p>
+          <p className="note">INR at ~₹84/$. Market figures are industry estimates; SOM is bottoms-up on our pricing.</p>
         </section>
 
         {/* 9 — BUSINESS MODEL */}
@@ -193,6 +193,25 @@ export default function PitchPage() {
               ["vs Olo / Toast (US)", "Validate the white-label SaaS thesis at scale — we bring it to India, AI-first, at far lower price."],
             ].map(([h, p]) => (
               <div className="vsrow" key={h}><b>{h}</b><span>{p}</span></div>
+            ))}
+          </div>
+        </section>
+
+        {/* VS FUDR */}
+        <section className="slide">
+          <div className="eyebrow">Why we win</div>
+          <h2>Pista vs fudr.in — AI is the moat.</h2>
+          <p className="kicker" style={{ marginTop: 0, marginBottom: 22 }}>fudr.in digitizes the table with QR ordering &amp; billing. Pista is an AI-native platform that owns and grows the customer relationship.</p>
+          <div className="grid3">
+            {[
+              ["AI ordering assistant", "Recommends by mood, diet, time of day and caffeine — a conversation, not a static QR menu."],
+              ["Food intelligence", "Auto origin, ingredients, allergens and nutrition on every item — trust and upsell a QR menu can’t carry."],
+              ["AI WhatsApp marketing", "AI-written personalized campaigns plus automated win-back and reward nudges — a retention engine, not just ordering."],
+              ["AI platform analytics", "Revenue & MRR trends, a next-month forecast and at-risk detection with an AI insight summary."],
+              ["True white-label app", "Each café’s own branded PWA on its own subdomain — not a shared marketplace skin."],
+              ["Flat SaaS · 0% commission", "Cafés keep 100% of order value and own all their customer data."],
+            ].map(([h, p]) => (
+              <div className="card" key={h}><h3>{h}</h3><p>{p}</p></div>
             ))}
           </div>
         </section>
@@ -229,7 +248,8 @@ export default function PitchPage() {
             <thead><tr><th></th><th>Year 1</th><th>Year 2</th><th>Year 3</th></tr></thead>
             <tbody>
               <tr><td>Paying outlets</td><td>100</td><td>600</td><td>2,000</td></tr>
-              <tr><td>ARR (₹)</td><td>~0.9 Cr</td><td>~6 Cr</td><td>~22 Cr</td></tr>
+              <tr><td>MRR (₹)</td><td>~₹7.5 L</td><td>~₹50 L</td><td>~₹1.8 Cr</td></tr>
+              <tr><td>ARR (₹)</td><td>~₹0.9 Cr</td><td>~₹6 Cr</td><td>~₹22 Cr</td></tr>
               <tr><td>Net revenue retention</td><td>—</td><td>110%+</td><td>120%+</td></tr>
             </tbody>
           </table>
