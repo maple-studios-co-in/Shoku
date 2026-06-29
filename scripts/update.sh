@@ -32,6 +32,12 @@ DEFAULT_TENANT_SLUG="$DEFAULT_TENANT_SLUG"
 EOF
 fi
 
+# Cross-subdomain login cookie (added once if missing). Needs HTTPS.
+if ! grep -q '^COOKIE_DOMAIN=' .env 2>/dev/null; then
+  echo "✎ Adding COOKIE_DOMAIN to .env"
+  echo "COOKIE_DOMAIN=\".$BASE_DOMAIN_DEFAULT\"" >> .env
+fi
+
 echo "⛁ Backing up database…"
 [ -f prisma/dev.db ] && cp prisma/dev.db "prisma/dev.db.bak-$(date +%Y%m%d%H%M%S)" || true
 
