@@ -1,0 +1,285 @@
+"use client";
+
+import { useEffect } from "react";
+import { Outfit } from "next/font/google";
+
+const outfit = Outfit({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"], display: "swap" });
+
+const FEATURES = [
+  ["🍜", "Your own branded app", "Your logo, colours and menu on your own subdomain — a fast mobile web app, no download. Customers see your café, not ours."],
+  ["✨", "AI ordering assistant", "“What should I have?” Shoku AI recommends by mood, diet, time of day and caffeine — and builds the cart."],
+  ["🌿", "Food intelligence", "Every item carries origin, ingredients, allergens and nutrition — trust and upsell a QR menu can’t match."],
+  ["📲", "AI WhatsApp marketing", "AI-written, personalised campaigns to loyal regulars, plus automated win-back and reward nudges."],
+  ["📈", "AI analytics", "Revenue & MRR trends, a next-month forecast and at-risk alerts — with a plain-English “what changed” summary."],
+  ["🫶", "0% commission", "A flat monthly fee, never a cut of your orders. You keep 100% of the value — and all your customer data."],
+];
+
+const STEPS = [
+  ["Onboard", "Set your brand, colours, menu and subdomain in the console."],
+  ["Go live", "Your café launches on its own link with a starter menu and loyalty — in days."],
+  ["Sell direct", "Customers order by QR or link; AI assists, loyalty rewards, data stays yours."],
+  ["Grow", "WhatsApp campaigns, sale banners and analytics drive repeat orders."],
+];
+
+const TESTI = [
+  ["We dropped the delivery apps for our regulars. Shoku paid for itself in a month — and we finally own our customer list.", "Priya Nair", "Owner · Brew & Bloom", "1438761681033-6461ffad8d80"],
+  ["The AI suggestions genuinely lift our average order. Customers add a pastry it recommends more often than not.", "Rohan Mehta", "Founder · Third Wave Roasters", "1500648767791-00dcc994a43e"],
+  ["Live in a week, on our own domain, in our own brand. It feels like an app we built, not a marketplace we rent.", "Ananya Rao", "Co-owner · Chai & Co.", "1544005313-94ddf0286df2"],
+];
+
+const PRICES = [
+  ["Starter", "₹4,999", "/mo", "Single café, full storefront + core AI.", ["Branded ordering app", "AI ordering assistant", "Loyalty & QR tables", "Food intelligence"], false],
+  ["Growth", "₹12,999", "/mo", "Multi-outlet, advanced AI & marketing.", ["Everything in Starter", "AI WhatsApp marketing", "AI analytics & forecast", "Sale banners & segments"], true],
+  ["Enterprise", "Custom", "", "Chains, SLAs, custom domains.", ["Everything in Growth", "Custom domain & SSO", "Onboarding & success", "Priority support"], false],
+];
+
+export default function Landing() {
+  useEffect(() => {
+    const els = document.querySelectorAll(".reveal");
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }), { threshold: 0.14, rootMargin: "0px 0px -8% 0px" });
+    els.forEach((e) => io.observe(e));
+    const onScroll = () => { const p = document.querySelector(".prog"); if (p) p.style.width = (window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100) + "%"; };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  return (
+    <div className={`lp ${outfit.className}`}>
+      <div className="prog" />
+      <nav className="nav">
+        <a className="brand" href="#top"><img src="/shoku-mark.svg" alt="" /> shoku</a>
+        <div className="links">
+          <a href="#features">Product</a><a href="#how">How it works</a><a href="#pricing">Pricing</a>
+        </div>
+        <a className="btn cta" href="#demo">Book a demo</a>
+      </nav>
+
+      {/* HERO */}
+      <header className="hero" id="top">
+        <div className="hcopy reveal">
+          <div className="eyebrow">食 · AI ordering for cafés</div>
+          <h1>Your café’s own ordering app.<br /><span className="hl">Zero commission.</span></h1>
+          <p className="lede">Shoku gives every café a branded ordering app — menu, loyalty, AI recommendations and WhatsApp marketing — for a flat fee, not a 20–30% aggregator cut. Own your customers, your data and your margin.</p>
+          <div className="c-row">
+            <a className="btn cta lg" href="#demo">Book a demo</a>
+            <a className="btn ghost lg" href="#how">See how it works</a>
+          </div>
+          <div className="trust">No commission · Live in days · 100% your customer data</div>
+        </div>
+        <div className="hvisual reveal">
+          <div className="glow" />
+          <video className="logovid" autoPlay loop muted playsInline poster="/shoku-logo-frame.png">
+            <source src="/shoku-hero.mp4" type="video/mp4" />
+          </video>
+          <div className="tagchip">食 · Own your table</div>
+        </div>
+      </header>
+
+      {/* LOGOS */}
+      <section className="logos reveal">
+        <div className="lab">Trusted by cafés &amp; coffee chains</div>
+        <div className="logo-row">
+          {["Coffee Bean & Tea Leaf", "Blue Tokai", "Third Wave", "Chai & Co.", "Nothing Before Coffee", "Roastery"].map((b) => (
+            <div className="brandname" key={b}>{b}</div>
+          ))}
+        </div>
+      </section>
+
+      {/* FEATURES */}
+      <section className="sec" id="features">
+        <div className="center-head reveal">
+          <div className="eyebrow">Why Shoku</div>
+          <h2>Everything to sell direct — minus the dev team.</h2>
+          <p>One platform: a branded app your customers love, an AI layer no aggregator gives you, and the marketing engine to bring them back.</p>
+        </div>
+        <div className="fgrid">
+          {FEATURES.map(([ic, h, p], i) => (
+            <div className="fcard reveal" key={h} style={{ transitionDelay: `${(i % 3) * 70}ms` }}>
+              <div className="fic">{ic}</div>
+              <h3>{h}</h3><p>{p}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* HOW */}
+      <section className="how" id="how">
+        <div className="center-head light reveal">
+          <div className="eyebrow light">How it works</div>
+          <h2>From signup to a live branded app — in days.</h2>
+        </div>
+        <div className="steps">
+          {STEPS.map(([h, p], i) => (
+            <div className="step reveal" key={h} style={{ transitionDelay: `${i * 70}ms` }}>
+              <span className="num">{i + 1}</span><h3>{h}</h3><p>{p}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* STATS */}
+      <section className="statband reveal">
+        {[["0%", "commission, ever"], ["<7 days", "to launch your app"], ["100%", "your customer data"], ["24/7", "AI ordering"]].map(([n, l]) => (
+          <div className="sbi" key={l}><div className="num">{n}</div><div className="lbl">{l}</div></div>
+        ))}
+      </section>
+
+      {/* TESTIMONIALS */}
+      <section className="sec">
+        <div className="center-head reveal">
+          <div className="eyebrow">What operators say</div>
+          <h2>Loved by café owners.</h2>
+        </div>
+        <div className="tgrid">
+          {TESTI.map(([q, n, r, img], i) => (
+            <div className="tcard reveal" key={n} style={{ transitionDelay: `${(i % 3) * 70}ms` }}>
+              <div className="stars">★★★★★</div>
+              <p className="q">“{q}”</p>
+              <div className="who"><img src={`https://images.unsplash.com/photo-${img}?w=120&h=120&fit=crop&crop=faces`} alt="" /><div><b>{n}</b><span>{r}</span></div></div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* PRICING */}
+      <section className="sec" id="pricing">
+        <div className="center-head reveal">
+          <div className="eyebrow">Pricing</div>
+          <h2>Flat SaaS. Zero per-order commission.</h2>
+          <p>Pick a plan, launch your app, keep 100% of every order. Cancel anytime.</p>
+        </div>
+        <div className="pgrid">
+          {PRICES.map(([name, price, per, desc, feats, pop]) => (
+            <div className={`price reveal ${pop ? "pop" : ""}`} key={name}>
+              {pop && <div className="badge">Most popular</div>}
+              <h3>{name}</h3>
+              <div className="amt">{price}<span>{per}</span></div>
+              <p className="pdesc">{desc}</p>
+              <ul>{feats.map((f) => <li key={f}><span className="ck">✓</span>{f}</li>)}</ul>
+              <a className={`btn ${pop ? "cta" : "ghost"} full`} href="#demo">Book a demo</a>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="cta-band reveal" id="demo">
+        <h2>Own your table.</h2>
+        <p>See Shoku on your own menu in a 20-minute demo. We’ll spin up a branded preview for your café.</p>
+        <a className="btn white lg" href="mailto:hello@getshoku.com?subject=Shoku%20demo">Book a demo →</a>
+      </section>
+
+      <footer className="foot">
+        <div className="fbrand"><img src="/shoku-mark.svg" alt="" /> shoku</div>
+        <div className="fcols">
+          <div><h4>Product</h4><a href="#features">Features</a><a href="#pricing">Pricing</a><a href="#how">How it works</a></div>
+          <div><h4>Company</h4><a href="#top">About</a><a href="mailto:hello@getshoku.com">Contact</a><a href="#top">Privacy</a></div>
+          <div><h4>Get started</h4><a href="#demo">Book a demo</a><a href="/login">Sign in</a></div>
+        </div>
+        <div className="fbot">© 2026 Shoku · getshoku.com · 食 Own your table</div>
+      </footer>
+
+      <style jsx global>{`
+        .lp { --m:#2f6b4f; --md:#234c38; --mdd:#1c3a28; --clay:#d9774e; --paper:#f7f4ef; --cream:#f4f1ea; --ink:#1b1813; --mut:#6b6357; --line:#e7e2d8; --mist:#9fc7b0; --tint:#eef4ec;
+          color:var(--ink); background:var(--paper); line-height:1.6; overflow-x:hidden; }
+        .lp *{ box-sizing:border-box; }
+        .lp a{ text-decoration:none; color:inherit; }
+        .lp .prog{ position:fixed; top:0; left:0; height:3px; width:0; background:linear-gradient(90deg,var(--m),var(--clay)); z-index:300; }
+        .lp .reveal{ opacity:0; transform:translateY(16px); transition:opacity .6s ease, transform .6s cubic-bezier(.2,.7,.3,1); }
+        .lp .reveal.in{ opacity:1; transform:none; }
+        .lp .btn{ display:inline-flex; align-items:center; gap:8px; font-weight:700; font-size:14px; padding:11px 18px; border-radius:13px; cursor:pointer; transition:transform .15s, background .2s; }
+        .lp .btn.cta{ background:var(--m); color:#fff; box-shadow:0 8px 22px rgba(47,107,79,.28); }
+        .lp .btn.cta:hover{ background:var(--md); transform:translateY(-1px); }
+        .lp .btn.ghost{ border:1px solid var(--line); background:#fff; color:var(--ink); }
+        .lp .btn.ghost:hover{ border-color:var(--m); color:var(--md); }
+        .lp .btn.white{ background:#fff; color:var(--md); }
+        .lp .btn.lg{ padding:14px 24px; font-size:15px; border-radius:14px; }
+        .lp .btn.full{ width:100%; justify-content:center; margin-top:18px; }
+        .lp .eyebrow{ font-size:12.5px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:var(--m); margin-bottom:14px; }
+        .lp .eyebrow.light{ color:var(--mist); }
+        .lp .hl{ color:var(--clay); }
+        /* NAV */
+        .lp .nav{ position:sticky; top:0; z-index:100; display:flex; align-items:center; gap:24px; padding:14px 30px; background:rgba(247,244,239,.85); backdrop-filter:blur(12px); border-bottom:1px solid var(--line); }
+        .lp .brand{ display:flex; align-items:center; gap:9px; font-weight:700; font-size:21px; letter-spacing:-.02em; }
+        .lp .brand img{ width:32px; height:32px; border-radius:9px; }
+        .lp .nav .links{ display:flex; gap:26px; margin-left:18px; font-size:14px; font-weight:600; color:var(--mut); }
+        .lp .nav .links a:hover{ color:var(--ink); }
+        .lp .nav .cta{ margin-left:auto; }
+        /* HERO */
+        .lp .hero{ max-width:1160px; margin:0 auto; padding:70px 30px 40px; display:grid; grid-template-columns:1.05fr .95fr; gap:48px; align-items:center; }
+        .lp .hero h1{ font-size:54px; line-height:1.05; letter-spacing:-.025em; font-weight:800; margin:0 0 20px; }
+        .lp .lede{ font-size:17px; color:var(--mut); max-width:48ch; margin:0 0 28px; }
+        .lp .c-row{ display:flex; gap:13px; flex-wrap:wrap; }
+        .lp .trust{ margin-top:20px; font-size:13px; font-weight:600; color:var(--mut); }
+        .lp .hvisual{ position:relative; display:grid; place-items:center; min-height:420px; }
+        .lp .glow{ position:absolute; width:78%; height:78%; border-radius:50%; background:radial-gradient(circle,rgba(47,107,79,.30),transparent 62%); filter:blur(18px); }
+        .lp .logovid{ width:min(420px,84%); aspect-ratio:1/1; border-radius:38px; object-fit:cover; box-shadow:0 40px 90px rgba(40,55,20,.28); position:relative; z-index:1; background:var(--md); }
+        .lp .tagchip{ position:absolute; bottom:18px; z-index:2; background:#fff; color:var(--md); font-size:12.5px; font-weight:700; padding:8px 16px; border-radius:999px; box-shadow:0 10px 24px rgba(0,0,0,.12); letter-spacing:.04em; }
+        /* LOGOS */
+        .lp .logos{ max-width:1100px; margin:18px auto; padding:18px 30px; text-align:center; }
+        .lp .logos .lab{ font-size:12px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--mut); margin-bottom:16px; }
+        .lp .logo-row{ display:flex; flex-wrap:wrap; gap:14px 34px; justify-content:center; }
+        .lp .brandname{ font-size:18px; font-weight:700; color:var(--md); opacity:.62; }
+        /* SECTIONS */
+        .lp .sec{ max-width:1100px; margin:0 auto; padding:64px 30px; }
+        .lp .center-head{ text-align:center; max-width:62ch; margin:0 auto 40px; }
+        .lp .center-head h2{ font-size:34px; line-height:1.12; letter-spacing:-.02em; font-weight:800; margin:0 0 12px; }
+        .lp .center-head p{ font-size:16px; color:var(--mut); }
+        .lp .center-head.light h2{ color:#fff; } .lp .center-head.light p{ color:#cfe0d2; }
+        .lp .fgrid{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+        .lp .fcard{ background:#fff; border:1px solid var(--line); border-radius:20px; padding:26px; transition:transform .25s, box-shadow .25s, border-color .25s; }
+        .lp .fcard:hover{ transform:translateY(-4px); border-color:var(--m); box-shadow:0 22px 48px rgba(40,55,20,.08); }
+        .lp .fic{ width:50px; height:50px; border-radius:14px; background:var(--tint); display:grid; place-items:center; font-size:24px; margin-bottom:16px; }
+        .lp .fcard h3{ font-size:17px; margin:0 0 8px; }
+        .lp .fcard p{ font-size:14px; color:var(--mut); margin:0; }
+        /* HOW */
+        .lp .how{ background:linear-gradient(160deg,var(--m),var(--mdd)); color:#fff; padding:66px 30px; }
+        .lp .how .center-head{ margin-bottom:36px; }
+        .lp .steps{ max-width:1100px; margin:0 auto; display:grid; grid-template-columns:repeat(4,1fr); gap:20px; }
+        .lp .step{ background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); border-radius:18px; padding:24px; }
+        .lp .step .num{ display:grid; place-items:center; width:40px; height:40px; border-radius:12px; background:var(--clay); color:#fff; font-weight:800; margin-bottom:14px; }
+        .lp .step h3{ margin:0 0 6px; font-size:16px; } .lp .step p{ margin:0; font-size:13.5px; color:#cfe0d2; }
+        /* STATS */
+        .lp .statband{ max-width:1100px; margin:0 auto; padding:30px; display:grid; grid-template-columns:repeat(4,1fr); gap:24px; }
+        .lp .sbi{ text-align:center; } .lp .sbi .num{ font-size:40px; font-weight:800; color:var(--m); letter-spacing:-.02em; } .lp .sbi .lbl{ font-size:13px; color:var(--mut); margin-top:4px; }
+        /* TESTI */
+        .lp .tgrid{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+        .lp .tcard{ background:#fff; border:1px solid var(--line); border-radius:20px; padding:24px; display:flex; flex-direction:column; }
+        .lp .stars{ color:#e8a33d; letter-spacing:2px; font-size:14px; }
+        .lp .tcard .q{ font-size:15px; line-height:1.55; margin:12px 0 18px; }
+        .lp .who{ display:flex; align-items:center; gap:12px; margin-top:auto; }
+        .lp .who img{ width:46px; height:46px; border-radius:50%; object-fit:cover; }
+        .lp .who b{ display:block; font-size:14px; } .lp .who span{ font-size:12.5px; color:var(--mut); }
+        /* PRICING */
+        .lp .pgrid{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px; align-items:start; }
+        .lp .price{ background:#fff; border:1px solid var(--line); border-radius:22px; padding:28px; position:relative; }
+        .lp .price.pop{ border:2px solid var(--m); box-shadow:0 24px 54px rgba(40,55,20,.10); }
+        .lp .price .badge{ position:absolute; top:-12px; left:50%; transform:translateX(-50%); background:var(--m); color:#fff; font-size:11px; font-weight:800; padding:5px 13px; border-radius:999px; }
+        .lp .price h3{ font-size:18px; margin:0 0 6px; }
+        .lp .amt{ font-size:38px; font-weight:800; letter-spacing:-.02em; } .lp .amt span{ font-size:15px; font-weight:600; color:var(--mut); }
+        .lp .pdesc{ font-size:13.5px; color:var(--mut); margin:8px 0 16px; }
+        .lp .price ul{ list-style:none; padding:0; margin:0; }
+        .lp .price li{ display:flex; align-items:center; gap:9px; font-size:14px; padding:6px 0; }
+        .lp .price .ck{ color:var(--m); font-weight:900; }
+        /* CTA */
+        .lp .cta-band{ max-width:1000px; margin:50px auto; padding:64px 40px; text-align:center; background:linear-gradient(135deg,var(--m),var(--md)); color:#fff; border-radius:30px; }
+        .lp .cta-band h2{ font-size:40px; font-weight:800; letter-spacing:-.02em; margin:0 0 10px; }
+        .lp .cta-band p{ font-size:16px; color:#cfe0d2; max-width:50ch; margin:0 auto 26px; }
+        /* FOOTER */
+        .lp .foot{ border-top:1px solid var(--line); padding:50px 30px 40px; max-width:1100px; margin:0 auto; }
+        .lp .fbrand{ display:flex; align-items:center; gap:9px; font-weight:700; font-size:20px; } .lp .fbrand img{ width:30px; height:30px; border-radius:8px; }
+        .lp .fcols{ display:flex; flex-wrap:wrap; gap:40px; margin:24px 0; }
+        .lp .fcols h4{ font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--mut); margin:0 0 10px; }
+        .lp .fcols a{ display:block; font-size:14px; color:var(--ink); padding:3px 0; } .lp .fcols a:hover{ color:var(--m); }
+        .lp .fbot{ font-size:12.5px; color:var(--mut); border-top:1px solid var(--line); padding-top:18px; }
+        @media(max-width:880px){
+          .lp .hero{ grid-template-columns:1fr; text-align:center; padding-top:40px; }
+          .lp .hero h1{ font-size:40px; } .lp .lede{ margin-inline:auto; } .lp .c-row{ justify-content:center; }
+          .lp .hvisual{ order:-1; min-height:320px; }
+          .lp .fgrid,.lp .steps,.lp .tgrid,.lp .pgrid,.lp .statband{ grid-template-columns:1fr; }
+          .lp .nav .links{ display:none; }
+        }
+      `}</style>
+    </div>
+  );
+}

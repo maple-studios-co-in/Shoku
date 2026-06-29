@@ -32,7 +32,7 @@ export function ListItem({ item }) {
           <div className="flex items-center gap-1.5 text-[15px] font-semibold leading-tight">
             {item.name}
             {item.signature && (
-              <span className="rounded-full bg-brand-tint px-1.5 py-0.5 text-[9px] font-bold text-brand-dark">★ SIGNATURE</span>
+              <span className="rounded-full bg-accent-tint px-1.5 py-0.5 text-[9px] font-bold text-accent">★ SIGNATURE</span>
             )}
           </div>
           <p className="mt-0.5 line-clamp-2 text-xs text-muted">{item.desc}</p>

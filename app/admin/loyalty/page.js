@@ -18,7 +18,7 @@ export default function LoyaltyPage() {
     fetch("/api/loyalty").then((r) => r.json()).then((d) => { setEarnRate(d.earnRate); setTiers(d.tiers || []); setRewards(d.rewards || []); });
     fetch("/api/menu?all=1").then((r) => r.json()).then((d) => setItems(d.items || []));
   }
-  useEffect(load, []);
+  useEffect(() => { load(); }, []);
 
   async function saveSettings() {
     await fetch("/api/loyalty", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ earnRate: Number(earnRate), tiers }) });

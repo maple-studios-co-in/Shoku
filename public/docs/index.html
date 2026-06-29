@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pista Docs — Developer & User Guides</title>
-<meta name="description" content="Documentation for Pista, the AI-powered white-label ordering platform: setup, architecture, API reference, and user guides.">
+<title>Shoku Docs — Developer & User Guides</title>
+<meta name="description" content="Documentation for Shoku, the AI-powered white-label ordering platform: setup, architecture, API reference, and user guides.">
 <style>
   :root{
-    --pista:#7AB04A; --pista-d:#36511F; --pista-dd:#2b4a1c;
+    --shoku:#3A6B4D; --shoku-d:#244635; --shoku-dd:#15281e;
     --tint:#E9F2DE; --tint2:#f4f8ee;
     --ink:#1b2417; --muted:#5d6b50; --line:#e4ead9;
     --cream:#f7faf2; --code-bg:#1d2a14; --code-ink:#e8f0dd;
@@ -17,9 +17,9 @@
   *{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth}
   body{font-family:var(--font);color:var(--ink);background:#fff;line-height:1.65;font-size:15px}
-  a{color:var(--pista-d);text-decoration:none}
+  a{color:var(--shoku-d);text-decoration:none}
   a:hover{text-decoration:underline}
-  code{font-family:var(--mono);font-size:.86em;background:var(--tint);color:var(--pista-dd);padding:2px 6px;border-radius:5px}
+  code{font-family:var(--mono);font-size:.86em;background:var(--tint);color:var(--shoku-dd);padding:2px 6px;border-radius:5px}
   pre{background:var(--code-bg);color:var(--code-ink);padding:16px 18px;border-radius:12px;overflow-x:auto;margin:14px 0;font-size:13px;line-height:1.6}
   pre code{background:none;color:inherit;padding:0}
   h1{font-size:34px;letter-spacing:-.02em;margin-bottom:6px}
@@ -35,17 +35,17 @@
   /* Sidebar */
   .side{position:sticky;top:0;height:100vh;overflow-y:auto;border-right:1px solid var(--line);padding:22px 18px;background:var(--cream)}
   .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px;margin-bottom:6px}
-  .brand .mark{width:30px;height:30px;border-radius:8px;background:var(--pista);color:#fff;display:grid;place-items:center;font-weight:900}
+  .brand .mark{width:30px;height:30px;border-radius:8px;background:var(--shoku);color:#fff;display:grid;place-items:center;font-weight:900}
   .side .tag{font-size:12px;color:var(--muted);margin-bottom:18px}
   .side .grp{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin:18px 0 7px}
   .side a{display:block;color:var(--muted);font-size:13.5px;font-weight:500;padding:5px 10px;border-radius:8px;text-decoration:none}
   .side a:hover{background:var(--tint);color:var(--ink)}
-  .side a.active{background:var(--pista);color:#fff;font-weight:600}
+  .side a.active{background:var(--shoku);color:#fff;font-weight:600}
   .content{padding:42px 56px 120px;min-width:0}
   .lead{font-size:18px;color:var(--muted);margin:8px 0 18px}
-  .pill{display:inline-flex;align-items:center;gap:7px;background:var(--tint);color:var(--pista-d);font-size:12px;font-weight:700;padding:5px 12px;border-radius:999px}
-  .note{background:var(--tint2);border:1px solid var(--line);border-left:3px solid var(--pista);border-radius:10px;padding:13px 16px;margin:16px 0;font-size:14px}
-  .note b{color:var(--pista-dd)}
+  .pill{display:inline-flex;align-items:center;gap:7px;background:var(--tint);color:var(--shoku-d);font-size:12px;font-weight:700;padding:5px 12px;border-radius:999px}
+  .note{background:var(--tint2);border:1px solid var(--line);border-left:3px solid var(--shoku);border-radius:10px;padding:13px 16px;margin:16px 0;font-size:14px}
+  .note b{color:var(--shoku-dd)}
   .method{font-family:var(--mono);font-size:12px;font-weight:700;padding:2px 8px;border-radius:6px;color:#fff;margin-right:8px}
   .get{background:#3b82f6}.post{background:#16a34a}.put{background:#d97706}.patch{background:#9333ea}.delete{background:#dc2626}
   .endpoint{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:10px 0;font-size:13.5px}
@@ -62,22 +62,23 @@
     .content{padding:24px 20px 80px}
     .grid2{grid-template-columns:1fr}
     .topbar{display:flex;align-items:center;gap:10px;position:sticky;top:0;background:#fff;border-bottom:1px solid var(--line);padding:12px 16px;z-index:10;font-weight:800}
-    .topbar .mark{width:28px;height:28px;border-radius:7px;background:var(--pista);color:#fff;display:grid;place-items:center;font-weight:900}
+    .topbar .mark{width:28px;height:28px;border-radius:7px;background:var(--shoku);color:#fff;display:grid;place-items:center;font-weight:900}
   }
 </style>
 </head>
 <body>
-<div class="topbar"><span class="mark">P</span> Pista Docs</div>
+<div class="topbar"><span class="mark">食</span> Shoku Docs</div>
 <div class="layout">
   <!-- SIDEBAR -->
   <aside class="side">
-    <div class="brand"><span class="mark">P</span> Pista Docs</div>
+    <div class="brand"><span class="mark">食</span> Shoku Docs</div>
     <div class="tag">AI white-label ordering platform</div>
 
     <div class="grp">Developer</div>
     <a href="#intro">Introduction</a>
     <a href="#getting-started">Getting started</a>
     <a href="#architecture">Architecture</a>
+    <a href="#diagrams">Diagrams</a>
     <a href="#structure">Project structure</a>
     <a href="#data-model">Data model</a>
     <a href="#api">API reference</a>
@@ -96,9 +97,9 @@
   <main class="content">
     <section id="intro">
       <span class="pill">✨ Documentation</span>
-      <h1>Pista</h1>
-      <p class="lead">Pista is an AI-powered, white-label ordering platform for cafés and restaurant chains. A brand configures its identity and menu once, and gets a polished mobile-first ordering app with AI recommendations, food intelligence, orders, loyalty and an admin dashboard.</p>
-      <p>This site has two parts: <b>Developer docs</b> (how Pista is built and how to run, extend and deploy it) and <b>User guides</b> (how customers order and how café owners run the admin dashboard).</p>
+      <h1>Shoku</h1>
+      <p class="lead">Shoku is an AI-powered, white-label ordering platform for cafés and restaurant chains. A brand configures its identity and menu once, and gets a polished mobile-first ordering app with AI recommendations, food intelligence, orders, loyalty and an admin dashboard.</p>
+      <p>This site has two parts: <b>Developer docs</b> (how Shoku is built and how to run, extend and deploy it) and <b>User guides</b> (how customers order and how café owners run the admin dashboard).</p>
       <div class="note">⚡ <b>Quick links:</b> <a href="#getting-started">Run it locally</a> · <a href="#api">API reference</a> · <a href="#guide-owner">Cafe-owner guide</a></div>
       <h3>What's included</h3>
       <div class="grid2">
@@ -118,12 +119,12 @@
         <li>npm 9+</li>
       </ul>
       <h3>Install & run</h3>
-      <pre><code>cd pista
+      <pre><code>cd shoku
 npm install        # also runs `prisma generate`
 npm run setup      # creates the SQLite DB (prisma db push) + seeds data
 npm run dev        # http://localhost:3000</code></pre>
       <p>Open <code>http://localhost:3000</code>. The marketing site is at <code>/</code>; click <b>View live demo</b> to open the ordering app at <code>/menu</code>. The app is mobile-first — narrow your window or use device emulation.</p>
-      <div class="note">🔑 <b>Demo admin login:</b> <code>demo@pista.app</code> / <code>password</code>. This account has the <code>admin</code> role, so it can open the dashboard at <code>/admin</code>. New sign-ups are customers.</div>
+      <div class="note">🔑 <b>Demo admin login:</b> <code>demo@shoku.app</code> / <code>password</code>. This account has the <code>admin</code> role, so it can open the dashboard at <code>/admin</code>. New sign-ups are customers.</div>
       <h3>Useful scripts</h3>
       <table>
         <tr><th>Script</th><th>What it does</th></tr>
@@ -138,7 +139,7 @@ npm run dev        # http://localhost:3000</code></pre>
     <hr>
     <section id="architecture">
       <h2>Architecture</h2>
-      <p>Pista is a single Next.js 14 (App Router) application. The customer app and admin dashboard are route groups in the same project; both talk to the database through API route handlers (and a few server reads).</p>
+      <p>Shoku is a single Next.js 14 (App Router) application. The customer app and admin dashboard are route groups in the same project; both talk to the database through API route handlers (and a few server reads).</p>
       <pre><code>Browser (customer app / admin dashboard)
         │  fetch()
         ▼
@@ -167,16 +168,26 @@ Next.js App Router  ── pages (client components)
     </section>
 
     <hr>
+    <section id="diagrams">
+      <h2>Diagrams</h2>
+      <p>High-level views of how the product fits together. The source SVGs live in <code>public/docs/</code>.</p>
+      <h3>Customer &amp; café-owner flows</h3>
+      <img src="/docs/user-flow.svg" alt="Shoku customer and café-owner user-flow diagram" style="width:100%;border:1px solid var(--line);border-radius:12px;margin:8px 0 24px"/>
+      <h3>System architecture</h3>
+      <img src="/docs/architecture.svg" alt="Shoku system architecture diagram" style="width:100%;border:1px solid var(--line);border-radius:12px;margin:8px 0"/>
+    </section>
+
+    <hr>
     <section id="structure">
       <h2>Project structure</h2>
-      <pre><code>pista/
+      <pre><code>shoku/
 ├─ app/
 │  ├─ layout.js              # root layout + providers + fonts
 │  ├─ globals.css            # design tokens (white-label CSS vars)
 │  ├─ page.js                # marketing landing (/)
 │  ├─ menu/page.js           # ordering app home
 │  ├─ item/[id]/page.js      # item detail + AI info
-│  ├─ ai/page.js             # Pista AI assistant
+│  ├─ ai/page.js             # Shoku AI assistant
 │  ├─ cart, checkout, success, account, login, register
 │  ├─ admin/                 # dashboard (layout + sub-pages)
 │  │  ├─ layout.js           # sidebar + admin-role guard
@@ -248,7 +259,7 @@ Next.js App Router  ── pages (client components)
       <p>Authentication is handled by NextAuth's Credentials provider (<code>lib/auth.js</code>). Passwords are hashed with bcrypt; sessions are JWTs. The user's <code>role</code> is embedded in the JWT and exposed on <code>session.user.role</code>.</p>
       <ul>
         <li><b>customer</b> — default for sign-ups. Can order, view their orders and earn points.</li>
-        <li><b>admin</b> — can open <code>/admin</code> and call admin APIs. The seeded <code>demo@pista.app</code> is an admin.</li>
+        <li><b>admin</b> — can open <code>/admin</code> and call admin APIs. The seeded <code>demo@shoku.app</code> is an admin.</li>
       </ul>
       <p>Server routes guard with <code>requireAdmin()</code> (<code>lib/admin.js</code>), which returns <code>401</code> when signed out and <code>403</code> for non-admins. The admin UI is additionally guarded in <code>app/admin/layout.js</code>.</p>
       <div class="note">🔒 To promote a user to admin, set <code>role = "admin"</code> in the database (e.g. via <code>npx prisma studio</code>).</div>
@@ -259,7 +270,7 @@ Next.js App Router  ── pages (client components)
       <h2>White-label theming</h2>
       <p>Brand colours are CSS variables (RGB channels) defined in <code>app/globals.css</code> and consumed by Tailwind (<code>bg-brand</code>, <code>text-brand-dark</code>, <code>bg-brand-tint</code>). The <code>BrandProvider</code> in <code>components/Providers.js</code> loads the brand from <code>/api/brand</code>, applies the variables to <code>:root</code>, and the admin "Publish" button persists changes.</p>
       <pre><code>:root {
-  --brand: 122 176 74;       /* pistachio */
+  --brand: 58 107 77;       /* matcha */
   --brand-dark: 54 81 31;
   --brand-tint: ...;         /* derived */
 }</code></pre>
@@ -277,7 +288,7 @@ Next.js App Router  ── pages (client components)
     <section id="deployment">
       <h2>Deployment</h2>
       <h3>Hosting the app</h3>
-      <p>Pista runs anywhere Next.js does. For Vercel:</p>
+      <p>Shoku runs anywhere Next.js does. For Vercel:</p>
       <ol>
         <li>Push the repo to GitHub and import it into Vercel.</li>
         <li>SQLite isn't suitable for serverless — switch <code>DATABASE_URL</code> to a hosted Postgres and change the Prisma <code>provider</code> to <code>postgresql</code>.</li>
@@ -297,13 +308,13 @@ npx serve public/docs
     <!-- ===================== USER GUIDES ===================== -->
     <section id="guide-customer">
       <h2>User guide — for customers</h2>
-      <p class="lead">How to order on a Pista-powered café app.</p>
+      <p class="lead">How to order on a Shoku-powered café app.</p>
       <h3>1. Browse the menu</h3>
       <p>Open the app and browse by category (Ice Blended, Hot Coffee, Tea, Food). The <b>✨ Picked for you</b> row highlights signature and top-rated items. Tap any item to see details.</p>
       <h3>2. Know what you're ordering</h3>
       <p>Each item has a <b>"Know your cup"</b> card: bean origin, ingredients, allergens and nutrition (calories, protein, sugar, caffeine), plus an AI tip. Choose a size and milk, then <b>Add to bag</b>.</p>
-      <h3>3. Ask Pista AI</h3>
-      <p>Not sure what to get? Open <b>Pista AI</b> and tap a mood ("Cold &amp; refreshing", "High protein", "Low caffeine") or type your own. It ranks the menu and explains why each pick fits — add any suggestion straight to your bag.</p>
+      <h3>3. Ask Shoku AI</h3>
+      <p>Not sure what to get? Open <b>Shoku AI</b> and tap a mood ("Cold &amp; refreshing", "High protein", "Low caffeine") or type your own. It ranks the menu and explains why each pick fits — add any suggestion straight to your bag.</p>
       <h3>4. Checkout</h3>
       <p>Review your bag (with an AI pairing suggestion), then check out: choose pickup / dine-in / delivery, add a promo code, pick a payment method and place the order. You'll need an account — sign up takes a moment.</p>
       <h3>5. Track orders & earn rewards</h3>
@@ -313,7 +324,7 @@ npx serve public/docs
     <hr>
     <section id="guide-owner">
       <h2>User guide — for café owners</h2>
-      <p class="lead">Running your store from the Pista admin dashboard at <code>/admin</code> (admin login required).</p>
+      <p class="lead">Running your store from the Shoku admin dashboard at <code>/admin</code> (admin login required).</p>
       <h3>Overview</h3>
       <p>Your home screen: revenue, order count, average order value and customer count, a 14-day revenue chart, your top sellers, and the latest orders.</p>
       <h3>Orders</h3>
@@ -334,7 +345,7 @@ npx serve public/docs
     <section id="faq">
       <h2>FAQ & troubleshooting</h2>
       <h3>I can't open /admin</h3>
-      <p>The dashboard requires the <code>admin</code> role. Sign in with <code>demo@pista.app</code> / <code>password</code>, or promote your user in the database.</p>
+      <p>The dashboard requires the <code>admin</code> role. Sign in with <code>demo@shoku.app</code> / <code>password</code>, or promote your user in the database.</p>
       <h3>The menu is empty</h3>
       <p>Run <code>npm run setup</code> (or <code>npm run seed</code>) to create and populate the database.</p>
       <h3>Login fails right after install</h3>

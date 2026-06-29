@@ -53,7 +53,7 @@ export default function BrandingPage() {
               ))}
             </div>
             <div className="border-t border-line px-5 py-3">
-              <button onClick={() => update(DEFAULTS)} className="text-[12.5px] font-semibold text-brand">↺ Reset to Pista defaults</button>
+              <button onClick={() => update(DEFAULTS)} className="text-[12.5px] font-semibold text-brand">↺ Reset to Shoku defaults</button>
             </div>
           </SectionCard>
         </div>

@@ -10,7 +10,7 @@ export default function GuideView({ userHtml, devHtml }) {
   return (
     <div className="guide">
       <nav className="gbar">
-        <Link href="/" className="brand"><span className="dot">P</span> Pista</Link>
+        <Link href="/" className="brand"><img src="/shoku-mark.svg" alt="" className="dot" /> Shoku</Link>
         <div className="tabs">
           <button className={tab === "user" ? "on" : ""} onClick={() => setTab("user")}>For café owners</button>
           {devHtml && <button className={tab === "dev" ? "on" : ""} onClick={() => setTab("dev")}>For developers</button>}
@@ -21,10 +21,10 @@ export default function GuideView({ userHtml, devHtml }) {
 
       <article className="prose" dangerouslySetInnerHTML={{ __html: html || "<p>Guide is unavailable right now.</p>" }} />
 
-      <footer className="gfoot">Pista · pista.maplestudios.co.in</footer>
+      <footer className="gfoot">Shoku · getshoku.com</footer>
 
       <style jsx global>{`
-        .guide { --green:#7AB04A; --dark:#22330f; --ink:#1d2615; --muted:#6b7766; --line:#e7ece1; --tint:#eef6e8; --canvas:#f7faf4;
+        .guide { --green:#3A6B4D; --dark:#15281e; --ink:#1B1813; --muted:#6F6557; --line:#E4DDD0; --tint:#EAF1EA; --canvas:#F6F2EA;
           background:var(--canvas); min-height:100vh; color:var(--ink);
           font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; }
         .guide .gbar { position:sticky; top:0; z-index:20; display:flex; align-items:center; gap:16px; flex-wrap:wrap;
@@ -37,8 +37,8 @@ export default function GuideView({ userHtml, devHtml }) {
         .guide .spacer { flex:1; }
         .guide .back { font-size:13px; font-weight:700; color:var(--green); text-decoration:none; }
         .guide .prose { max-width:860px; margin:0 auto; padding:36px 22px 80px; line-height:1.65; font-size:15.5px; }
-        .guide .prose h1 { font-family:Georgia,serif; font-size:38px; line-height:1.15; margin:8px 0 18px; letter-spacing:-.01em; }
-        .guide .prose h2 { font-family:Georgia,serif; font-size:26px; margin:42px 0 14px; padding-top:14px; border-top:1px solid var(--line); }
+        .guide .prose h1 { font-family:var(--font-serif,Georgia,serif); font-size:38px; line-height:1.15; margin:8px 0 18px; letter-spacing:-.01em; }
+        .guide .prose h2 { font-family:var(--font-serif,Georgia,serif); font-size:26px; margin:42px 0 14px; padding-top:14px; border-top:1px solid var(--line); }
         .guide .prose h3 { font-size:18px; margin:26px 0 10px; }
         .guide .prose h4 { font-size:15.5px; margin:20px 0 8px; }
         .guide .prose p { margin:0 0 14px; }

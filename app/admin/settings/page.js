@@ -75,7 +75,7 @@ export default function SettingsPage() {
         ))}
       </SectionCard>
 
-      <p className="mt-6 text-center text-[11px] text-muted">Pista white-label platform · settings persist to your brand workspace.</p>
+      <p className="mt-6 text-center text-[11px] text-muted">Shoku white-label platform · settings persist to your brand workspace.</p>
     </div>
   );
 }

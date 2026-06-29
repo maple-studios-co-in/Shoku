@@ -12,7 +12,7 @@ export default function PitchPage() {
   const isAdmin = session?.user?.role === "superadmin";
 
   const load = () => fetch("/api/pitch").then((r) => (r.ok ? r.json() : null)).then(setMeta).catch(() => {});
-  useEffect(load, []);
+  useEffect(() => { load(); }, []);
 
   async function onUpload(e, kind) {
     const f = e.target.files?.[0];
@@ -35,7 +35,7 @@ export default function PitchPage() {
   return (
     <div className="deck">
       <nav className="bar">
-        <div className="brand"><span className="dot">P</span> Pista</div>
+        <div className="brand"><img src="/shoku-mark.svg" alt="" className="dot" /> Shoku</div>
         <div className="spacer" />
         {pdf?.custom && <span className="ver">v{pdf.version}</span>}
         <a className="btn ghost" href="/api/pitch/download?inline=1" target="_blank" rel="noreferrer">View PDF</a>
@@ -59,9 +59,9 @@ export default function PitchPage() {
       <main className="stage">
         {/* 1 — TITLE */}
         <section className="slide dark title">
-          <div className="logo"><span className="dot big">P</span></div>
+          <div className="logo"><img src="/shoku-mark.svg" alt="" className="dot big" /></div>
           <div className="eyebrow light">Seed pitch · 2026</div>
-          <h1>Pista</h1>
+          <h1>Shoku</h1>
           <p className="lede">AI-powered, white-label online ordering for cafés &amp; restaurant chains.</p>
           <p className="tag">Your café. Your customers. Your app. <em>Zero commission.</em></p>
           <p className="sub">Every café gets its own branded ordering app — menu, loyalty, analytics and an AI ordering assistant — for a flat SaaS fee, not a 20–30% aggregator tax.</p>
@@ -115,9 +115,9 @@ export default function PitchPage() {
             {[
               ["Branded storefront", "Logo, colours, menu, cart & checkout on the café’s own subdomain — a mobile-first PWA, no download."],
               ["AI ordering assistant", "A ‘what should I eat?’ chat that recommends dishes, answers questions and builds the cart."],
-              ["Food intelligence", "Every item enriched with origin, ingredients, allergens and nutrition — unique to Pista."],
+              ["Food intelligence", "Every item enriched with origin, ingredients, allergens and nutrition — unique to Shoku."],
               ["Loyalty & rewards", "Points, tiers and redeemable rewards (₹-off or free items), redeemed right at checkout."],
-              ["Super-admin console", "Pista provisions, themes and monitors every café tenant from one control plane."],
+              ["Super-admin console", "Shoku provisions, themes and monitors every café tenant from one control plane."],
               ["Table QR & feedback", "Dine-in QR ordering tied to tables, plus post-order ratings into an owner dashboard."],
             ].map(([h, p]) => (
               <div className="card" key={h}><h3>{h}</h3><p>{p}</p></div>
@@ -165,7 +165,7 @@ export default function PitchPage() {
           <h2>Monetize the operators, not the orders.</h2>
           <div className="stats3">
             <div><b>₹2.7L Cr → ₹11.7L Cr</b><span>India online food ordering &amp; delivery (2024→2030, ~28% CAGR). [≈ $32B→$140B]</span></div>
-            <div><b>₹2,100 Cr → ₹7,050 Cr</b><span>India restaurant-tech SaaS — Pista’s TAM (2024→2030, ~23% CAGR).</span></div>
+            <div><b>₹2,100 Cr → ₹7,050 Cr</b><span>India restaurant-tech SaaS — Shoku’s TAM (2024→2030, ~23% CAGR).</span></div>
             <div><b>₹18–54 Cr</b><span>5-yr SOM ARR — 2,000–6,000 outlets at our price points.</span></div>
           </div>
           <p className="note">INR at ~₹84/$. Market figures are industry estimates; SOM is bottoms-up on our pricing.</p>
@@ -188,7 +188,7 @@ export default function PitchPage() {
           <h2>The only AI-native, commission-free, fully-branded ordering OS.</h2>
           <div className="vs">
             {[
-              ["vs Aggregators (Zomato/Swiggy)", "Take 16–30% and own the customer. Pista: flat SaaS, the café owns everything."],
+              ["vs Aggregators (Zomato/Swiggy)", "Take 16–30% and own the customer. Shoku: flat SaaS, the café owns everything."],
               ["vs UrbanPiper / Posist / Petpooja", "Strong POS/integration tooling, but aggregator-centric and light on a branded, AI-native storefront."],
               ["vs Olo / Toast (US)", "Validate the white-label SaaS thesis at scale — we bring it to India, AI-first, at far lower price."],
             ].map(([h, p]) => (
@@ -200,8 +200,8 @@ export default function PitchPage() {
         {/* VS FUDR */}
         <section className="slide">
           <div className="eyebrow">Why we win</div>
-          <h2>Pista vs fudr.in — AI is the moat.</h2>
-          <p className="kicker" style={{ marginTop: 0, marginBottom: 22 }}>fudr.in digitizes the table with QR ordering &amp; billing. Pista is an AI-native platform that owns and grows the customer relationship.</p>
+          <h2>Shoku vs fudr.in — AI is the moat.</h2>
+          <p className="kicker" style={{ marginTop: 0, marginBottom: 22 }}>fudr.in digitizes the table with QR ordering &amp; billing. Shoku is an AI-native platform that owns and grows the customer relationship.</p>
           <div className="grid3">
             {[
               ["AI ordering assistant", "Recommends by mood, diet, time of day and caffeine — a conversation, not a static QR menu."],
@@ -276,7 +276,7 @@ export default function PitchPage() {
             <li>12–18 mo: 100+ paying outlets, 5–10 chain logos, proven CAC/payback, ROI case studies.</li>
             <li>Unlocks a seed/Series A: a repeatable sales motion + early net revenue retention from land-and-expand.</li>
           </ul>
-          <p className="contact">hello@pista.app · pista.maplestudios.co.in</p>
+          <p className="contact">hello@getshoku.com · getshoku.com</p>
         </section>
 
         <footer className="foot">
@@ -285,7 +285,7 @@ export default function PitchPage() {
       </main>
 
       <style jsx global>{`
-        .deck { --green:#7AB04A; --dark:#22330f; --dark2:#2c441a; --ink:#1d2615; --muted:#67736090; --line:#e7ece1; --tint:#eef6e8; --canvas:#f4f7f0;
+        .deck { --green:#3A6B4D; --dark:#15281e; --dark2:#244635; --ink:#1B1813; --muted:#6F6557; --line:#E4DDD0; --tint:#EAF1EA; --canvas:#F6F2EA;
           background:var(--canvas); min-height:100vh; color:var(--ink);
           font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; }
         .deck *{ box-sizing:border-box; }

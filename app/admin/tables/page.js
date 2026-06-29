@@ -15,7 +15,7 @@ export default function AdminTablesPage() {
   function load() {
     fetch("/api/tables").then((r) => (r.ok ? r.json() : [])).then(setTables).catch(() => {});
   }
-  useEffect(load, []);
+  useEffect(() => { load(); }, []);
 
   const tableUrl = (id) => `https://${brand.subdomain || "your-cafe"}.${BASE}/?table=${id}`;
   const qrSrc = (id) => `https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=8&data=${encodeURIComponent(tableUrl(id))}`;

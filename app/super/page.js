@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { SectionCard, Stat, BarChart, formatINR } from "@/components/AdminUI";
 
-const PLAN_COLORS = { starter: "#9ca3af", growth: "#7AB04A", enterprise: "#36511F" };
+const PLAN_COLORS = { starter: "#9ca3af", growth: "#3A6B4D", enterprise: "#244635" };
 
 export default function PlatformOverview() {
   const [a, setA] = useState(null);
@@ -25,7 +25,7 @@ export default function PlatformOverview() {
       <header className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Platform analytics</h1>
-          <p className="text-sm text-muted">AI-assisted overview across all cafés on Pista.</p>
+          <p className="text-sm text-muted">AI-assisted overview across all cafés on Shoku.</p>
         </div>
         <div className="flex gap-2">
           <Link href="/super/audit" className="rounded-xl border border-line bg-white px-4 py-2.5 text-[13px] font-bold">Audit log</Link>
@@ -102,7 +102,7 @@ export default function PlatformOverview() {
                   <span className="text-muted">{formatINR(val)} <span className="text-[11px]">({Math.round((val / planTotal) * 100)}%)</span></span>
                 </div>
                 <div className="h-2 overflow-hidden rounded-full bg-canvas">
-                  <div className="h-full rounded-full" style={{ width: `${(val / planTotal) * 100}%`, background: PLAN_COLORS[plan] || "#7AB04A" }} />
+                  <div className="h-full rounded-full" style={{ width: `${(val / planTotal) * 100}%`, background: PLAN_COLORS[plan] || "#3A6B4D" }} />
                 </div>
               </div>
             ))}

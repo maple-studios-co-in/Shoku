@@ -16,7 +16,7 @@ const FULFILMENT = [
 const PAYMENTS = [
   { id: "upi", label: "💳 UPI · GPay / PhonePe" },
   { id: "card", label: "🏦 Card ending 4218" },
-  { id: "wallet", label: "💰 Pista Wallet · ₹240" },
+  { id: "wallet", label: "💰 Shoku Wallet · ₹240" },
 ];
 
 export default function CheckoutPage() {
@@ -70,23 +70,88 @@ export default function CheckoutPage() {
     }
   }
 
+  function loadRazorpay() {
+    return new Promise((resolve, reject) => {
+      if (typeof window !== "undefined" && window.Razorpay) return resolve();
+      const s = document.createElement("script");
+      s.src = "https://checkout.razorpay.com/v1/checkout.js";
+      s.onload = () => resolve();
+      s.onerror = () => reject(new Error("Couldn't load the payment SDK."));
+      document.body.appendChild(s);
+    });
+  }
+
+  // Direct (mock-paid) checkout — used when no payment gateway is configured.
+  async function directCheckout(payload) {
+    const res = await fetch("/api/orders", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      if (res.status === 401) return router.replace("/login?next=/checkout");
+      throw new Error(data.error || "Could not place order");
+    }
+    clear();
+    router.push(`/success?id=${encodeURIComponent(data.id)}`);
+  }
+
+  async function payWithRazorpay(rd) {
+    await loadRazorpay();
+    const rzp = new window.Razorpay({
+      key: rd.keyId,
+      order_id: rd.razorpayOrderId,
+      amount: rd.amount,
+      currency: rd.currency || "INR",
+      name: "Shoku",
+      description: "Order payment",
+      theme: { color: "#3A6B4D" },
+      handler: async (resp) => {
+        try {
+          const v = await fetch("/api/payments/razorpay/verify", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              razorpayOrderId: resp.razorpay_order_id,
+              razorpayPaymentId: resp.razorpay_payment_id,
+              signature: resp.razorpay_signature,
+              orderId: rd.orderId,
+            }),
+          });
+          const vd = await v.json();
+          if (!v.ok) throw new Error(vd.error || "Payment verification failed");
+          clear();
+          router.push(`/success?id=${encodeURIComponent(rd.orderId)}`);
+        } catch (e) {
+          setError(e.message);
+          setPlacing(false);
+        }
+      },
+      modal: { ondismiss: () => setPlacing(false) },
+    });
+    rzp.open();
+  }
+
   async function placeOrder() {
     if (!lines.length || placing) return;
     setPlacing(true);
     setError("");
+    const payload = { lines, fulfilment: ful, payment: pay, discountCode: applied?.code || null, rewardId: redeem?.id || null, tableId: table?.id || null };
     try {
-      const res = await fetch("/api/orders", {
+      // Try the real gateway; if it isn't configured (503), use direct checkout.
+      const rz = await fetch("/api/payments/razorpay/order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ lines, fulfilment: ful, payment: pay, discountCode: applied?.code || null, rewardId: redeem?.id || null, tableId: table?.id || null }),
+        body: JSON.stringify(payload),
       });
-      const data = await res.json();
-      if (!res.ok) {
-        if (res.status === 401) return router.replace("/login?next=/checkout");
-        throw new Error(data.error || "Could not place order");
+      if (rz.status === 503) return await directCheckout(payload);
+      const rd = await rz.json();
+      if (!rz.ok) {
+        if (rz.status === 401) return router.replace("/login?next=/checkout");
+        throw new Error(rd.error || "Could not start payment");
       }
-      clear();
-      router.push(`/success?id=${encodeURIComponent(data.id)}`);
+      await payWithRazorpay(rd);
     } catch (e) {
       setError(e.message);
       setPlacing(false);

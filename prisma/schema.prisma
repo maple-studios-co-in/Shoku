@@ -7,7 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// A café / tenant on the Pista platform. Holds its white-label config.
+// A café / tenant on the Shoku platform. Holds its white-label config.
 model Tenant {
   id          String   @id @default(cuid())
   name        String
@@ -15,8 +15,8 @@ model Tenant {
   status      String   @default("active") // active | trial | suspended
   plan        String   @default("growth") // starter | growth | enterprise
   // white-label
-  brandHex    String   @default("#7AB04A")
-  darkHex     String   @default("#36511F")
+  brandHex    String   @default("#3A6B4D")
+  darkHex     String   @default("#244635")
   font        String   @default("Inter")
   // ai feature flags
   aiAssistant Boolean  @default(true)
@@ -173,6 +173,9 @@ model Order {
   total        Int
   fulfilment   String      @default("pickup")
   payment      String      @default("upi")
+  paymentStatus     String  @default("paid")   // paid | pending | failed
+  razorpayOrderId   String?
+  razorpayPaymentId String?
   tableId      String?
   tableLabel   String?
   table        Table?      @relation(fields: [tableId], references: [id])
@@ -181,6 +184,8 @@ model Order {
   items        OrderItem[]
 
   @@index([tenantId])
+  @@index([userId])
+  @@index([razorpayOrderId])
 }
 
 model OrderItem {

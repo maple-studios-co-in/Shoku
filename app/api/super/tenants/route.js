@@ -57,8 +57,8 @@ export async function POST(req) {
       name, slug, plan: b.plan || "growth",
       storeName: b.storeName || name,
       address: b.address || null,
-      brandHex: b.brandHex || "#7AB04A",
-      darkHex: b.darkHex || "#36511F",
+      brandHex: b.brandHex || "#3A6B4D",
+      darkHex: b.darkHex || "#244635",
       tiers: JSON.stringify(DEFAULT_TIERS),
     },
   });

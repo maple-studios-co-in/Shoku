@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1010 560" font-family="Inter, system-ui, sans-serif">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#3A6B4D"/>
+    </marker>
+    <style>
+      .box{fill:#fff;stroke:#E4DDD0;stroke-width:1.5}
+      .h{fill:#1B1813;font-size:13px;font-weight:700}
+      .t{fill:#1B1813;font-size:12px;font-weight:600}
+      .s{fill:#6F6557;font-size:10.5px}
+      .lab{font-size:11px;font-weight:700;letter-spacing:.14em}
+      .flow{stroke:#3A6B4D;stroke-width:2;marker-end:url(#a)}
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="1010" height="560" rx="20" fill="#F6F2EA"/>
+  <text x="32" y="44" font-family="Georgia, serif" font-size="24" fill="#1B1813">Shoku — System Architecture</text>
+
+  <!-- CLIENTS -->
+  <text x="32" y="78" class="lab" fill="#3A6B4D">CLIENTS</text>
+  <text x="120" y="78" class="s">Next.js App Router · React · Tailwind · styled-jsx</text>
+  <g>
+    <rect class="box" x="24"  y="88" width="230" height="54" rx="12"/>
+    <rect class="box" x="268" y="88" width="230" height="54" rx="12"/>
+    <rect class="box" x="512" y="88" width="230" height="54" rx="12"/>
+    <rect class="box" x="756" y="88" width="230" height="54" rx="12"/>
+    <text class="t" x="40" y="112">Marketing site</text><text class="s" x="40" y="128">/ homepage · /pitch</text>
+    <text class="t" x="284" y="112">Customer app</text><text class="s" x="284" y="128">/menu · /cart · /checkout · /ai</text>
+    <text class="t" x="528" y="112">Admin console</text><text class="s" x="528" y="128">/admin</text>
+    <text class="t" x="772" y="112">Super console</text><text class="s" x="772" y="128">/super</text>
+  </g>
+  <line class="flow" x1="505" y1="142" x2="505" y2="170"/>
+
+  <!-- MIDDLEWARE -->
+  <rect class="box" x="24" y="172" width="962" height="42" rx="12" fill="#FBF3EE" stroke="#E7C9B8"/>
+  <text class="t" x="40" y="198">middleware.js</text>
+  <text class="s" x="150" y="198">host → tenant resolution   ·   CSP + security headers (next.config.mjs)</text>
+  <line class="flow" x1="505" y1="214" x2="505" y2="240"/>
+
+  <!-- API -->
+  <rect class="box" x="24" y="242" width="962" height="64" rx="12" fill="#EFF4EF" stroke="#CADBCE"/>
+  <text class="h" x="40" y="268">API — Next.js Route Handlers · /api/*</text>
+  <text class="s" x="40" y="290">NextAuth (JWT · bcrypt)   ·   requireAdmin / requireSuperadmin gates   ·   rate limiting   ·   markdown sanitize   ·   audit log</text>
+  <line class="flow" x1="505" y1="306" x2="505" y2="332"/>
+
+  <!-- SERVICES -->
+  <text x="32" y="330" class="lab" fill="#3A6B4D">DOMAIN SERVICES · lib/</text>
+  <g>
+    <rect class="box" x="24"  y="338" width="180" height="54" rx="12"/>
+    <rect class="box" x="216" y="338" width="180" height="54" rx="12"/>
+    <rect class="box" x="408" y="338" width="180" height="54" rx="12"/>
+    <rect class="box" x="600" y="338" width="180" height="54" rx="12"/>
+    <rect class="box" x="792" y="338" width="194" height="54" rx="12"/>
+    <text class="t" x="40" y="362">lib/orders</text><text class="s" x="40" y="378">totals · create</text>
+    <text class="t" x="232" y="362">lib/payments</text><text class="s" x="232" y="378">Razorpay verify</text>
+    <text class="t" x="424" y="362">lib/ai</text><text class="s" x="424" y="378">recommend</text>
+    <text class="t" x="616" y="362">lib/whatsapp</text><text class="s" x="616" y="378">campaigns</text>
+    <text class="t" x="808" y="362">lib/loyalty</text><text class="s" x="808" y="378">points · tiers</text>
+  </g>
+
+  <!-- branches to Data + External -->
+  <line class="flow" x1="240" y1="392" x2="240" y2="420"/>
+  <line class="flow" x1="780" y1="392" x2="780" y2="420"/>
+
+  <!-- DATA -->
+  <rect class="box" x="24" y="422" width="560" height="70" rx="12" fill="#F2F0EA" stroke="#DBD3C4"/>
+  <text x="40" y="446" class="lab" fill="#244635">DATA</text>
+  <text class="t" x="40" y="466">Prisma ORM  →  SQLite (dev) / Postgres (prod)</text>
+  <text class="s" x="40" y="483">multi-tenant — every query scoped by tenantId</text>
+
+  <!-- EXTERNAL -->
+  <rect class="box" x="624" y="422" width="362" height="70" rx="12" fill="#FBF3EE" stroke="#E7C9B8"/>
+  <text x="640" y="446" class="lab" fill="#C2643C">EXTERNAL INTEGRATIONS</text>
+  <text class="t" x="640" y="466">Razorpay · WhatsApp (Meta / BSP) · LLM</text>
+  <text class="s" x="640" y="483">payments · marketing messages · AI recommendations</text>
+
+  <text x="32" y="528" class="s" font-size="11">Self-contained Next.js 14 app · API routes + a few server reads · env-keyed integrations (graceful when unconfigured)</text>
+</svg>

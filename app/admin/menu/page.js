@@ -42,7 +42,7 @@ export default function AdminMenuPage() {
   function load() {
     fetch("/api/menu?all=1").then((r) => r.json()).then((d) => { setItems(d.items || []); setCats(d.categories || []); });
   }
-  useEffect(load, []);
+  useEffect(() => { load(); }, []);
 
   const catLabel = (id) => cats.find((c) => c.id === id)?.label || id;
 

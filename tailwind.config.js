@@ -12,6 +12,8 @@ module.exports = {
         brand: "rgb(var(--brand) / <alpha-value>)",
         "brand-dark": "rgb(var(--brand-dark) / <alpha-value>)",
         "brand-tint": "rgb(var(--brand-tint) / <alpha-value>)",
+        accent: "rgb(var(--accent) / <alpha-value>)",
+        "accent-tint": "rgb(var(--accent-tint) / <alpha-value>)",
         canvas: "rgb(var(--canvas) / <alpha-value>)",
         ink: "rgb(var(--ink) / <alpha-value>)",
         muted: "rgb(var(--muted) / <alpha-value>)",
@@ -19,6 +21,7 @@ module.exports = {
       },
       fontFamily: {
         sans: ["var(--font-sans)", "system-ui", "sans-serif"],
+        serif: ["var(--font-serif)", "Georgia", "serif"],
       },
       boxShadow: {
         card: "0 1px 2px rgba(16,24,40,.04), 0 10px 30px rgba(16,24,40,.06)",
