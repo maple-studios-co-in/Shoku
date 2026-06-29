@@ -92,14 +92,14 @@ export default function MenuPage() {
 
       <Link href="/ai" className="mx-4 mt-3.5 block">
         <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-brand to-brand-dark p-4 text-white">
-          <div className="pointer-events-none absolute -right-3 -top-3 text-7xl opacity-15">✨</div>
-          <div className="text-[11px] font-bold uppercase tracking-wider opacity-80">✨ Pista AI</div>
-          <h3 className="mt-1 text-[17px] font-semibold">Not sure what to order?</h3>
+          <div className="pointer-events-none absolute -right-2 -top-5 font-serif text-8xl opacity-15">食</div>
+          <div className="text-[11px] font-bold uppercase tracking-wider opacity-80">食 · Shoku AI</div>
+          <h3 className="mt-1 font-serif text-[19px] font-semibold">Not sure what to order?</h3>
           <p className="mt-0.5 max-w-[230px] text-[12.5px] opacity-90">
             Tell me your mood, time of day or craving — I'll build your perfect cup.
           </p>
           <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-white px-3.5 py-2 text-[12.5px] font-bold text-brand-dark">
-            Ask Pista AI →
+            Ask Shoku AI →
           </span>
         </div>
       </Link>
@@ -123,8 +123,8 @@ export default function MenuPage() {
       {!loading && cat === "all" && picks.length > 0 && (
         <>
           <div className="mb-2.5 mt-4 flex items-baseline justify-between px-4">
-            <h3 className="text-base font-bold">✨ Picked for you</h3>
-            <span className="text-xs font-semibold text-brand">AI</span>
+            <h3 className="serif text-lg font-semibold">Picked for you</h3>
+            <span className="rounded-full bg-accent-tint px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-accent">AI</span>
           </div>
           <div className="no-scrollbar flex gap-3 overflow-x-auto px-4 pb-2">
             {picks.map((item) => (
@@ -137,8 +137,8 @@ export default function MenuPage() {
       {!loading &&
         shownCats.map((c) => (
           <div key={c.id}>
-            <div className="mb-1 mt-4 px-4">
-              <h3 className="text-base font-bold">{c.label}</h3>
+            <div className="mb-1 mt-5 px-4">
+              <h3 className="serif text-lg font-semibold">{c.label}</h3>
             </div>
             <div className="px-4 pb-2">
               {items

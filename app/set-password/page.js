@@ -39,7 +39,7 @@ function SetPasswordInner() {
     return (
       <div className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-6 text-center">
         <h1 className="text-xl font-bold">Invite link invalid</h1>
-        <p className="mt-2 text-sm text-muted">This link is invalid or has expired. Ask Pista to send a new one.</p>
+        <p className="mt-2 text-sm text-muted">This link is invalid or has expired. Ask Shoku to send a new one.</p>
         <Link href="/login" className="mt-5 font-bold text-brand-dark">Go to sign in</Link>
       </div>
     );
@@ -48,7 +48,7 @@ function SetPasswordInner() {
   return (
     <div className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-6 py-12">
       <div className="mb-8 flex items-center gap-2.5 text-xl font-extrabold">
-        <span className="grid h-9 w-9 place-items-center rounded-xl bg-brand text-white">P</span> Pista
+        <span className="grid h-9 w-9 place-items-center rounded-xl bg-brand text-white">P</span> Shoku
       </div>
       <h1 className="text-2xl font-bold tracking-tight">Set your password</h1>
       <p className="mt-1 text-sm text-muted">Welcome to <b>{state.cafe}</b> — set a password for <b>{state.email}</b> to access your dashboard.</p>

@@ -103,7 +103,7 @@ export default function ItemPage() {
         <div className="mt-4 overflow-hidden rounded-2xl border border-line">
           <div className="flex items-center gap-2 bg-brand-tint px-3.5 py-3 text-[13px] font-bold text-brand-dark">
             ✨ Know your cup
-            <span className="ml-auto rounded-md bg-brand px-1.5 py-1 text-[10px] font-extrabold tracking-wide text-white">PISTA AI</span>
+            <span className="ml-auto rounded-md bg-brand px-1.5 py-1 text-[10px] font-extrabold tracking-wide text-white">SHOKU AI</span>
           </div>
           <InfoRow icon="🌍" title={isDrink ? "Bean / origin" : "Origin"}>{item.origin}</InfoRow>
           <InfoRow icon="🧾" title="Ingredients"><Pills items={item.ingredients} /></InfoRow>

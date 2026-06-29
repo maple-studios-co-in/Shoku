@@ -35,7 +35,7 @@ export default function AIPage() {
   const [messages, setMessages] = useState([
     {
       from: "bot",
-      lead: "Hi! ✨ I'm Pista AI.",
+      lead: "Hi! ✨ I'm Shoku AI.",
       text: "Tell me your mood, the time of day, or what you're craving — I know the whole menu, including caffeine, calories and what's good right now.",
     },
   ]);
@@ -74,7 +74,7 @@ export default function AIPage() {
         <div className="flex items-center gap-3">
           <div className="grid h-11 w-11 place-items-center rounded-xl bg-white/15 text-xl">✨</div>
           <div>
-            <div className="text-[11px] font-bold tracking-wider opacity-80">PISTA AI ASSISTANT</div>
+            <div className="text-[11px] font-bold tracking-wider opacity-80">SHOKU AI ASSISTANT</div>
             <h1 className="text-xl font-bold tracking-tight">What are you craving?</h1>
           </div>
         </div>
@@ -98,7 +98,7 @@ export default function AIPage() {
             )}
           </div>
         ))}
-        {busy && <div className="text-xs text-muted">Pista AI is thinking…</div>}
+        {busy && <div className="text-xs text-muted">Shoku AI is thinking…</div>}
         <div ref={endRef} />
       </div>
 

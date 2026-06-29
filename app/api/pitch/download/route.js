@@ -6,7 +6,7 @@ import path from "path";
 export const dynamic = "force-dynamic";
 
 function safe(name) {
-  return String(name || "Pista-Pitch-Deck.pdf").replace(/[^\w.\- ]+/g, "_");
+  return String(name || "Shoku-Pitch-Deck.pdf").replace(/[^\w.\- ]+/g, "_");
 }
 
 export async function GET(req) {
@@ -30,7 +30,7 @@ export async function GET(req) {
     return new Response(buf, {
       headers: {
         "Content-Type": "application/pdf",
-        "Content-Disposition": `${disp}; filename="Pista-Pitch-Deck.pdf"`,
+        "Content-Disposition": `${disp}; filename="Shoku-Pitch-Deck.pdf"`,
       },
     });
   } catch {

@@ -34,7 +34,7 @@ export default function MarketingPage() {
     fetch("/api/campaigns").then((r) => (r.ok ? r.json() : null)).then(setData).catch(() => {});
     fetch("/api/campaigns/segments").then((r) => (r.ok ? r.json() : null)).then((d) => d && setSeg(d)).catch(() => {});
   };
-  useEffect(load, []);
+  useEffect(() => { load(); }, []);
 
   const fromName = data?.fromName || "your café";
   const segCount = seg.segments.find((s) => s.key === segment)?.count ?? 0;
@@ -255,11 +255,11 @@ function Settings({ onSaved }) {
           </div>
           <div className="flex items-center justify-between rounded-xl bg-canvas px-3.5 py-3 text-[13px]">
             <div><div className="font-semibold">Auto order updates</div><div className="text-[12px] text-muted">Order confirmation & ready alerts</div></div>
-            <input type="checkbox" checked={s.triggers} onChange={(e) => set("triggers", e.target.checked)} className="h-5 w-5 accent-[#7AB04A]" />
+            <input type="checkbox" checked={s.triggers} onChange={(e) => set("triggers", e.target.checked)} className="h-5 w-5 accent-[#3A6B4D]" />
           </div>
           <div className="flex items-center justify-between rounded-xl bg-canvas px-3.5 py-3 text-[13px]">
             <div><div className="font-semibold">Loyalty nudges</div><div className="text-[12px] text-muted">Reward-close & win-back reminders</div></div>
-            <input type="checkbox" checked={s.nudges} onChange={(e) => set("nudges", e.target.checked)} className="h-5 w-5 accent-[#7AB04A]" />
+            <input type="checkbox" checked={s.nudges} onChange={(e) => set("nudges", e.target.checked)} className="h-5 w-5 accent-[#3A6B4D]" />
           </div>
         </div>
       </SectionCard>
@@ -296,7 +296,7 @@ function Settings({ onSaved }) {
 
           {P !== "" && (
             <label className="flex items-center gap-2 text-[13px]">
-              <input type="checkbox" checked={s.enabled} onChange={(e) => set("enabled", e.target.checked)} className="h-5 w-5 accent-[#7AB04A]" />
+              <input type="checkbox" checked={s.enabled} onChange={(e) => set("enabled", e.target.checked)} className="h-5 w-5 accent-[#3A6B4D]" />
               Enable live sending for this café
             </label>
           )}

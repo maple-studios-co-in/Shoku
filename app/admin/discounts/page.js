@@ -12,7 +12,7 @@ export default function AdminDiscountsPage() {
   function load() {
     fetch("/api/discounts").then((r) => (r.ok ? r.json() : [])).then(setRows).catch(() => {});
   }
-  useEffect(load, []);
+  useEffect(() => { load(); }, []);
 
   async function create() {
     setErr("");

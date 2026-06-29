@@ -18,7 +18,7 @@ export default function CartBar() {
   return (
     <Link
       href="/cart"
-      className="fixed inset-x-0 bottom-[64px] z-40 mx-auto flex max-w-[480px] items-center gap-3 border-t border-brand-dark/20 bg-brand px-4 py-3 text-white shadow-pop"
+      className="fixed inset-x-0 bottom-[64px] z-40 mx-auto flex max-w-[480px] items-center gap-3 rounded-t-2xl bg-brand px-4 py-3.5 text-white shadow-pop"
     >
       <span className="grid h-7 w-7 place-items-center rounded-full bg-white/20 text-sm font-bold">{count}</span>
       <span className="text-sm font-semibold">{count === 1 ? "item" : "items"} in bag</span>

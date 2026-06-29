@@ -1,5 +1,5 @@
 /* eslint-disable */
-// One-off: adopt an existing single-tenant Pista database into multi-tenant.
+// One-off: adopt an existing single-tenant Shoku database into multi-tenant.
 // Run ONCE on your live DB after `prisma db push` with the new schema:
 //   node prisma/migrate-to-multitenant.js
 //
@@ -14,11 +14,11 @@ const SLUG = process.env.DEFAULT_TENANT_SLUG || "cbtl";
 
 async function main() {
   // 1. Platform superadmin
-  let sa = await prisma.user.findFirst({ where: { email: "super@pista.app", role: "superadmin" } });
+  let sa = await prisma.user.findFirst({ where: { email: "super@shoku.app", role: "superadmin" } });
   if (!sa) {
     const pw = await bcrypt.hash("password", 10);
-    sa = await prisma.user.create({ data: { email: "super@pista.app", name: "Pista Admin", role: "superadmin", tenantId: null, password: pw, points: 0 } });
-    console.log("✓ created superadmin: super@pista.app / password (change this!)");
+    sa = await prisma.user.create({ data: { email: "super@shoku.app", name: "Shoku Admin", role: "superadmin", tenantId: null, password: pw, points: 0 } });
+    console.log("✓ created superadmin: super@shoku.app / password (change this!)");
   }
 
   // 2. Default tenant

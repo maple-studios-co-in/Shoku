@@ -9,7 +9,7 @@ function LoginInner() {
   const router = useRouter();
   const params = useSearchParams();
   const next = params.get("next") || "/menu";
-  const [email, setEmail] = useState("demo@pista.app");
+  const [email, setEmail] = useState("demo@shoku.app");
   const [password, setPassword] = useState("password");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -27,7 +27,7 @@ function LoginInner() {
   return (
     <div className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-6 py-12">
       <Link href="/" className="mb-8 flex items-center gap-2.5 text-xl font-extrabold">
-        <span className="grid h-9 w-9 place-items-center rounded-xl bg-brand text-white">P</span> Pista
+        <span className="grid h-9 w-9 place-items-center rounded-xl bg-brand text-white">P</span> Shoku
       </Link>
       <h1 className="text-2xl font-bold tracking-tight">Welcome back</h1>
       <p className="mt-1 text-sm text-muted">Sign in to order and track your rewards.</p>
@@ -54,7 +54,7 @@ function LoginInner() {
         New here? <Link href="/register" className="font-bold text-brand-dark">Create an account</Link>
       </p>
       <div className="mt-6 rounded-xl bg-brand-tint px-4 py-3 text-center text-xs text-brand-dark">
-        Demo login is pre-filled: <b>demo@pista.app</b> / <b>password</b>
+        Demo login is pre-filled: <b>demo@shoku.app</b> / <b>password</b>
       </div>
     </div>
   );

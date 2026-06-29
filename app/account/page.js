@@ -120,7 +120,7 @@ export default function AccountPage() {
         )}
         {session?.user?.role === "superadmin" && (
           <Link href="/super" className="mt-4 flex items-center gap-3 rounded-2xl border border-brand-dark bg-brand-dark px-4 py-3.5 text-[13.5px] font-bold text-white">
-            🌐 Pista platform console<span className="ml-auto text-xs font-semibold opacity-70">manage cafés →</span>
+            🌐 Shoku platform console<span className="ml-auto text-xs font-semibold opacity-70">manage cafés →</span>
           </Link>
         )}
 
@@ -128,7 +128,7 @@ export default function AccountPage() {
           Sign out
         </button>
 
-        <p className="mt-6 text-center text-[11px] text-muted">Powered by Pista · the AI white-label ordering platform</p>
+        <p className="mt-6 text-center text-[11px] text-muted">Powered by Shoku · the AI white-label ordering platform</p>
       </div>
     </AppShell>
   );

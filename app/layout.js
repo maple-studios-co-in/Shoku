@@ -7,13 +7,19 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-sans", display: "swa
 const fraunces = Fraunces({ subsets: ["latin"], variable: "--font-serif", display: "swap", weight: ["400", "500", "600", "700"], style: ["normal", "italic"] });
 
 export const metadata = {
-  title: "Pista — Order smarter",
+  title: "Shoku — Order smarter",
   description:
-    "Pista is an AI-powered white-label ordering app for cafes and restaurant chains. Get smart recommendations and know exactly what's in your cup.",
+    "Shoku is an AI-powered white-label ordering app for cafes and restaurant chains. Get smart recommendations and know exactly what's in your cup.",
+  openGraph: {
+    title: "Shoku — Your café. Your brand. Zero commission.",
+    description: "An AI-powered, white-label ordering app for cafés — menu, loyalty, AI recommendations and WhatsApp marketing, for a flat fee, not an aggregator cut.",
+    images: ["/img/shoku-mockup-board.webp"],
+  },
+  twitter: { card: "summary_large_image", images: ["/img/shoku-mockup-board.webp"] },
 };
 
 export const viewport = {
-  themeColor: "#7AB04A",
+  themeColor: "#3A6B4D",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,

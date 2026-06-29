@@ -2,10 +2,14 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db";
 import { getCurrentTenant } from "@/lib/tenant";
+import { rateLimit, clientIp } from "@/lib/rateLimit";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req) {
+  if (!rateLimit(`register:${clientIp(req)}`, { limit: 5, windowMs: 60_000 }).ok) {
+    return NextResponse.json({ error: "Too many attempts. Please try again shortly." }, { status: 429 });
+  }
   let body;
   try {
     body = await req.json();

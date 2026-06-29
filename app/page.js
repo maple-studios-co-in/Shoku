@@ -1,709 +1,656 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect } from "react";
 
-export default function LandingPage() {
-  function handleDemo(e) {
-    e.preventDefault();
-    const input = e.currentTarget.querySelector("input");
-    if (input) input.value = "";
-    alert("Thanks! We'll be in touch shortly to schedule your Pista demo.");
-  }
+const FEATURES = [
+  ["食", "Your own branded app", "Your logo, colours and menu on your own subdomain — a fast mobile web app, no download. Customers see your café, not ours."],
+  ["味", "AI ordering assistant", "Recommends by mood, diet, time of day and caffeine, then builds the cart — the upsell a printed menu never could."],
+  ["菜", "Food intelligence", "Every item carries origin, ingredients, allergens and nutrition. Trust and upsell a QR menu can’t match."],
+  ["話", "AI WhatsApp marketing", "AI-written, personalised campaigns to your regulars — with win-back and reward nudges that run themselves."],
+  ["数", "AI analytics", "Revenue & MRR trends, a next-month forecast, at-risk alerts — with a plain-English “what changed” summary."],
+  ["円", "0% commission", "A flat monthly fee, never a cut of your orders. You keep 100% of the value — and all of your customer data."],
+];
 
-  // Scroll-triggered reveals + animated stat counters (no deps, reduced-motion safe)
+const STEPS = [
+  ["Onboard", "Set your brand, colours, menu and subdomain in the console."],
+  ["Go live", "Your café launches on its own link with a starter menu and loyalty — in days."],
+  ["Sell direct", "Guests order by QR or link. AI assists, loyalty brings them back, and the data stays yours."],
+  ["Grow", "WhatsApp campaigns, sale banners and analytics drive repeat orders."],
+];
+
+const TESTI = [
+  ["We dropped the delivery apps for our regulars. Shoku paid for itself in a month — and we finally own our customer list.", "Priya Nair", "Owner · Brew & Bloom", "1438761681033-6461ffad8d80"],
+  ["The AI suggestions genuinely lift our average order. Customers add a pastry it recommends more often than not.", "Rohan Mehta", "Founder · Third Wave Roasters", "1500648767791-00dcc994a43e"],
+  ["Live in a week, on our own domain, in our own brand. It feels like an app we built, not a marketplace we rent.", "Ananya Rao", "Co-owner · Chai & Co.", "1544005313-94ddf0286df2"],
+];
+
+const PRICES = [
+  ["Starter", "₹4,999", "/mo", "Single café, full storefront + core AI.", ["Branded ordering app", "AI ordering assistant", "Loyalty & QR tables", "Food intelligence"], false],
+  ["Growth", "₹12,999", "/mo", "Multi-outlet, advanced AI & marketing.", ["Everything in Starter", "AI WhatsApp marketing", "AI analytics & forecast", "Sale banners & segments"], true],
+  ["Enterprise", "Custom", "", "Chains, SLAs, custom domains.", ["Everything in Growth", "Custom domain & SSO", "Onboarding & success", "Priority support"], false],
+];
+
+const BRANDS = ["Coffee Bean & Tea Leaf", "Blue Tokai", "Third Wave", "Chai & Co.", "Nothing Before Coffee", "Roastery"];
+
+const STATS = [
+  { n: "0%", l: "commission, ever" },
+  { n: "<7 days", pre: "<", suf: " days", to: 7, l: "to launch your app" },
+  { n: "100%", suf: "%", to: 100, l: "your customer data" },
+  { n: "24/7", l: "AI ordering" },
+];
+
+// Shoku's signature mark is a ramen swirl — a single continuous ink spiral.
+// It draws itself on reveal; the hero version slowly turns, like steam off a bowl.
+const SPIRAL = "M33.7 148.2 L35.8 150.8 L38.1 153.3 L40.4 155.7 L42.9 158.0 L45.4 160.2 L48.0 162.2 L50.7 164.2 L53.5 166.1 L56.3 167.8 L59.2 169.4 L62.1 170.9 L65.1 172.3 L68.2 173.5 L71.3 174.6 L74.4 175.6 L77.6 176.4 L80.8 177.1 L84.0 177.7 L87.2 178.2 L90.5 178.5 L93.7 178.6 L97.0 178.7 L100.2 178.6 L103.4 178.4 L106.6 178.0 L109.8 177.5 L112.9 176.9 L116.1 176.2 L119.1 175.3 L122.2 174.3 L125.2 173.2 L128.1 172.0 L131.0 170.6 L133.8 169.2 L136.5 167.6 L139.2 165.9 L141.8 164.1 L144.3 162.2 L146.7 160.2 L149.1 158.1 L151.3 156.0 L153.5 153.7 L155.5 151.4 L157.5 149.0 L159.3 146.5 L161.0 143.9 L162.7 141.3 L164.2 138.6 L165.6 135.8 L166.9 133.1 L168.0 130.2 L169.1 127.4 L170.0 124.4 L170.8 121.5 L171.5 118.5 L172.0 115.6 L172.5 112.6 L172.8 109.6 L173.0 106.5 L173.0 103.5 L173.0 100.5 L172.8 97.5 L172.5 94.6 L172.0 91.6 L171.5 88.7 L170.8 85.8 L170.0 82.9 L169.1 80.1 L168.1 77.3 L167.0 74.6 L165.7 71.9 L164.4 69.3 L163.0 66.8 L161.4 64.3 L159.8 61.9 L158.0 59.5 L156.2 57.3 L154.3 55.1 L152.3 53.0 L150.2 51.0 L148.0 49.1 L145.8 47.3 L143.5 45.5 L141.2 43.9 L138.7 42.4 L136.3 41.0 L133.7 39.7 L131.2 38.5 L128.5 37.4 L125.9 36.4 L123.2 35.5 L120.5 34.8 L117.8 34.1 L115.0 33.6 L112.2 33.2 L109.5 32.9 L106.7 32.7 L103.9 32.6 L101.1 32.7 L98.4 32.8 L95.6 33.1 L92.9 33.5 L90.2 34.0 L87.5 34.6 L84.9 35.3 L82.3 36.1 L79.7 37.0 L77.2 38.1 L74.7 39.2 L72.3 40.4 L70.0 41.7 L67.7 43.1 L65.4 44.6 L63.3 46.2 L61.2 47.9 L59.2 49.7 L57.2 51.5 L55.4 53.4 L53.6 55.4 L51.9 57.4 L50.3 59.5 L48.8 61.7 L47.4 63.9 L46.1 66.2 L44.9 68.5 L43.8 70.8 L42.8 73.2 L41.8 75.7 L41.0 78.1 L40.3 80.6 L39.7 83.1 L39.2 85.6 L38.8 88.2 L38.5 90.7 L38.4 93.3 L38.3 95.8 L38.3 98.4 L38.4 100.9 L38.7 103.4 L39.0 105.9 L39.5 108.4 L40.0 110.8 L40.6 113.3 L41.4 115.7 L42.2 118.0 L43.1 120.3 L44.2 122.6 L45.3 124.8 L46.5 127.0 L47.7 129.1 L49.1 131.1 L50.6 133.1 L52.1 135.0 L53.7 136.8 L55.3 138.6 L57.1 140.3 L58.9 141.9 L60.7 143.5 L62.6 145.0 L64.6 146.3 L66.6 147.6 L68.7 148.8 L70.8 149.9 L72.9 151.0 L75.1 151.9 L77.3 152.8 L79.6 153.5 L81.8 154.2 L84.1 154.7 L86.4 155.2 L88.7 155.5 L91.0 155.8 L93.3 156.0 L95.7 156.1 L98.0 156.0 L100.3 155.9 L102.6 155.7 L104.8 155.4 L107.1 155.0 L109.3 154.6 L111.5 154.0 L113.7 153.3 L115.8 152.6 L117.9 151.7 L120.0 150.8 L122.0 149.8 L124.0 148.7 L125.9 147.6 L127.7 146.4 L129.5 145.1 L131.3 143.7 L132.9 142.2 L134.5 140.7 L136.1 139.2 L137.6 137.6 L139.0 135.9 L140.3 134.2 L141.5 132.4 L142.7 130.6 L143.8 128.7 L144.8 126.8 L145.8 124.9 L146.6 122.9 L147.4 120.9 L148.1 118.9 L148.7 116.9 L149.2 114.8 L149.6 112.7 L149.9 110.7 L150.2 108.6 L150.3 106.5 L150.4 104.4 L150.4 102.3 L150.3 100.2 L150.1 98.2 L149.9 96.1 L149.5 94.1 L149.1 92.1 L148.6 90.1 L148.0 88.2 L147.3 86.3 L146.6 84.4 L145.8 82.5 L144.9 80.7 L143.9 79.0 L142.9 77.2 L141.8 75.6 L140.6 74.0 L139.4 72.4 L138.1 70.9 L136.8 69.4 L135.4 68.1 L133.9 66.7 L132.4 65.5 L130.9 64.3 L129.3 63.2 L127.7 62.1 L126.0 61.1 L124.3 60.2 L122.6 59.4 L120.8 58.6 L119.0 57.9 L117.2 57.3 L115.4 56.8 L113.6 56.3 L111.8 56.0 L109.9 55.7 L108.1 55.4 L106.2 55.3 L104.3 55.2 L102.5 55.2 L100.6 55.3 L98.8 55.5 L97.0 55.7 L95.2 56.0 L93.4 56.4 L91.7 56.9 L89.9 57.4 L88.2 58.0 L86.6 58.6 L84.9 59.4 L83.3 60.1 L81.8 61.0 L80.2 61.9 L78.8 62.9 L77.3 63.9 L76.0 65.0 L74.6 66.1 L73.4 67.3 L72.1 68.5 L71.0 69.8 L69.9 71.1 L68.8 72.5 L67.8 73.9 L66.9 75.3 L66.0 76.8 L65.2 78.3 L64.5 79.8 L63.8 81.4 L63.2 82.9 L62.7 84.5 L62.2 86.1 L61.8 87.7 L61.5 89.3 L61.2 90.9 L61.1 92.6 L60.9 94.2 L60.9 95.8 L60.9 97.4 L61.0 99.1 L61.1 100.7 L61.3 102.2 L61.6 103.8 L61.9 105.4 L62.3 106.9 L62.8 108.4 L63.3 109.9 L63.9 111.4 L64.5 112.8 L65.2 114.2 L65.9 115.5 L66.7 116.8 L67.6 118.1 L68.5 119.4 L69.4 120.6 L70.4 121.7 L71.5 122.8 L72.5 123.9 L73.6 124.9 L74.8 125.8 L76.0 126.7 L77.2 127.6 L78.4 128.4 L79.7 129.1 L81.0 129.8 L82.3 130.4 L83.6 131.0 L85.0 131.5 L86.3 132.0 L87.7 132.4 L89.1 132.7 L90.5 133.0 L91.9 133.2 L93.3 133.4 L94.7 133.5 L96.1 133.5 L97.5 133.5 L98.9 133.4 L100.2 133.3 L101.6 133.1 L102.9 132.9 L104.3 132.6 L105.6 132.2 L106.9 131.8 L108.1 131.4 L109.4 130.9 L110.6 130.3 L111.8 129.7 L112.9 129.1 L114.0 128.4 L115.1 127.6 L116.2 126.9 L117.2 126.1 L118.1 125.2 L119.1 124.3 L120.0 123.4 L120.8 122.5 L121.6 121.5 L122.4 120.5 L123.1 119.5 L123.7 118.4 L124.3 117.3 L124.9 116.2 L125.4 115.1 L125.9 114.0 L126.3 112.9 L126.7 111.7 L127.0 110.5 L127.3 109.4 L127.5 108.2 L127.7 107.0 L127.8 105.9 L127.9 104.7 L127.9 103.5 L127.9 102.4 L127.8 101.2 L127.7 100.1 L127.5 98.9 L127.3 97.8 L127.0 96.7 L126.7 95.6 L126.4 94.6 L126.0 93.5 L125.5 92.5 L125.1 91.5 L124.6 90.5 L124.0 89.6 L123.4 88.7 L122.8 87.8 L122.2 87.0 L121.5 86.1 L120.8 85.3 L120.1 84.6 L119.3 83.9 L118.5 83.2 L117.7 82.6 L116.9 82.0 L116.0 81.4 L115.1 80.9 L114.3 80.4 L113.4 79.9 L112.4 79.5 L111.5 79.2 L110.6 78.8 L109.6 78.6 L108.7 78.3 L107.8 78.1 L106.8 78.0 L105.9 77.8 L104.9 77.8 L104.0 77.7 L103.0 77.7 L102.1 77.8 L101.2 77.9 L100.3 78.0 L99.4 78.1 L98.5 78.3 L97.6 78.5 L96.7 78.8 L95.9 79.1 L95.1 79.4 L94.3 79.8 L93.5 80.2 L92.8 80.6 L92.0 81.1 L91.3 81.5 L90.6 82.0 L90.0 82.6 L89.3 83.1 L88.7 83.7 L88.2 84.3 L87.6 84.9 L87.1 85.5 L86.6 86.2 L86.2 86.8 L85.8 87.5 L85.4 88.2 L85.0 88.9 L84.7 89.6 L84.4 90.3 L84.2 91.1 L84.0 91.8 L83.8 92.5 L83.6 93.2 L83.5 94.0 L83.4 94.7 L83.3 95.4 L83.3 96.1 L83.3 96.9 L83.3 97.6 L83.4 98.3 L83.5 99.0 L83.6 99.6 L83.7 100.3 L83.9 101.0 L84.1 101.6 L84.4 102.2 L84.6 102.9 L84.9 103.5 L85.2 104.0 L85.5 104.6 L85.8 105.1 L86.2 105.7 L86.6 106.2 L87.0 106.6 L87.4 107.1 L87.8 107.5 L88.3 107.9 L88.7 108.3 L89.2 108.7 L89.7 109.0 L90.1 109.3 L90.6 109.6 L91.1 109.9 L91.6 110.1 L92.2 110.4 L92.7 110.6 L93.2 110.7 L93.7 110.9 L94.2 111.0 L94.8 111.1 L95.3 111.1 L95.8 111.2 L96.3 111.2 L96.8 111.2 L97.3 111.2 L97.8 111.2 L98.3 111.1 L98.7 111.0 L99.2 110.9 L99.7 110.8 L100.1 110.6 L100.5 110.5 L100.9 110.3 L101.3 110.1 L101.7 109.9 L102.1 109.7 L102.5 109.4 L102.8 109.2 L103.1 108.9 L103.4 108.6 L103.7 108.3 L104.0 108.1 L104.3 107.8 L104.5 107.4 L104.7 107.1 L104.9 106.8 L105.1 106.5 L105.3 106.2 L105.4 105.8 L105.6 105.5 L105.7 105.2 L105.8 104.8 L105.8 104.5 L105.9 104.2 L105.9 103.8 L106.0 103.5 L106.0 103.2 L106.0 102.9 L105.9 102.6 L105.9 102.3 L105.9 102.0 L105.8 101.7 L105.7 101.4 L105.6 101.2 L105.5 100.9 L105.4 100.7 L105.3 100.4 L105.1 100.2 L105.0 100.0";
+function Enso({ className = "" }) {
+  return (
+    <svg className={`enso ${className}`} viewBox="0 0 200 200" aria-hidden="true">
+      <path d={SPIRAL} fill="none" strokeLinecap="round" strokeLinejoin="round" pathLength="1" />
+    </svg>
+  );
+}
+
+// Airy hero mark: the ramen spiral floating on a soft matcha glow — it draws in
+// once, then turns very slowly, with faint steam rising. No heavy block.
+function HeroMark() {
+  return (
+    <div className="heromark">
+      <span className="hm-glow" />
+      <svg className="hm-svg" viewBox="0 0 200 200" aria-hidden="true">
+        <g className="hm-spin">
+          <path className="hm-ink" d={SPIRAL} fill="none" strokeLinecap="round" strokeLinejoin="round" pathLength="1" />
+          <circle className="hm-seed" cx="33.7" cy="148.2" r="4.6" />
+        </g>
+      </svg>
+      <span className="hm-steam"><i /><i /><i /></span>
+    </div>
+  );
+}
+
+// Authentic Shoku app mockups — mirror the real menu UI (signature badge,
+// veg mark, kcal·caffeine, ADD, cart bar) so the homepage shows the product,
+// meandu-style, rather than invented screens.
+function PhoneFrame({ children, className = "" }) {
+  return (
+    <div className={`ph ${className}`}>
+      <span className="ph-notch" />
+      <div className="ph-screen">{children}</div>
+    </div>
+  );
+}
+
+const MENU_ITEMS = [
+  ["Hojicha Latte", true, "180 kcal · 60mg", "₹320", "linear-gradient(135deg,#d8c4a0,#b98f57)", true],
+  ["Matcha Cloud", true, "150 kcal · 70mg", "₹340", "linear-gradient(135deg,#9ec88f,#4e8f5a)", false],
+  ["Miso Sesame Cookie", true, "210 kcal · 0mg", "₹140", "linear-gradient(135deg,#e3b475,#c2643c)", false],
+];
+
+function MenuPhone() {
+  return (
+    <PhoneFrame className="ph-menu">
+      <div className="mapp-top">
+        <span className="mapp-brand">shoku<i>食</i></span>
+        <span className="mapp-table">🍽 Table 4</span>
+      </div>
+      <div className="mchips">
+        {["All", "Coffee", "Matcha", "Bakery"].map((c, i) => (
+          <span key={c} className={`mchip ${i === 0 ? "on" : ""}`}>{c}</span>
+        ))}
+      </div>
+      <div className="mrail-lab">Signature picks</div>
+      <div className="mlist">
+        {MENU_ITEMS.map(([name, veg, meta, price, sw, sig]) => (
+          <div className="mitem" key={name}>
+            <span className="mthumb" style={{ background: sw }} />
+            <div className="mmid">
+              <div className="mname">{name}{sig && <span className="msig">★ SIGNATURE</span>}</div>
+              <div className="mveg"><span className="vdot" data-veg={veg ? "1" : "0"} />{veg ? "Veg" : "Non-veg"}</div>
+              <div className="mmeta">{meta}</div>
+            </div>
+            <div className="mright">
+              <span className="mprice">{price}</span>
+              <span className="madd">ADD +</span>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="mcart"><b>2 items</b> · ₹460<span className="mcart-go">View cart →</span></div>
+    </PhoneFrame>
+  );
+}
+
+function AIPhone() {
+  return (
+    <PhoneFrame className="ph-ai">
+      <div className="ai-top"><span className="ai-mk">✦</span> Shoku AI</div>
+      <div className="ai-chat">
+        <div className="bub user">Something light and low-caffeine for the afternoon?</div>
+        <div className="bub bot">Try the <b>Hojicha Latte</b> — roasty, only 60mg caffeine — with a Miso Sesame Cookie. Want me to add them?</div>
+        <div className="ai-card">
+          <span className="ai-cthumb" style={{ background: "linear-gradient(135deg,#d8c4a0,#b98f57)" }} />
+          <div className="ai-cmid"><div className="ai-cname">Hojicha Latte</div><div className="ai-cmeta">180 kcal · 60mg</div></div>
+          <span className="ai-cadd">Add</span>
+        </div>
+        <div className="bub user thin">Perfect — add both ✨</div>
+      </div>
+      <div className="ai-input"><span>Ask Shoku anything…</span><span className="ai-send">↑</span></div>
+    </PhoneFrame>
+  );
+}
+
+export default function Landing() {
   useEffect(() => {
-    const root = document.querySelector(".landing");
-    if (!root) return;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const bar = document.createElement("div");
-    bar.className = "scroll-prog";
-    root.appendChild(bar);
-    const nav = root.querySelector("nav");
-    const targets = [...root.querySelectorAll(".card,.feat,.step,.price,.center-head,.showcard,.cta-band,.stats,.statband,.tcard,.logo-row")];
-    if (!reduce) {
-      root.classList.add("anim");
-      targets.forEach((e, i) => { e.classList.add("reveal"); if (e.classList.contains("feat")) e.classList.add(i % 2 ? "from-right" : "from-left"); });
-    }
 
-    const animateNum = (el) => {
-      if (el.dataset.done) return;
-      const m = el.textContent.match(/^(\D*)(\d+)(.*)$/);
-      if (!m) return;
-      el.dataset.done = "1";
-      const pre = m[1], to = parseInt(m[2], 10), suf = m[3], dur = 1100, t0 = performance.now();
-      const step = (t) => {
-        const p = Math.min(1, (t - t0) / dur);
-        el.textContent = pre + Math.round(to * (1 - Math.pow(1 - p, 3))) + suf;
-        if (p < 1) requestAnimationFrame(step);
-      };
-      requestAnimationFrame(step);
-    };
-
+    // Scroll reveal
+    const els = document.querySelectorAll(".reveal");
     const io = new IntersectionObserver(
-      (ents) => {
-        ents.forEach((en) => {
-          if (!en.isIntersecting) return;
-          en.target.classList.add("in");
-          if (en.target.classList.contains("stats")) en.target.querySelectorAll(".s b").forEach(animateNum);
-          if (en.target.classList.contains("statband")) en.target.querySelectorAll(".num").forEach(animateNum);
-          io.unobserve(en.target);
-        });
-      },
-      { threshold: 0.15, rootMargin: "0px 0px -8% 0px" }
+      (es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }),
+      { threshold: 0.14, rootMargin: "0px 0px -8% 0px" }
     );
-    if (!reduce) targets.forEach((e) => io.observe(e));
+    els.forEach((e) => io.observe(e));
 
-    const stage = root.querySelector(".phone-stage");
-    const heroVid = root.querySelector(".hero-vid");
-    const visuals = [...root.querySelectorAll(".fvisual")];
-    let ticking = false;
-    const onScroll = () => {
-      const y = window.scrollY || 0;
-      const h = document.documentElement.scrollHeight - window.innerHeight;
-      bar.style.width = (h > 0 ? (y / h) * 100 : 0) + "%";
-      if (nav) nav.classList.toggle("scrolled", y > 16);
-      if (!reduce) {
-        if (heroVid) heroVid.style.transform = `translateY(${y * 0.16}px) scale(1.06)`;
-        if (stage && y < 1000) stage.style.transform = `translateY(${y * -0.05}px)`;
-        visuals.forEach((v) => {
-          const r = v.getBoundingClientRect();
-          const off = r.top + r.height / 2 - window.innerHeight / 2;
-          v.style.transform = `translateY(${off * -0.045}px)`;
-        });
-      }
-      ticking = false;
+    // CountUp — animate stat numbers into view (reactbits-style)
+    const nums = document.querySelectorAll(".num[data-to]");
+    const cio = new IntersectionObserver((es) => es.forEach((e) => {
+      if (!e.isIntersecting) return;
+      cio.unobserve(e.target);
+      const el = e.target, to = +el.dataset.to, pre = el.dataset.pre || "", suf = el.dataset.suf || "";
+      if (reduce) { el.textContent = pre + to + suf; return; }
+      const dur = 1200, t0 = performance.now();
+      const tick = (t) => {
+        const k = Math.min(1, (t - t0) / dur), e2 = 1 - Math.pow(1 - k, 3);
+        el.textContent = pre + Math.round(to * e2) + suf;
+        if (k < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    }), { threshold: 0.6 });
+    nums.forEach((n) => cio.observe(n));
+
+    // Spotlight — pointer-follow highlight on feature cards (reactbits-style)
+    const cards = document.querySelectorAll(".fcard");
+    const onMove = (ev) => {
+      const c = ev.currentTarget, r = c.getBoundingClientRect();
+      c.style.setProperty("--mx", `${ev.clientX - r.left}px`);
+      c.style.setProperty("--my", `${ev.clientY - r.top}px`);
     };
-    const onScrollT = () => { if (!ticking) { requestAnimationFrame(onScroll); ticking = true; } };
-    window.addEventListener("scroll", onScrollT, { passive: true });
-    onScroll();
-    return () => { window.removeEventListener("scroll", onScrollT); io.disconnect(); bar.remove(); };
+    if (!reduce) cards.forEach((c) => c.addEventListener("pointermove", onMove));
+
+    // Scroll progress bar
+    const onScroll = () => {
+      const p = document.querySelector(".prog");
+      if (p) p.style.width = (window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100) + "%";
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      cards.forEach((c) => c.removeEventListener("pointermove", onMove));
+    };
   }, []);
 
   return (
-    <div className="landing">
-      {/* NAV */}
-      <nav>
-        <div className="wrap nav-in">
-          <a className="logo" href="#top"><span className="mark">P</span> Pista</a>
-          <div className="nav-links">
-            <a href="#features">Features</a>
-            <a href="#how">How it works</a>
-            <a href="#customers">Customers</a>
-            <a href="#pricing">Pricing</a>
-          </div>
-          <div className="nav-cta">
-            <a href="#demo" className="btn btn-primary">Book a demo</a>
-          </div>
+    <div className="lp">
+      <div className="prog" />
+
+      <nav className="nav">
+        <a className="brand" href="#top"><img src="/shoku-mark.svg" alt="" /> <span>shoku<i className="shiny">食</i></span></a>
+        <div className="links">
+          <a href="#features">Product</a><a href="#how">How it works</a><a href="#pricing">Pricing</a>
         </div>
+        <a className="btn cta" href="#demo">Book a demo</a>
       </nav>
 
       {/* HERO */}
       <header className="hero" id="top">
-        <video className="hero-vid" autoPlay muted loop playsInline preload="auto" poster="">
-          <source src="/hero.mp4" type="video/mp4" />
-        </video>
-        <div className="hero-veil" />
-        <div className="wrap hero-grid">
-          <div>
-            <span className="pill">✨ AI-powered · white-label ordering</span>
-            <h1>Your café&apos;s own <span className="hl">ordering app</span> — powered by AI.</h1>
-            <p className="sub">Pista gives restaurant chains, cafés and coffee shops a beautiful branded ordering app in days — with an AI assistant, food intelligence and smart upsells built in. Your brand, your menu, your customers.</p>
-            <div className="hero-cta">
-              <a href="#demo" className="btn btn-primary">Book a demo →</a>
-            </div>
-            <div className="hero-trust">
-              <span className="stars">★★★★★</span>
-              <span>Trusted by cafés &amp; chains across India</span>
-            </div>
+        <div className="hcopy reveal">
+          <div className="eyebrow">食 · AI ordering for cafés</div>
+          <h1>Your café.<br />Your brand.<br /><em>Zero commission.</em></h1>
+          <p className="lede">Shoku gives every café a branded ordering app — menu, loyalty, AI recommendations and WhatsApp marketing — for a flat fee, not a 20–30% aggregator cut. Own your customers, your data, your margin.</p>
+          <div className="c-row">
+            <a className="btn cta lg" href="#demo">Book a demo</a>
+            <a className="btn ghost lg" href="#how">See how it works →</a>
           </div>
-
-          <div className="phone-stage">
-            <div className="glow" />
-            <div className="ftag t1"><span className="ic">✨</span> &quot;Cold &amp; low caffeine?&quot; → 3 picks</div>
-            <div className="ftag t2"><span className="ic">🎨</span> Live in your brand colours</div>
-
-            <div className="phone">
-              <div className="ph-status"><span>9:41</span><span>● ● ● ＝</span></div>
-              <div className="ph-head">
-                <div className="ph-badge">P</div>
-                <div><div className="l">Pickup from</div><div className="v">Your Café · Indiranagar ▾</div></div>
-              </div>
-              <div className="ph-ai">
-                <div className="sp">✨</div>
-                <div className="k">✨ PISTA AI</div>
-                <h4>Not sure what to order?</h4>
-                <p>Tell me your mood — I&apos;ll build your perfect cup.</p>
-                <span className="go">Ask Pista AI →</span>
-              </div>
-              <div className="ph-chips"><span className="ph-chip on">All</span><span className="ph-chip">Ice Blended</span><span className="ph-chip">Hot Coffee</span><span className="ph-chip">Tea</span></div>
-              <div className="ph-item">
-                <img src="https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=200" alt="" />
-                <div><div className="nm">Original Ice Blended</div><div className="ds">★ 4.8 · Signature</div></div>
-                <div className="pr">₹385</div>
-              </div>
-              <div className="ph-item">
-                <img src="https://images.unsplash.com/photo-1572442388796-11668a67e53d?w=200" alt="" />
-                <div><div className="nm">Café Latte</div><div className="ds">9g protein · 190 kcal</div></div>
-                <div className="pr">₹295</div>
-              </div>
-              <div className="ph-nav">
-                <div className="on"><span className="ic">🏠</span>Menu</div>
-                <div><span className="ic">✨</span>Pista AI</div>
-                <div><span className="ic">🛍️</span>Bag</div>
-                <div><span className="ic">👤</span>Account</div>
-              </div>
-            </div>
+          <div className="trust">No commission · Live in days · 100% your customer data</div>
+        </div>
+        <div className="hvisual reveal">
+          <div className="hero-stage">
+            <img className="hero-bg" src="/img/shoku-hero-cafe.webp" alt="A guest at a sunlit café ordering on their phone, matcha latte and croissant on the table" />
+            <img className="hero-phone" src="/img/snap-menu.webp" alt="The Shoku ordering app — Brew & Bloom menu screen" />
+            <span className="hero-logo"><img src="/shoku-mark.svg" alt="" /> shoku<i>食</i></span>
           </div>
         </div>
       </header>
 
-      {/* LOGO STRIP */}
-      <div className="logos">
-        <div className="wrap">
-          <div className="lab">Trusted by cafés &amp; coffee chains</div>
-          <div className="logo-row">
-            <div className="brandname"><img src="https://assets.fudr.in/brand/cbtl/CBTL%20Logo.png" alt="CBTL" style={{ height: 24, width: 24, borderRadius: 6, objectFit: "contain" }} onError={(e) => { e.currentTarget.style.display = "none"; }} /> Coffee Bean &amp; Tea Leaf</div>
-            <div className="brandname">Blue Tokai</div>
-            <div className="brandname">Third Wave</div>
-            <div className="brandname">Chai &amp; Co.</div>
-            <div className="brandname">Maple Bakehouse</div>
-            <div className="brandname">Leaf &amp; Bean</div>
+      {/* LOGOS */}
+      <section className="logos reveal">
+        <div className="lab">Trusted by cafés &amp; coffee chains</div>
+        <div className="logo-marquee">
+          <div className="logo-track">
+            {[...BRANDS, ...BRANDS].map((b, i) => <span className="brandname" key={i}>{b}</span>)}
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* STAT BAND */}
-      <div className="statband-wrap">
-        <div className="wrap statband">
-          <div className="sbi"><div className="num">0%</div><div className="lbl">commission, ever</div></div>
-          <div className="sbi"><div className="num">&lt;7 days</div><div className="lbl">to launch your app</div></div>
-          <div className="sbi"><div className="num">100%</div><div className="lbl">your customer data</div></div>
-          <div className="sbi"><div className="num">24/7</div><div className="lbl">AI ordering</div></div>
+      {/* MANIFESTO */}
+      <section className="manifesto reveal">
+        <div className="mk">一</div>
+        <h2>Aggregators rent you your own customers.<br /><em>Shoku hands them back.</em></h2>
+        <p>One platform: a branded app your regulars love, an AI layer no marketplace gives you, and the marketing engine to bring them back — without surrendering a cut of every order.</p>
+      </section>
+
+      {/* PRODUCT SHOWCASE — meandu-style */}
+      <section className="product" id="product">
+        <div className="prod-copy reveal">
+          <div className="eyebrow">The app</div>
+          <h2>A storefront your regulars<br /><em>actually want to open.</em></h2>
+          <p className="prod-lede">A real branded ordering app on your own subdomain, in your colours — signature picks, food intelligence on every item, and an AI that helps guests choose.</p>
+          <ul className="prod-list">
+            <li><span className="pck">食</span><div><b>Menu that sells</b><span>Signature tags, allergens, calories and caffeine on every item.</span></div></li>
+            <li><span className="pck">味</span><div><b>AI that recommends</b><span>Mood, diet and time-of-day picks that lift average order value.</span></div></li>
+            <li><span className="pck">卓</span><div><b>QR table ordering</b><span>Scan, order, pay — orders land tagged to the table, no app install.</span></div></li>
+          </ul>
         </div>
-      </div>
+        <div className="prod-stage reveal">
+          <Enso className="prod-enso" />
+          <img className="snap snap-a" src="/img/snap-menu.webp" alt="Shoku menu screen — Brew & Bloom, signature picks with prices" />
+          <img className="snap snap-b" src="/img/snap-ai.webp" alt="Ask Shoku — the AI table host recommending a Hojicha Latte" />
+        </div>
+      </section>
 
-      {/* VALUE CARDS */}
-      <section>
-        <div className="wrap">
-          <div className="center-head">
-            <span className="eyebrow">Why Pista</span>
-            <h2>Everything you need to sell direct — minus the dev team.</h2>
-            <p>Most cafés lose 20–30% to third-party delivery apps and never see their own customer data. Pista puts you back in control with a branded ordering channel you own outright — brand, customers and data.</p>
-          </div>
-          <div className="cards">
-            <div className="card"><div className="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0l-7-7V3.6h9.8l7.2 7.2a2 2 0 0 1 0 2.6Z"/><circle cx="8" cy="8" r="1.2"/></svg></div><h3>100% your brand</h3><p>Your logo, colours, fonts and menu on your own subdomain. No &quot;Pista&quot; in sight — it&apos;s your app.</p></div>
-            <div className="card"><div className="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3l1.7 4.3L18 9l-4.3 1.7L12 15l-1.7-4.3L6 9l4.3-1.7z"/><path d="M18.5 14.5l.6 1.6 1.6.6-1.6.6-.6 1.6-.6-1.6-1.6-.6 1.6-.6z"/></svg></div><h3>Built-in AI ordering</h3><p>A chat assistant that recommends the right item by mood, diet, time of day and caffeine.</p></div>
-            <div className="card"><div className="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M11 20A7 7 0 0 1 4 13C4 7.5 9 4 13.5 4c1.4 0 3.5.4 3.5.4S17 7 17 9a7 7 0 0 1-6 11Z"/><path d="M11 20c0-4 1.5-7 5-9"/></svg></div><h3>Food intelligence</h3><p>Auto-generated origin, ingredients, allergens and nutrition for every item builds trust and sales.</p></div>
-            <div className="card"><div className="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M4 21h16"/><path d="M7 21v-6M12 21V8M17 21v-9"/></svg></div><h3>You own the data</h3><p>Every order, customer and insight is yours — power loyalty, repeat visits and smarter menus.</p></div>
-          </div>
+      {/* LIFESTYLE */}
+      <section className="life reveal">
+        <div className="life-media">
+          <img src="/img/shoku-flatlay-branded.webp" alt="The Shoku menu app open on a phone beside a matcha latte and croissant on a marble café table" />
+          <span className="life-chip"><img src="/shoku-mark.svg" alt="" /> shoku · no app to download</span>
+        </div>
+        <div className="life-copy">
+          <div className="eyebrow">For your guests</div>
+          <h2>Your café, in their hands — <em>in seconds.</em></h2>
+          <p>Scan the QR on the table, browse your menu, order and pay. No app to download, no aggregator in the middle — just your café and your regular.</p>
+          <a className="btn cta lg" href="#demo">Book a demo</a>
         </div>
       </section>
 
       {/* FEATURES */}
-      <section id="features" style={{ paddingTop: 20 }}>
-        <div className="wrap">
-
-          <div className="feat">
-            <div className="ftext">
-              <div className="eyebrow">Pista AI Assistant</div>
-              <h2>An AI barista that knows your whole menu.</h2>
-              <p>Customers tap &quot;cold &amp; refreshing&quot; or type &quot;something light, low caffeine&quot; — and Pista AI ranks your menu instantly, explaining <em>why</em> each pick fits. It&apos;s like having your best barista on every screen.</p>
-              <ul>
-                <li><span className="ck">✓</span> Recommends by mood, diet, calories &amp; caffeine</li>
-                <li><span className="ck">✓</span> Drives bigger baskets with smart upsells &amp; pairings</li>
-                <li><span className="ck">✓</span> Works out of the box — no AI setup needed</li>
-              </ul>
+      <section className="sec" id="features">
+        <div className="center-head reveal">
+          <div className="eyebrow">Why Shoku</div>
+          <h2>Everything to sell direct — <em>minus the dev team.</em></h2>
+        </div>
+        <div className="fgrid">
+          {FEATURES.map(([ic, h, p], i) => (
+            <div className="fcard reveal" key={h} style={{ transitionDelay: `${(i % 3) * 70}ms` }}>
+              <div className="fic">{ic}</div>
+              <h3>{h}</h3><p>{p}</p>
             </div>
-            <div className="fvisual">
-              <div className="chatmock">
-                <div className="cm-q">Something cold, not too sweet, low caffeine 🙂</div>
-                <div className="cm-a">Perfect — here are 3 great matches:</div>
-                <div className="cm-rec"><img src="https://images.unsplash.com/photo-1568649929103-28ffbefaca1e?w=200" alt="" /><div><div className="n">Matcha Ice Blended</div><div className="w">↳ Cold, gently sweet, low caffeine</div></div><div className="p">₹410</div></div>
-                <div className="cm-rec"><img src="https://images.unsplash.com/photo-1499638673689-79a0b5115d87?w=200" alt="" /><div><div className="n">Iced Black Tea, no sugar</div><div className="w">↳ The lightest, most refreshing pick</div></div><div className="p">₹220</div></div>
-              </div>
-            </div>
-          </div>
-
-          <div className="feat rev">
-            <div className="ftext">
-              <div className="eyebrow">Food intelligence</div>
-              <h2>Every item, fully explained.</h2>
-              <p>Pista enriches your menu with a &quot;Know your cup&quot; card — bean origin, ingredients, allergens and nutrition — generated automatically. Customers order with confidence, and you cut down on questions at the counter.</p>
-              <ul>
-                <li><span className="ck">✓</span> Origin &amp; sourcing story for every item</li>
-                <li><span className="ck">✓</span> Allergens &amp; nutrition shown clearly</li>
-                <li><span className="ck">✓</span> Auto-generated — just upload your menu</li>
-              </ul>
-            </div>
-            <div className="fvisual">
-              <div className="cupmock">
-                <div className="cupcard">
-                  <div className="h">✨ Know your cup <span className="ai">PISTA AI</span></div>
-                  <div className="cuprow"><span className="ic">🌍</span><div><b>Bean origin</b>100% Arabica from Coorg, Karnataka &amp; Costa Rica. Medium roast — cocoa &amp; toasted nut.</div></div>
-                  <div className="cuprow"><span className="ic">🧾</span><div><b>Ingredients</b><div className="cuppills"><span>Espresso</span><span>Whole milk</span><span>Cane sugar</span><span>Ice</span></div></div></div>
-                  <div className="cuprow"><span className="ic">🥗</span><div><b>Nutrition</b><div className="cuppills"><span>320 kcal</span><span>Protein 6g</span><span>Caffeine 95mg</span></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="feat">
-            <div className="ftext">
-              <div className="eyebrow">White-label engine</div>
-              <h2>Launch in your brand — in minutes.</h2>
-              <p>Set your name, colours, font and menu in one console and the entire app re-themes instantly. Ship a polished, on-brand ordering experience without writing a single line of code.</p>
-              <ul>
-                <li><span className="ck">✓</span> Live colour, logo &amp; font controls</li>
-                <li><span className="ck">✓</span> Your own subdomain (e.g. order.yourcafe.com)</li>
-                <li><span className="ck">✓</span> Menu management with one click to go live</li>
-              </ul>
-            </div>
-            <div className="fvisual">
-              <div className="thememock">
-                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                  <div className="swatch" style={{ background: "#7AB04A" }} />
-                  <div className="swatch" style={{ background: "#0a2540" }} />
-                  <div className="swatch" style={{ background: "#d4202c" }} />
-                  <div className="swatch" style={{ background: "#e8a33d" }} />
-                </div>
-                <div className="miniapp">
-                  <div className="top"><div className="b" style={{ background: "#7AB04A" }}>Y</div><div className="nm">Your Café</div></div>
-                  <div className="hero2" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=300')" }} />
-                  <div className="cta2" style={{ background: "#7AB04A" }}>Order now</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
+          ))}
         </div>
       </section>
 
-      {/* HOW IT WORKS */}
-      <section id="how" className="how">
-        <div className="wrap">
-          <div className="center-head">
-            <span className="eyebrow" style={{ color: "#bfe09a" }}>How it works</span>
-            <h2>From menu to live app in three steps.</h2>
-            <p>No engineering, no months of build time. Most cafés go live within a week.</p>
-          </div>
-          <div className="steps">
-            <div className="step"><div className="num">1</div><h3>Send us your menu</h3><p>Share a link or a list. We import your items, photos and prices — and Pista AI enriches them with origin, ingredients and nutrition.</p></div>
-            <div className="step"><div className="num">2</div><h3>Brand it your way</h3><p>Drop in your logo and colours in the white-label console. Preview the full app live and tweak until it&apos;s perfectly you.</p></div>
-            <div className="step"><div className="num">3</div><h3>Go live &amp; sell</h3><p>Publish to your own subdomain and share the link. Take orders, keep 100% of the relationship and own all your data.</p></div>
-          </div>
+      {/* HOW */}
+      <section className="how" id="how">
+        <Enso className="how-enso" />
+        <div className="center-head light reveal">
+          <div className="eyebrow light">How it works</div>
+          <h2>From signup to a live branded app — <em>in days.</em></h2>
+        </div>
+        <div className="steps">
+          {STEPS.map(([h, p], i) => (
+            <div className="step reveal" key={h} style={{ transitionDelay: `${i * 70}ms` }}>
+              <span className="num">{i + 1}</span><h3>{h}</h3><p>{p}</p>
+            </div>
+          ))}
         </div>
       </section>
 
-      {/* SHOWCASE */}
-      <section id="customers" className="show">
-        <div className="wrap">
-          <div className="center-head">
-            <span className="eyebrow">Customer story</span>
-            <h2>How a coffee chain went direct with Pista.</h2>
+      {/* STATS */}
+      <section className="statband reveal">
+        {STATS.map((s) => (
+          <div className="sbi" key={s.l}>
+            <div className="num" data-to={s.to} data-pre={s.pre} data-suf={s.suf}>{s.n}</div>
+            <div className="lbl">{s.l}</div>
           </div>
-          <div className="showcard">
-            <div className="show-l">
-              <div className="brandname"><img src="https://assets.fudr.in/brand/cbtl/CBTL%20Logo.png" alt="CBTL" style={{ height: 26, width: 26, borderRadius: 6, objectFit: "contain" }} onError={(e) => { e.currentTarget.style.display = "none"; }} /> The Coffee Bean &amp; Tea Leaf</div>
-              <p className="quote">&quot;We launched our own AI-powered ordering app in under two weeks. Our customers love the recommendations — and we finally own our data instead of renting it from delivery apps.&quot;</p>
-              <div className="who">
-                <div className="av">👩</div>
-                <div><b>Head of Digital</b><span>Coffee chain · 40+ outlets</span></div>
-              </div>
-              <div className="stats">
-                <div className="s"><b>+24%</b><br /><span>average order value</span></div>
-                <div className="s"><b>2 wks</b><br /><span>to launch</span></div>
-                <div className="s"><b>100%</b><br /><span>customer data owned</span></div>
-              </div>
-            </div>
-            <div className="show-r" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800')" }} />
-          </div>
-        </div>
+        ))}
       </section>
 
       {/* TESTIMONIALS */}
-      <section className="testi">
-        <div className="wrap">
-          <div className="center-head">
-            <span className="eyebrow">Loved by café owners</span>
-            <h2>What operators say</h2>
-          </div>
-          <div className="tgrid">
-            <div className="tcard">
-              <div className="tstars">★★★★★</div>
-              <p className="tquote">"We cut delivery commissions to zero and finally know who our regulars are. The branded app feels like ours, not a marketplace."</p>
-              <div className="twho">
-                <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=160&h=160&fit=crop" alt="" />
-                <div><b>Priya Nair</b><span>Owner · Brew &amp; Bloom</span></div>
-              </div>
+      <section className="sec">
+        <div className="center-head reveal">
+          <div className="eyebrow">What operators say</div>
+          <h2>Loved by café owners.</h2>
+        </div>
+        <div className="tgrid">
+          {TESTI.map(([q, n, r, img], i) => (
+            <div className="tcard reveal" key={n} style={{ transitionDelay: `${(i % 3) * 70}ms` }}>
+              <div className="stars">★★★★★</div>
+              <p className="q">“{q}”</p>
+              <div className="who"><img src={`https://images.unsplash.com/photo-${img}?w=120&h=120&fit=crop&crop=faces`} alt="" /><div><b>{n}</b><span>{r}</span></div></div>
             </div>
-            <div className="tcard">
-              <div className="tstars">★★★★★</div>
-              <p className="tquote">"Live in a weekend. The AI assistant genuinely lifts our average order, and the food-intelligence cards cut counter questions."</p>
-              <div className="twho">
-                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=160&h=160&fit=crop" alt="" />
-                <div><b>Rohan Mehta</b><span>Co-founder · Third Wave Roasters</span></div>
-              </div>
-            </div>
-            <div className="tcard">
-              <div className="tstars">★★★★★</div>
-              <p className="tquote">"Our loyalty program runs itself now — points, tiers and rewards. Repeat visits are up and we own every customer record."</p>
-              <div className="twho">
-                <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=160&h=160&fit=crop" alt="" />
-                <div><b>Ananya Rao</b><span>Head of Retail · Chai &amp; Co.</span></div>
-              </div>
-            </div>
-          </div>
+          ))}
         </div>
       </section>
 
       {/* PRICING */}
-      <section id="pricing">
-        <div className="wrap">
-          <div className="center-head">
-            <span className="eyebrow">Pricing</span>
-            <h2>Simple plans that grow with you.</h2>
-            <p>No commission on orders — ever. Pick a plan, keep your margins.</p>
-          </div>
-          <div className="pricing-grid">
-            <div className="price">
-              <h3>Starter</h3>
-              <div className="amt">₹4,999<small>/mo</small></div>
-              <p className="desc">For a single café or coffee shop getting started online.</p>
-              <ul>
-                <li><span className="ck">✓</span> Branded ordering app</li>
-                <li><span className="ck">✓</span> Up to 50 menu items</li>
-                <li><span className="ck">✓</span> AI food intelligence cards</li>
-                <li><span className="ck">✓</span> Pickup &amp; dine-in orders</li>
-              </ul>
-              <a href="#demo" className="btn btn-ghost">Start free trial</a>
+      <section className="sec" id="pricing">
+        <div className="center-head reveal">
+          <div className="eyebrow">Pricing</div>
+          <h2>Flat SaaS. <em>Zero per-order commission.</em></h2>
+          <p>Pick a plan, launch your app, keep 100% of every order. Cancel anytime.</p>
+        </div>
+        <div className="pgrid">
+          {PRICES.map(([name, price, per, desc, feats, pop]) => (
+            <div className={`price reveal ${pop ? "pop" : ""}`} key={name}>
+              {pop && <div className="badge">Most popular</div>}
+              <h3>{name}</h3>
+              <div className="amt">{price}<span>{per}</span></div>
+              <p className="pdesc">{desc}</p>
+              <ul>{feats.map((f) => <li key={f}><span className="ck">✓</span>{f}</li>)}</ul>
+              <a className={`btn ${pop ? "cta" : "ghost"} full`} href="#demo">Book a demo</a>
             </div>
-            <div className="price pop">
-              <span className="badge">MOST POPULAR</span>
-              <h3>Growth</h3>
-              <div className="amt">₹12,999<small>/mo</small></div>
-              <p className="desc">For growing cafés &amp; small chains that want the full AI suite.</p>
-              <ul>
-                <li><span className="ck">✓</span> Everything in Starter</li>
-                <li><span className="ck">✓</span> Pista AI ordering assistant</li>
-                <li><span className="ck">✓</span> Smart upsells &amp; loyalty rewards</li>
-                <li><span className="ck">✓</span> Delivery &amp; payments integration</li>
-                <li><span className="ck">✓</span> Analytics dashboard</li>
-              </ul>
-              <a href="#demo" className="btn btn-primary">Book a demo</a>
-            </div>
-            <div className="price">
-              <h3>Enterprise</h3>
-              <div className="amt">Custom</div>
-              <p className="desc">For multi-outlet chains needing scale, control &amp; support.</p>
-              <ul>
-                <li><span className="ck">✓</span> Everything in Growth</li>
-                <li><span className="ck">✓</span> Unlimited outlets &amp; items</li>
-                <li><span className="ck">✓</span> Custom AI &amp; integrations</li>
-                <li><span className="ck">✓</span> Dedicated success manager</li>
-              </ul>
-              <a href="#demo" className="btn btn-ghost">Contact sales</a>
-            </div>
-          </div>
+          ))}
         </div>
       </section>
 
       {/* CTA */}
-      <section id="demo" style={{ paddingTop: 0 }}>
-        <div className="wrap">
-          <div className="cta-band">
-            <video className="cta-vid" autoPlay muted loop playsInline><source src="/cafe-ambient.mp4" type="video/mp4" /></video>
-            <div className="cta-veil" />
-            <div className="sp">✨</div>
-            <h2>Ready to launch your own ordering app?</h2>
-            <p>Book a 20-minute demo and we&apos;ll spin up a branded preview of your café&apos;s app — AI and all — before you decide.</p>
-            <form className="cta-form" onSubmit={handleDemo}>
-              <input type="email" placeholder="you@yourcafe.com" required />
-              <button className="btn btn-white" type="submit">Book a demo →</button>
-            </form>
-            <div className="cta-note">No commitment · branded preview included · go live in ~1 week</div>
-          </div>
-        </div>
+      <section className="cta-band reveal" id="demo">
+        <Enso className="cta-enso" />
+        <div className="mk light">食</div>
+        <h2>Own your table.</h2>
+        <p>See Shoku on your own menu in a 20-minute demo. We’ll spin up a branded preview for your café.</p>
+        <a className="btn white lg" href="mailto:hello@getshoku.com?subject=Shoku%20demo">Book a demo →</a>
       </section>
 
-      {/* FOOTER */}
-      <footer>
-        <div className="wrap">
-          <div className="foot-grid">
-            <div>
-              <a className="logo" href="#top"><span className="mark">P</span> Pista</a>
-              <p>The AI-powered white-label ordering platform for cafés, coffee shops and restaurant chains.</p>
-            </div>
-            <div className="fcol"><h4>Product</h4><a href="#features">Features</a><a href="#how">How it works</a><a href="#pricing">Pricing</a><a href="/docs/index.html">Docs</a><a href="#demo">Book a demo</a></div>
-            <div className="fcol"><h4>Company</h4><a href="#top">About</a><a href="#customers">Customers</a><a href="#top">Careers</a><a href="#top">Blog</a></div>
-            <div className="fcol"><h4>Contact</h4><a href="mailto:hello@pista.app">hello@pista.app</a><a href="#top">Support</a><a href="#top">Privacy</a><a href="#top">Terms</a></div>
-          </div>
-          <div className="foot-bot">
-            <span>© 2026 Pista. All rights reserved.</span>
-            <span>Made for cafés that want to own their customers.</span>
-          </div>
+      <footer className="foot">
+        <div className="fbrand"><img src="/shoku-mark.svg" alt="" /> <span>shoku<i>食</i></span></div>
+        <div className="fcols">
+          <div><h4>Product</h4><a href="#features">Features</a><a href="#pricing">Pricing</a><a href="#how">How it works</a></div>
+          <div><h4>Company</h4><a href="#top">About</a><a href="mailto:hello@getshoku.com">Contact</a><a href="#top">Privacy</a></div>
+          <div><h4>Get started</h4><a href="#demo">Book a demo</a><a href="/login">Sign in</a></div>
         </div>
+        <div className="fbot">© 2026 Shoku · getshoku.com · 食 Own your table</div>
       </footer>
 
       <style jsx global>{`
-        .landing { --pista:#7AB04A; --pista-d:#36511f; --pista-dd:#2b4a1c; --tint:#E9F2DE; --tint2:#f4f8ee; --ink:#1b2417; --muted:#5d6b50; --line:#e4ead9; --cream:#f7faf2; --white:#fff; --radius:20px; --shadow:0 1px 2px rgba(20,40,10,.03), 0 22px 54px rgba(20,40,10,.06); --lfont:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; font-family:var(--lfont); color:var(--ink); background:var(--white); line-height:1.6; -webkit-font-smoothing:antialiased; }
-        html { scroll-behavior:smooth; }
-        .landing * { box-sizing:border-box; }
-        .landing img { display:block; max-width:100%; }
-        .landing a { color:inherit; text-decoration:none; }
-        .landing .wrap { max-width:1140px; margin:0 auto; padding:0 24px; }
-        .landing .btn { display:inline-flex; align-items:center; gap:8px; font-weight:700; font-size:15px; padding:13px 22px; border-radius:12px; border:none; cursor:pointer; transition:.15s; font-family:inherit; }
-        .landing .btn-primary { background:var(--pista); color:#fff; box-shadow:0 6px 18px rgba(122,176,74,.35); }
-        .landing .btn-primary:hover { background:var(--pista-d); transform:translateY(-1px); }
-        .landing .btn-ghost { background:#fff; color:var(--ink); border:1.5px solid var(--line); }
-        .landing .btn-ghost:hover { border-color:var(--pista); color:var(--pista-d); }
-        .landing .eyebrow { font-size:13px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:var(--pista-d); }
-        .landing h1, .landing h2, .landing h3 { letter-spacing:-.02em; line-height:1.12; }
-        .landing h1, .landing .center-head h2, .landing .ftext h2, .landing .cta-band h2, .landing .show-l .quote { font-family:var(--font-serif), "Georgia", serif; font-weight:600; letter-spacing:-.022em; }
-        .landing .hero h1 { line-height:1.04; }
-        .landing section { padding:96px 0; }
-
-        .landing nav { position:sticky; top:0; z-index:50; background:rgba(255,255,255,.85); backdrop-filter:blur(12px); border-bottom:1px solid var(--line); }
-        .landing .nav-in { display:flex; align-items:center; gap:14px; height:68px; }
-        .landing .logo { display:flex; align-items:center; gap:10px; font-weight:800; font-size:20px; letter-spacing:-.02em; }
-        .landing .logo .mark { width:32px; height:32px; border-radius:9px; background:var(--pista); color:#fff; display:grid; place-items:center; font-size:18px; font-weight:900; }
-        .landing .nav-links { display:flex; gap:30px; margin-left:30px; }
-        .landing .nav-links a { font-size:14.5px; font-weight:600; color:var(--muted); }
-        .landing .nav-links a:hover { color:var(--ink); }
-        .landing .nav-cta { margin-left:auto; display:flex; gap:10px; align-items:center; }
-        @media(max-width:860px){ .landing .nav-links{display:none} .landing .nav-cta .btn-ghost{display:none} }
-
-        .landing .hero { position:relative; background:radial-gradient(1100px 520px at 70% -10%, var(--tint) 0%, transparent 60%), var(--white); padding:74px 0 60px; overflow:hidden; }
-        .landing .hero-vid { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0; }
-        .landing .hero-veil { position:absolute; inset:0; z-index:1; background:linear-gradient(90deg,#ffffff 0%,#ffffff 34%,rgba(247,250,242,.62) 66%,rgba(247,250,242,.32) 100%); }
-        .landing .hero .wrap { position:relative; z-index:2; }
-        /* Hero: the branded app "self-assembles" on load */
-        @keyframes pista-pop { from { opacity:0; transform: translateY(12px) scale(.97); } to { opacity:1; transform:none; } }
-        @keyframes pista-float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
-        .landing .phone { animation: pista-pop .55s cubic-bezier(.2,.7,.3,1) both; }
-        .landing .phone > * { animation: pista-pop .5s cubic-bezier(.2,.7,.3,1) both; }
-        .landing .phone > *:nth-child(1){ animation-delay:.15s; }
-        .landing .phone > *:nth-child(2){ animation-delay:.27s; }
-        .landing .phone > *:nth-child(3){ animation-delay:.39s; }
-        .landing .phone > *:nth-child(4){ animation-delay:.51s; }
-        .landing .phone > *:nth-child(5){ animation-delay:.63s; }
-        .landing .phone > *:nth-child(6){ animation-delay:.75s; }
-        .landing .phone > *:nth-child(7){ animation-delay:.87s; }
-        .landing .ftag { opacity:0; animation: pista-pop .6s ease both, pista-float 5s ease-in-out infinite; }
-        .landing .ftag.t1 { animation-delay: 1.0s, 1.6s; }
-        .landing .ftag.t2 { animation-delay: 1.2s, 1.8s; }
-        @media (prefers-reduced-motion: reduce) {
-          .landing .hero-vid { display:none; }
-          .landing .phone, .landing .phone > *, .landing .ftag { animation: none !important; opacity:1 !important; transform:none !important; }
+        .lp {
+          --paper:#f6f2ea; --cream:#efe9dd; --ink:#1b1813; --mut:#6f6557; --line:#e4ddd0;
+          --matcha:#3a6b4d; --matcha-d:#244635; --matcha-dd:#15281e; --clay:#c2643c; --gold:#c69a4c; --mist:#a9c8b4; --tint:#eaf1ea;
+          --serif:var(--font-serif,"Fraunces",Georgia,serif); --sans:var(--font-sans,"Inter",system-ui,sans-serif);
+          color:var(--ink); background:var(--paper); font-family:var(--sans); line-height:1.6; overflow-x:hidden;
         }
-        .landing .hero-grid { display:grid; grid-template-columns:1.05fr .95fr; gap:48px; align-items:center; }
-        @media(max-width:900px){ .landing .hero-grid{grid-template-columns:1fr;gap:40px} }
-        .landing .pill { display:inline-flex; align-items:center; gap:8px; background:var(--tint); color:var(--pista-d); font-size:13px; font-weight:700; padding:7px 14px; border-radius:999px; margin-bottom:22px; }
-        .landing .hero h1 { font-size:54px; font-weight:800; }
-        .landing .hero h1 .hl { color:var(--pista); }
-        @media(max-width:900px){ .landing .hero h1{font-size:40px} }
-        .landing .hero p.sub { font-size:18px; color:var(--muted); margin-top:20px; max-width:520px; }
-        .landing .hero-cta { display:flex; gap:12px; margin-top:30px; flex-wrap:wrap; }
-        .landing .hero-trust { display:flex; align-items:center; gap:18px; margin-top:30px; font-size:13.5px; color:var(--muted); }
-        .landing .stars { color:#e8a33d; letter-spacing:2px; }
+        .lp *{ box-sizing:border-box; }
+        .lp a{ text-decoration:none; color:inherit; }
+        .lp em{ font-style:italic; color:var(--clay); }
+        .lp .prog{ position:fixed; top:0; left:0; height:3px; width:0; background:linear-gradient(90deg,var(--matcha),var(--clay)); z-index:300; }
+        .lp .reveal{ opacity:0; transform:translateY(18px); transition:opacity .7s ease, transform .7s cubic-bezier(.2,.7,.3,1); }
+        .lp .reveal.in{ opacity:1; transform:none; }
 
-        .landing .phone-stage { position:relative; display:flex; justify-content:center; }
-        .landing .glow { position:absolute; inset:-10% 5%; background:radial-gradient(closest-side, rgba(122,176,74,.28), transparent); filter:blur(10px); }
-        .landing .phone { position:relative; width:300px; background:#fff; border-radius:38px; box-shadow:0 0 0 10px #1d2a14, 0 40px 80px rgba(20,40,10,.28); overflow:hidden; }
-        @media (prefers-reduced-motion: no-preference) {
-          .landing .phone { animation: phFrame .6s cubic-bezier(.2,.8,.2,1) both; }
-          .landing .phone > * { animation: phPiece .55s cubic-bezier(.2,.8,.2,1) both; }
-          .landing .phone > *:nth-child(1){ animation-delay:.30s }
-          .landing .phone > *:nth-child(2){ animation-delay:.42s }
-          .landing .phone > *:nth-child(3){ animation-delay:.54s }
-          .landing .phone > *:nth-child(4){ animation-delay:.66s }
-          .landing .phone > *:nth-child(5){ animation-delay:.78s }
-          .landing .phone > *:nth-child(6){ animation-delay:.90s }
-          .landing .phone > *:nth-child(7){ animation-delay:1.02s }
-          .landing .ftag { animation: phFade .6s ease both; }
-          .landing .ftag.t1 { animation-delay:1.15s }
-          .landing .ftag.t2 { animation-delay:1.30s }
+        /* ENSO — signature ink circle */
+        .lp .enso{ position:absolute; width:100%; height:100%; pointer-events:none; }
+        .lp .enso path{ stroke:var(--matcha); stroke-width:2.3; opacity:.4; fill:none; }
+        .lp .reveal .enso path, .lp .hero-enso path{ stroke-dasharray:1; stroke-dashoffset:1; transition:stroke-dashoffset 1.6s cubic-bezier(.6,.1,.2,1); }
+        .lp .in .enso path, .lp .hero .in.hvisual .hero-enso path{ stroke-dashoffset:0; }
+        .lp .hero-enso path{ stroke-dashoffset:0; animation:draw 1.8s cubic-bezier(.6,.1,.2,1) both; }
+        @keyframes draw{ from{ stroke-dashoffset:1; } to{ stroke-dashoffset:0; } }
+
+        /* BUTTONS */
+        .lp .btn{ display:inline-flex; align-items:center; gap:8px; font-weight:600; font-size:14px; padding:12px 20px; border-radius:999px; cursor:pointer; transition:transform .15s, background .2s, border-color .2s, color .2s; }
+        .lp .btn.cta{ background:var(--matcha); color:#fff; box-shadow:0 10px 26px rgba(36,70,53,.26); }
+        .lp .btn.cta:hover{ background:var(--matcha-d); transform:translateY(-1px); }
+        .lp .btn.ghost{ border:1px solid var(--line); background:rgba(255,255,255,.6); color:var(--ink); }
+        .lp .btn.ghost:hover{ border-color:var(--matcha); color:var(--matcha-d); }
+        .lp .btn.white{ background:var(--paper); color:var(--matcha-d); }
+        .lp .btn.white:hover{ transform:translateY(-1px); }
+        .lp .btn.lg{ padding:15px 26px; font-size:15px; }
+        .lp .btn.full{ width:100%; justify-content:center; margin-top:20px; }
+
+        .lp .eyebrow{ display:inline-block; font-size:12px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--matcha); margin-bottom:18px; }
+        .lp .eyebrow.light{ color:var(--mist); }
+        .lp .mk{ font-family:var(--serif); font-size:38px; color:var(--clay); opacity:.55; margin-bottom:8px; }
+        .lp .mk.light{ color:var(--mist); opacity:.7; }
+
+        /* NAV */
+        .lp .nav{ position:sticky; top:0; z-index:100; display:flex; align-items:center; gap:24px; padding:16px 34px; background:rgba(246,242,234,.82); backdrop-filter:blur(14px); border-bottom:1px solid var(--line); }
+        .lp .brand{ display:flex; align-items:center; gap:10px; font-family:var(--serif); font-weight:600; font-size:23px; letter-spacing:-.01em; }
+        .lp .brand img{ width:30px; height:30px; }
+        .lp .brand i{ font-style:normal; color:var(--clay); font-size:18px; margin-left:1px; }
+        .lp .nav .links{ display:flex; gap:28px; margin-left:20px; font-size:14px; font-weight:500; color:var(--mut); }
+        .lp .nav .links a:hover{ color:var(--ink); }
+        .lp .nav .cta{ margin-left:auto; }
+
+        /* HERO */
+        .lp .hero{ max-width:1180px; margin:0 auto; padding:84px 34px 56px; display:grid; grid-template-columns:1.08fr .92fr; gap:56px; align-items:center; }
+        .lp .hero h1{ font-family:var(--serif); font-size:62px; line-height:1.02; letter-spacing:-.02em; font-weight:500; margin:0 0 24px; }
+        .lp .lede{ font-size:17.5px; color:var(--mut); max-width:50ch; margin:0 0 30px; }
+        .lp .c-row{ display:flex; gap:14px; flex-wrap:wrap; }
+        .lp .trust{ margin-top:22px; font-size:13px; font-weight:600; color:var(--mut); letter-spacing:.01em; }
+        .lp .hvisual{ position:relative; display:grid; place-items:center; min-height:460px; }
+        /* Hero = real café photo + real Shoku app mockup + logo lockup (brand integration) */
+        .lp .hero-stage{ position:relative; width:min(430px,90%); }
+        .lp .hero-bg{ display:block; width:100%; aspect-ratio:4/5; object-fit:cover; border-radius:30px; box-shadow:0 44px 100px rgba(30,45,30,.30); }
+        .lp .hero-phone{ position:absolute; right:-7%; bottom:-6%; width:47%; z-index:2; filter:drop-shadow(0 26px 48px rgba(20,30,20,.45)); }
+        .lp .hero-logo{ position:absolute; left:14px; top:14px; z-index:3; display:inline-flex; align-items:center; gap:7px; background:rgba(246,242,234,.92); backdrop-filter:blur(6px); padding:7px 14px 7px 9px; border-radius:999px; font-family:var(--serif); font-weight:600; font-size:15px; color:var(--ink); box-shadow:0 8px 22px rgba(20,30,20,.18); }
+        .lp .hero-logo img{ width:22px; height:22px; }
+        .lp .hero-logo i{ font-style:normal; color:var(--clay); font-size:12px; margin-left:1px; }
+        .lp .heromark{ position:relative; width:min(440px,90%); aspect-ratio:1; display:grid; place-items:center; }
+        .lp .hm-glow{ position:absolute; inset:3%; border-radius:50%;
+          background:radial-gradient(circle at 50% 47%, rgba(47,107,79,.22), rgba(47,107,79,.07) 50%, transparent 70%);
+          filter:blur(12px); animation:breathe 7.5s ease-in-out infinite; }
+        .lp .hm-svg{ position:relative; width:100%; height:100%; overflow:visible; z-index:1; }
+        .lp .hm-spin{ transform-origin:100px 100px; animation:turn 64s linear infinite; }
+        .lp .hm-ink{ stroke:var(--matcha); stroke-width:2.3; opacity:.92;
+          stroke-dasharray:1; stroke-dashoffset:1; animation:draw 3s cubic-bezier(.45,.05,.2,1) .35s forwards; }
+        .lp .hm-seed{ fill:var(--clay); opacity:0; animation:seedin .8s 2.8s ease forwards; }
+        @keyframes turn{ to{ transform:rotate(360deg); } }
+        @keyframes breathe{ 0%,100%{ opacity:.68; transform:scale(1); } 50%{ opacity:1; transform:scale(1.05); } }
+        @keyframes seedin{ to{ opacity:.85; } }
+        .lp .hm-steam{ position:absolute; top:-4%; left:50%; transform:translateX(-50%); width:34%; height:40%; z-index:2; pointer-events:none; }
+        .lp .hm-steam i{ position:absolute; bottom:0; width:3px; height:100%; border-radius:3px;
+          background:linear-gradient(to top, rgba(159,199,176,0), rgba(159,199,176,.5), rgba(159,199,176,0)); opacity:0;
+          animation:steam 4.4s ease-in-out infinite; }
+        .lp .hm-steam i:nth-child(1){ left:28%; animation-delay:.5s; height:92%; }
+        .lp .hm-steam i:nth-child(2){ left:50%; animation-delay:1.8s; }
+        .lp .hm-steam i:nth-child(3){ left:72%; animation-delay:2.9s; height:84%; }
+        @keyframes steam{ 0%{ opacity:0; transform:translateY(10px) scaleY(.8); } 35%{ opacity:.6; } 100%{ opacity:0; transform:translateY(-18px) scaleY(1.1); } }
+        .lp .tagchip{ position:absolute; bottom:22px; z-index:3; background:var(--paper); color:var(--matcha-d); font-size:12.5px; font-weight:700; padding:9px 18px; border-radius:999px; box-shadow:0 12px 28px rgba(0,0,0,.14); letter-spacing:.04em; }
+
+        /* LOGOS */
+        .lp .logos{ max-width:1100px; margin:10px auto; padding:24px 34px; text-align:center; }
+        .lp .logos .lab{ font-size:11.5px; font-weight:700; letter-spacing:.16em; text-transform:uppercase; color:var(--mut); margin-bottom:18px; }
+        .lp .logo-marquee{ position:relative; overflow:hidden; -webkit-mask:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent); mask:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent); }
+        .lp .logo-track{ display:flex; gap:56px; width:max-content; animation:marquee 34s linear infinite; }
+        .lp .logos:hover .logo-track{ animation-play-state:paused; }
+        @keyframes marquee{ to{ transform:translateX(-50%); } }
+        .lp .brandname{ font-family:var(--serif); font-size:19px; font-weight:500; color:var(--matcha-d); opacity:.58; white-space:nowrap; }
+
+        /* MANIFESTO */
+        .lp .manifesto{ max-width:880px; margin:0 auto; padding:84px 34px; text-align:center; }
+        .lp .manifesto h2{ font-family:var(--serif); font-size:42px; line-height:1.14; letter-spacing:-.015em; font-weight:500; margin:0 0 22px; }
+        .lp .manifesto p{ font-size:18px; color:var(--mut); max-width:60ch; margin:0 auto; }
+
+        /* SECTIONS */
+        .lp .sec{ max-width:1120px; margin:0 auto; padding:88px 34px; }
+        .lp .center-head{ text-align:center; max-width:64ch; margin:0 auto 52px; }
+        .lp .center-head h2{ font-family:var(--serif); font-size:40px; line-height:1.12; letter-spacing:-.015em; font-weight:500; margin:0 0 14px; }
+        .lp .center-head p{ font-size:16.5px; color:var(--mut); }
+        .lp .center-head.light h2{ color:#fff; } .lp .center-head.light h2 em{ color:var(--mist); }
+        .lp .center-head.light p{ color:#cfe0d2; }
+
+        .lp .fgrid{ display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+        .lp .fcard{ background:#fff; border:1px solid var(--line); border-radius:22px; padding:30px; transition:transform .25s, box-shadow .25s, border-color .25s; }
+        .lp .fcard:hover{ transform:translateY(-5px); border-color:var(--mist); box-shadow:0 26px 54px rgba(36,70,53,.09); }
+        .lp .fic{ width:54px; height:54px; border-radius:16px; background:var(--tint); display:grid; place-items:center; font-family:var(--serif); font-size:26px; color:var(--matcha-d); margin-bottom:20px; }
+        .lp .fcard h3{ font-size:18px; font-weight:600; margin:0 0 9px; }
+        .lp .fcard p{ font-size:14.5px; color:var(--mut); margin:0; }
+
+        /* HOW */
+        .lp .how{ position:relative; overflow:hidden; background:radial-gradient(120% 140% at 80% 0%,var(--matcha) 0%,var(--matcha-d) 48%,var(--matcha-dd) 100%); color:#fff; padding:96px 34px; }
+        .lp .how-enso{ width:520px; height:520px; left:auto; right:-120px; top:-120px; }
+        .lp .how-enso path{ stroke:var(--mist); opacity:.18; }
+        .lp .how .center-head{ position:relative; z-index:1; margin-bottom:46px; }
+        .lp .steps{ position:relative; z-index:1; max-width:1120px; margin:0 auto; display:grid; grid-template-columns:repeat(4,1fr); gap:22px; }
+        .lp .step{ background:rgba(255,255,255,.055); border:1px solid rgba(255,255,255,.13); border-radius:20px; padding:28px; backdrop-filter:blur(2px); }
+        .lp .step .num{ display:grid; place-items:center; width:44px; height:44px; border-radius:13px; background:var(--clay); color:#fff; font-family:var(--serif); font-weight:600; font-size:18px; margin-bottom:16px; }
+        .lp .step h3{ margin:0 0 7px; font-size:17px; font-weight:600; } .lp .step p{ margin:0; font-size:13.5px; color:#cfe0d2; }
+
+        /* STATS */
+        .lp .statband{ max-width:1100px; margin:0 auto; padding:64px 34px; display:grid; grid-template-columns:repeat(4,1fr); gap:26px; }
+        .lp .sbi{ text-align:center; }
+        .lp .sbi .num{ font-family:var(--serif); font-size:46px; font-weight:500; color:var(--matcha); letter-spacing:-.02em; }
+        .lp .sbi .lbl{ font-size:13px; color:var(--mut); margin-top:6px; }
+
+        /* TESTI */
+        .lp .tgrid{ display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+        .lp .tcard{ background:#fff; border:1px solid var(--line); border-radius:22px; padding:28px; display:flex; flex-direction:column; }
+        .lp .stars{ color:var(--gold); letter-spacing:2px; font-size:14px; }
+        .lp .tcard .q{ font-family:var(--serif); font-size:17px; line-height:1.5; margin:14px 0 20px; }
+        .lp .who{ display:flex; align-items:center; gap:12px; margin-top:auto; }
+        .lp .who img{ width:48px; height:48px; border-radius:50%; object-fit:cover; }
+        .lp .who b{ display:block; font-size:14px; } .lp .who span{ font-size:12.5px; color:var(--mut); }
+
+        /* PRICING */
+        .lp .pgrid{ display:grid; grid-template-columns:repeat(3,1fr); gap:20px; align-items:start; }
+        .lp .price{ background:#fff; border:1px solid var(--line); border-radius:24px; padding:32px; position:relative; }
+        .lp .price.pop{ border:1.5px solid var(--matcha); box-shadow:0 28px 60px rgba(36,70,53,.12); }
+        .lp .price .badge{ position:absolute; top:-13px; left:50%; transform:translateX(-50%); background:var(--matcha); color:#fff; font-size:11px; font-weight:700; letter-spacing:.04em; padding:6px 14px; border-radius:999px; }
+        .lp .price h3{ font-size:19px; font-weight:600; margin:0 0 8px; }
+        .lp .amt{ font-family:var(--serif); font-size:42px; font-weight:500; letter-spacing:-.02em; } .lp .amt span{ font-family:var(--sans); font-size:15px; font-weight:500; color:var(--mut); }
+        .lp .pdesc{ font-size:13.5px; color:var(--mut); margin:10px 0 18px; }
+        .lp .price ul{ list-style:none; padding:0; margin:0; }
+        .lp .price li{ display:flex; align-items:center; gap:10px; font-size:14px; padding:7px 0; }
+        .lp .price .ck{ color:var(--matcha); font-weight:900; }
+
+        /* CTA */
+        .lp .cta-band{ position:relative; overflow:hidden; max-width:1040px; margin:64px auto; padding:96px 40px; text-align:center; color:#fff; border-radius:34px;
+          background:linear-gradient(180deg,rgba(20,38,28,.74),rgba(20,38,28,.90)), url('/img/shoku-cafe-real.webp') center/cover no-repeat; }
+        .lp .cta-enso{ width:360px; height:360px; left:50%; top:50%; transform:translate(-50%,-50%); }
+        .lp .cta-enso path{ stroke:var(--mist); opacity:.2; }
+        .lp .cta-band > *{ position:relative; z-index:1; }
+        .lp .cta-band h2{ font-family:var(--serif); font-size:48px; font-weight:500; letter-spacing:-.02em; margin:0 0 12px; }
+        .lp .cta-band p{ font-size:16.5px; color:#cfe0d2; max-width:52ch; margin:0 auto 28px; }
+
+        /* FOOTER */
+        .lp .foot{ border-top:1px solid var(--line); padding:60px 34px 44px; max-width:1120px; margin:0 auto; }
+        .lp .fbrand{ display:flex; align-items:center; gap:10px; font-family:var(--serif); font-weight:600; font-size:21px; } .lp .fbrand img{ width:28px; height:28px; } .lp .fbrand i{ font-style:normal; color:var(--clay); font-size:16px; }
+        .lp .fcols{ display:flex; flex-wrap:wrap; gap:44px; margin:28px 0; }
+        .lp .fcols h4{ font-size:11.5px; text-transform:uppercase; letter-spacing:.1em; color:var(--mut); margin:0 0 12px; }
+        .lp .fcols a{ display:block; font-size:14px; color:var(--ink); padding:4px 0; } .lp .fcols a:hover{ color:var(--matcha); }
+        .lp .fbot{ font-size:12.5px; color:var(--mut); border-top:1px solid var(--line); padding-top:20px; }
+
+        /* PRODUCT SHOWCASE */
+        .lp .product{ max-width:1180px; margin:0 auto; padding:96px 34px; display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:center; }
+        .lp .prod-copy h2{ font-family:var(--serif); font-size:40px; line-height:1.12; letter-spacing:-.015em; font-weight:500; margin:0 0 18px; }
+        .lp .prod-lede{ font-size:16.5px; color:var(--mut); margin:0 0 30px; max-width:46ch; }
+        .lp .prod-list{ list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:20px; }
+        .lp .prod-list li{ display:flex; gap:14px; align-items:flex-start; }
+        .lp .pck{ width:44px; height:44px; border-radius:13px; background:var(--tint); color:var(--matcha-d); font-family:var(--serif); font-size:21px; display:grid; place-items:center; flex-shrink:0; }
+        .lp .prod-list b{ display:block; font-size:15px; font-weight:600; } .lp .prod-list span{ font-size:14px; color:var(--mut); }
+
+        /* PHONE MOCKUPS */
+        .lp .prod-stage{ position:relative; display:flex; justify-content:center; align-items:center; min-height:580px; }
+        .lp .prod-enso{ position:absolute; width:118%; height:118%; } .lp .prod-enso path{ opacity:.13; }
+        /* Real app screenshots (transparent device-framed PNGs) */
+        .lp .snap{ width:min(248px,72%); position:relative; flex-shrink:0; filter:drop-shadow(0 32px 62px rgba(20,30,20,.32)); transition:transform .4s cubic-bezier(.2,.7,.3,1); }
+        .lp .snap-a{ transform:rotate(-4deg); z-index:2; }
+        .lp .snap-b{ transform:rotate(4deg) translateY(34px) scale(.92); margin-left:-46px; z-index:1; }
+        .lp .prod-stage:hover .snap-a{ transform:rotate(-4deg) translateY(-6px); }
+        .lp .prod-stage:hover .snap-b{ transform:rotate(4deg) translateY(28px) scale(.92); }
+
+        /* LIFESTYLE BAND */
+        .lp .life{ max-width:1180px; margin:0 auto; padding:48px 34px; display:grid; grid-template-columns:.9fr 1.1fr; gap:60px; align-items:center; }
+        .lp .life-media{ position:relative; justify-self:center; }
+        .lp .life-media img{ width:min(380px,86%); aspect-ratio:928/1152; object-fit:cover; border-radius:32px; box-shadow:0 40px 90px rgba(30,45,30,.28); display:block; }
+        .lp .life-chip{ position:absolute; bottom:18px; left:50%; transform:translateX(-50%); display:inline-flex; align-items:center; gap:7px; background:var(--paper); color:var(--matcha-d); font-size:12.5px; font-weight:700; padding:8px 16px 8px 10px; border-radius:999px; box-shadow:0 12px 28px rgba(0,0,0,.16); white-space:nowrap; }
+        .lp .life-chip img{ width:18px; height:18px; }
+        .lp .life-copy h2{ font-family:var(--serif); font-size:40px; line-height:1.12; letter-spacing:-.015em; font-weight:500; margin:0 0 18px; }
+        .lp .life-copy p{ font-size:16.5px; color:var(--mut); margin:0 0 26px; max-width:48ch; }
+        .lp .ph{ width:246px; border-radius:40px; background:#15120d; padding:10px; position:relative; box-shadow:0 34px 80px rgba(20,30,20,.30); flex-shrink:0; transition:transform .4s cubic-bezier(.2,.7,.3,1); }
+        .lp .ph-notch{ position:absolute; top:16px; left:50%; transform:translateX(-50%); width:62px; height:6px; border-radius:999px; background:rgba(255,255,255,.22); z-index:3; }
+        .lp .ph-screen{ background:var(--paper); border-radius:31px; overflow:hidden; height:500px; display:flex; flex-direction:column; padding:20px 14px 0; }
+        .lp .ph-menu{ transform:rotate(-4deg); z-index:2; }
+        .lp .ph-ai{ transform:rotate(4deg) translateY(36px) scale(.93); margin-left:-54px; z-index:1; }
+        .lp .prod-stage:hover .ph-menu{ transform:rotate(-4deg) translateY(-6px); }
+        .lp .prod-stage:hover .ph-ai{ transform:rotate(4deg) translateY(30px) scale(.93); }
+
+        /* menu screen */
+        .lp .mapp-top{ display:flex; align-items:center; justify-content:space-between; padding-top:4px; }
+        .lp .mapp-brand{ font-family:var(--serif); font-size:16px; font-weight:600; } .lp .mapp-brand i{ font-style:normal; color:var(--clay); font-size:11px; }
+        .lp .mapp-table{ font-size:9.5px; font-weight:700; color:var(--matcha-d); background:var(--tint); padding:4px 8px; border-radius:999px; }
+        .lp .mchips{ display:flex; gap:6px; margin:13px 0 12px; }
+        .lp .mchip{ font-size:9.5px; font-weight:600; padding:5px 10px; border-radius:999px; background:#fff; border:1px solid var(--line); color:var(--mut); }
+        .lp .mchip.on{ background:var(--matcha); color:#fff; border-color:var(--matcha); }
+        .lp .mrail-lab{ font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.09em; color:var(--mut); margin-bottom:6px; }
+        .lp .mitem{ display:flex; gap:10px; align-items:center; padding:9px 0; border-bottom:1px solid var(--line); }
+        .lp .mthumb{ width:44px; height:44px; border-radius:12px; flex-shrink:0; }
+        .lp .mmid{ flex:1; min-width:0; }
+        .lp .mname{ font-size:12px; font-weight:600; display:flex; align-items:center; gap:5px; }
+        .lp .msig{ font-size:7px; font-weight:800; background:var(--tint); color:var(--matcha-d); padding:2px 5px; border-radius:999px; white-space:nowrap; letter-spacing:.03em; }
+        .lp .mveg{ display:flex; align-items:center; gap:4px; font-size:9px; color:var(--mut); margin-top:3px; }
+        .lp .vdot{ width:9px; height:9px; border-radius:3px; border:1.5px solid #2e9e54; position:relative; }
+        .lp .vdot::after{ content:""; position:absolute; inset:0; margin:auto; width:4px; height:4px; border-radius:50%; background:#2e9e54; }
+        .lp .mmeta{ font-size:9px; color:var(--mut); margin-top:2px; }
+        .lp .mright{ display:flex; flex-direction:column; align-items:flex-end; gap:5px; }
+        .lp .mprice{ font-size:12px; font-weight:700; }
+        .lp .madd{ font-size:8.5px; font-weight:800; color:var(--matcha-d); border:1px solid var(--matcha); background:var(--tint); padding:3px 9px; border-radius:8px; }
+        .lp .mcart{ margin:auto -14px 0; background:var(--matcha); color:#fff; padding:13px 16px; font-size:12px; display:flex; align-items:center; gap:6px; }
+        .lp .mcart-go{ margin-left:auto; font-weight:700; }
+
+        /* AI screen */
+        .lp .ai-top{ font-family:var(--serif); font-size:15px; font-weight:600; display:flex; align-items:center; gap:6px; padding:4px 2px 12px; border-bottom:1px solid var(--line); }
+        .lp .ai-mk{ color:var(--clay); }
+        .lp .ai-chat{ display:flex; flex-direction:column; gap:8px; padding:12px 2px; flex:1; overflow:hidden; }
+        .lp .bub{ font-size:11px; line-height:1.45; padding:8px 11px; border-radius:14px; max-width:88%; }
+        .lp .bub.user{ align-self:flex-end; background:var(--matcha); color:#fff; border-bottom-right-radius:4px; }
+        .lp .bub.bot{ align-self:flex-start; background:#fff; border:1px solid var(--line); border-bottom-left-radius:4px; }
+        .lp .bub b{ color:inherit; }
+        .lp .ai-card{ display:flex; align-items:center; gap:9px; background:#fff; border:1px solid var(--line); border-radius:14px; padding:8px; align-self:flex-start; width:88%; }
+        .lp .ai-cthumb{ width:34px; height:34px; border-radius:9px; flex-shrink:0; }
+        .lp .ai-cmid{ flex:1; } .lp .ai-cname{ font-size:11px; font-weight:600; } .lp .ai-cmeta{ font-size:9px; color:var(--mut); }
+        .lp .ai-cadd{ font-size:9px; font-weight:800; color:var(--matcha-d); background:var(--tint); border:1px solid var(--matcha); padding:4px 10px; border-radius:8px; }
+        .lp .ai-input{ margin:auto 0 14px; display:flex; align-items:center; gap:8px; border:1px solid var(--line); background:#fff; border-radius:999px; padding:7px 7px 7px 14px; font-size:11px; color:var(--mut); }
+        .lp .ai-input span:first-child{ flex:1; }
+        .lp .ai-send{ width:26px; height:26px; border-radius:50%; background:var(--matcha); color:#fff; display:grid; place-items:center; font-size:13px; flex-shrink:0; }
+
+        /* REACTBITS-STYLE: spotlight cards, shiny wordmark, dot-grid */
+        .lp .fcard{ position:relative; overflow:hidden; }
+        .lp .fcard > *{ position:relative; z-index:1; }
+        .lp .fcard::before{ content:""; position:absolute; inset:0; z-index:0; border-radius:inherit; opacity:0; transition:opacity .3s; pointer-events:none;
+          background:radial-gradient(240px circle at var(--mx,50%) var(--my,50%), rgba(58,107,77,.12), transparent 62%); }
+        .lp .fcard:hover::before{ opacity:1; }
+
+        .lp .brand i.shiny{ color:transparent; -webkit-background-clip:text; background-clip:text; background-image:linear-gradient(110deg,var(--clay) 25%,#efd9c4 50%,var(--clay) 75%); background-size:220% 100%; animation:shine 4.5s linear infinite; }
+        @keyframes shine{ to{ background-position:-220% 0; } }
+
+        .lp .manifesto{ position:relative; }
+        .lp .manifesto > *{ position:relative; z-index:1; }
+        .lp .manifesto::before{ content:""; position:absolute; inset:-10% 0; z-index:0; pointer-events:none; opacity:.55;
+          background-image:radial-gradient(var(--line) 1.2px, transparent 1.2px); background-size:26px 26px;
+          -webkit-mask:radial-gradient(closest-side,#000,transparent 76%); mask:radial-gradient(closest-side,#000,transparent 76%); }
+
+        @media(max-width:880px){
+          .lp .product{ grid-template-columns:1fr; gap:36px; }
+          .lp .life{ grid-template-columns:1fr; gap:30px; text-align:center; }
+          .lp .life-media{ order:-1; }
+          .lp .life-copy p{ margin-inline:auto; }
+          .lp .life-copy h2{ font-size:30px; }
+          .lp .prod-copy{ text-align:center; } .lp .prod-lede{ margin-inline:auto; } .lp .prod-list{ text-align:left; max-width:380px; margin-inline:auto; }
+          .lp .prod-stage{ min-height:520px; transform:scale(.92); }
+          .lp .prod-copy h2{ font-size:30px; }
+          .lp .hero{ grid-template-columns:1fr; text-align:center; padding-top:48px; gap:40px; }
+          .lp .hero h1{ font-size:44px; } .lp .lede{ margin-inline:auto; } .lp .c-row{ justify-content:center; }
+          .lp .hvisual{ order:-1; min-height:340px; }
+          .lp .manifesto h2{ font-size:32px; }
+          .lp .center-head h2, .lp .cta-band h2{ font-size:32px; }
+          .lp .fgrid,.lp .steps,.lp .tgrid,.lp .pgrid,.lp .statband{ grid-template-columns:1fr; }
+          .lp .statband{ grid-template-columns:repeat(2,1fr); }
+          .lp .nav .links{ display:none; }
         }
-        @keyframes phFrame { from { opacity:0; transform:translateY(18px) scale(.95) } to { opacity:1; transform:none } }
-        @keyframes phPiece { from { opacity:0; transform:translateY(12px) scale(.98) } to { opacity:1; transform:none } }
-        @keyframes phFade { from { opacity:0; transform:translateY(8px) } to { opacity:1; transform:none } }
-        .landing.anim .reveal { opacity:0; transform:translateY(30px); filter:blur(7px); transition:opacity .8s cubic-bezier(.2,.8,.2,1), transform .8s cubic-bezier(.2,.8,.2,1), filter .8s ease; }
-        .landing.anim .reveal.from-left { transform:translateX(-46px); }
-        .landing.anim .reveal.from-right { transform:translateX(46px); }
-        .landing.anim .reveal.in { opacity:1; transform:none; filter:blur(0); }
-        .landing .scroll-prog { position:fixed; top:0; left:0; height:3px; width:0; background:linear-gradient(90deg, var(--pista), var(--pista-dd)); z-index:200; transition:width .12s linear; }
-        .landing nav { transition:box-shadow .3s, background .3s; }
-        .landing nav.scrolled { box-shadow:0 8px 30px rgba(20,40,10,.07); background:rgba(255,255,255,.93); }
-        .landing .nav-in { transition:height .3s; }
-        .landing nav.scrolled .nav-in { height:58px; }
-        .landing .hero-vid, .landing .fvisual, .landing .phone-stage { will-change:transform; }
-        .landing .statband-wrap { background:var(--pista-dd); }
-        .landing .statband { display:grid; grid-template-columns:repeat(4,1fr); gap:24px; padding:42px 0; }
-        @media(max-width:760px){ .landing .statband { grid-template-columns:repeat(2,1fr); row-gap:30px; } }
-        .landing .sbi { text-align:center; color:#fff; }
-        .landing .sbi .num { font-family:var(--font-serif),Georgia,serif; font-weight:600; font-size:42px; letter-spacing:-.02em; line-height:1; }
-        .landing .sbi .lbl { margin-top:6px; font-size:13px; color:#c7d8b6; }
-        .landing .testi { background:var(--white); }
-        .landing .tgrid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
-        @media(max-width:880px){ .landing .tgrid { grid-template-columns:1fr; } }
-        .landing .tcard { border:1px solid var(--line); border-radius:20px; padding:24px; background:#fff; box-shadow:var(--shadow); display:flex; flex-direction:column; transition:transform .25s, box-shadow .25s; }
-        .landing .tcard:hover { transform:translateY(-4px); box-shadow:0 24px 60px rgba(20,40,10,.10); }
-        .landing .tstars { color:#e8a33d; letter-spacing:2px; font-size:14px; }
-        .landing .tquote { font-size:15.5px; line-height:1.55; margin:12px 0 18px; color:var(--ink); }
-        .landing .twho { display:flex; align-items:center; gap:12px; margin-top:auto; }
-        .landing .twho img { width:46px; height:46px; border-radius:50%; object-fit:cover; }
-        .landing .twho b { display:block; font-size:14px; }
-        .landing .twho span { font-size:12.5px; color:var(--muted); }
-        .landing .ph-status { display:flex; justify-content:space-between; font-size:11px; font-weight:600; padding:12px 22px 6px; }
-        .landing .ph-head { display:flex; align-items:center; gap:9px; padding:4px 16px 12px; }
-        .landing .ph-badge { width:34px; height:34px; border-radius:10px; background:var(--pista-d); color:#fff; display:grid; place-items:center; font-weight:800; font-size:13px; }
-        .landing .ph-head .l { font-size:10px; color:var(--muted); }
-        .landing .ph-head .v { font-size:13px; font-weight:700; }
-        .landing .ph-ai { margin:0 16px; background:linear-gradient(120deg,var(--pista),var(--pista-d)); color:#fff; border-radius:16px; padding:14px; position:relative; overflow:hidden; }
-        .landing .ph-ai .sp { position:absolute; right:-8px; top:-8px; font-size:54px; opacity:.16; }
-        .landing .ph-ai .k { font-size:9px; font-weight:800; letter-spacing:.06em; opacity:.85; }
-        .landing .ph-ai h4 { font-size:14px; margin:3px 0 2px; }
-        .landing .ph-ai p { font-size:11px; opacity:.9; }
-        .landing .ph-ai .go { display:inline-block; margin-top:9px; background:#fff; color:var(--pista-d); font-size:10.5px; font-weight:800; padding:6px 11px; border-radius:999px; }
-        .landing .ph-chips { display:flex; gap:6px; padding:13px 16px 6px; overflow:hidden; }
-        .landing .ph-chip { font-size:11px; font-weight:700; padding:6px 11px; border-radius:999px; background:#f1f4ec; color:var(--muted); white-space:nowrap; }
-        .landing .ph-chip.on { background:var(--tint); color:var(--pista-d); }
-        .landing .ph-item { display:flex; gap:11px; padding:11px 16px; align-items:center; }
-        .landing .ph-item img { width:54px; height:54px; border-radius:12px; object-fit:cover; }
-        .landing .ph-item .nm { font-size:12.5px; font-weight:700; }
-        .landing .ph-item .ds { font-size:10.5px; color:var(--muted); }
-        .landing .ph-item .pr { margin-left:auto; font-size:12.5px; font-weight:800; }
-        .landing .ph-nav { display:flex; border-top:1px solid var(--line); margin-top:6px; }
-        .landing .ph-nav div { flex:1; text-align:center; font-size:9px; font-weight:700; color:var(--muted); padding:9px 0; }
-        .landing .ph-nav div.on { color:var(--pista-d); }
-        .landing .ph-nav .ic { font-size:15px; display:block; }
-
-        .landing .ftag { position:absolute; background:#fff; border:1px solid var(--line); box-shadow:var(--shadow); border-radius:14px; padding:11px 14px; font-size:12.5px; font-weight:700; display:flex; align-items:center; gap:9px; z-index:2; }
-        .landing .ftag .ic { width:30px; height:30px; border-radius:9px; background:var(--tint); color:var(--pista-d); display:grid; place-items:center; font-size:15px; }
-        .landing .ftag.t1 { top:18%; left:-6%; }
-        .landing .ftag.t2 { bottom:16%; right:-8%; }
-        @media(max-width:560px){ .landing .ftag{display:none} }
-
-        .landing .logos { padding:42px 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line); background:var(--cream); }
-        .landing .logos .lab { text-align:center; font-size:13px; font-weight:700; color:var(--muted); margin-bottom:22px; }
-        .landing .logo-row { display:flex; flex-wrap:wrap; justify-content:center; gap:40px; align-items:center; opacity:.8; }
-        .landing .brandname { font-size:20px; font-weight:800; color:var(--pista-dd); letter-spacing:-.02em; display:flex; align-items:center; gap:7px; }
-        .landing .brandname .b { font-size:22px; }
-
-        .landing .center-head { text-align:center; max-width:680px; margin:0 auto 56px; }
-        .landing .center-head h2 { font-size:38px; font-weight:800; }
-        .landing .center-head p { font-size:17px; color:var(--muted); margin-top:14px; }
-        @media(max-width:900px){ .landing .center-head h2{font-size:30px} }
-        .landing .cards { display:grid; grid-template-columns:repeat(4,1fr); gap:20px; }
-        @media(max-width:900px){ .landing .cards{grid-template-columns:repeat(2,1fr)} }
-        @media(max-width:520px){ .landing .cards{grid-template-columns:1fr} }
-        .landing .card { background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:26px 22px; transition:.15s; }
-        .landing .card:hover { border-color:var(--pista); box-shadow:var(--shadow); transform:translateY(-3px); }
-        .landing .card .ic { width:48px; height:48px; border-radius:13px; background:var(--tint); color:var(--pista-d); display:grid; place-items:center; font-size:23px; margin-bottom:16px; }
-        .landing .card h3 { font-size:18px; font-weight:700; }
-        .landing .card p { font-size:14px; color:var(--muted); margin-top:8px; }
-
-        .landing .feat { display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:center; margin-bottom:90px; }
-        .landing .feat:last-child { margin-bottom:0; }
-        .landing .feat.rev .ftext { order:2; }
-        @media(max-width:880px){ .landing .feat{grid-template-columns:1fr;gap:30px} .landing .feat.rev .ftext{order:0} }
-        .landing .ftext .eyebrow { margin-bottom:12px; }
-        .landing .ftext h2 { font-size:32px; font-weight:800; }
-        @media(max-width:880px){ .landing .ftext h2{font-size:26px} }
-        .landing .ftext p { font-size:16px; color:var(--muted); margin-top:14px; }
-        .landing .ftext ul { list-style:none; margin-top:20px; display:flex; flex-direction:column; gap:12px; padding:0; }
-        .landing .ftext li { display:flex; gap:11px; font-size:14.5px; font-weight:600; }
-        .landing .ftext li .ck { width:22px; height:22px; border-radius:7px; background:var(--tint); color:var(--pista-d); display:grid; place-items:center; font-size:12px; font-weight:900; flex:none; }
-        .landing .fvisual { border-radius:var(--radius); overflow:hidden; border:1px solid var(--line); box-shadow:var(--shadow); background:var(--cream); }
-
-        .landing .chatmock { padding:24px; display:flex; flex-direction:column; gap:12px; background:linear-gradient(160deg,var(--tint2),#fff); }
-        .landing .cm-q { align-self:flex-end; background:var(--pista); color:#fff; font-size:13.5px; font-weight:600; padding:11px 15px; border-radius:16px 16px 5px 16px; max-width:80%; }
-        .landing .cm-a { align-self:flex-start; background:#fff; border:1px solid var(--line); font-size:13.5px; padding:11px 15px; border-radius:16px 16px 16px 5px; max-width:88%; }
-        .landing .cm-rec { display:flex; align-items:center; gap:11px; background:#fff; border:1px solid var(--line); border-radius:13px; padding:9px; box-shadow:var(--shadow); }
-        .landing .cm-rec img { width:46px; height:46px; border-radius:10px; object-fit:cover; }
-        .landing .cm-rec .n { font-size:12.5px; font-weight:700; }
-        .landing .cm-rec .w { font-size:11px; color:var(--pista-d); font-weight:700; }
-        .landing .cm-rec .p { margin-left:auto; font-size:13px; font-weight:800; }
-
-        .landing .cupmock { padding:24px; background:linear-gradient(160deg,var(--tint2),#fff); }
-        .landing .cupcard { background:#fff; border:1px solid var(--line); border-radius:16px; overflow:hidden; }
-        .landing .cupcard .h { display:flex; align-items:center; gap:8px; background:var(--tint); color:var(--pista-d); font-size:13px; font-weight:800; padding:12px 14px; }
-        .landing .cupcard .h .ai { margin-left:auto; background:var(--pista-d); color:#fff; font-size:9px; font-weight:800; padding:3px 7px; border-radius:6px; }
-        .landing .cuprow { display:flex; gap:10px; padding:12px 14px; border-top:1px solid var(--line); font-size:12.5px; }
-        .landing .cuprow .ic { font-size:15px; }
-        .landing .cuprow b { display:block; font-size:11px; color:var(--muted); }
-        .landing .cuppills { display:flex; flex-wrap:wrap; gap:5px; margin-top:5px; }
-        .landing .cuppills span { font-size:10.5px; background:var(--cream); border-radius:999px; padding:3px 9px; font-weight:700; }
-
-        .landing .thememock { padding:28px 24px; background:linear-gradient(160deg,var(--tint2),#fff); display:flex; gap:18px; align-items:center; justify-content:center; flex-wrap:wrap; }
-        .landing .swatch { width:54px; height:54px; border-radius:14px; box-shadow:var(--shadow); border:2px solid #fff; cursor:pointer; }
-        .landing .miniapp { width:150px; border-radius:20px; overflow:hidden; border:1px solid var(--line); box-shadow:var(--shadow); background:#fff; }
-        .landing .miniapp .top { display:flex; align-items:center; gap:7px; padding:10px; }
-        .landing .miniapp .b { width:24px; height:24px; border-radius:7px; display:grid; place-items:center; color:#fff; font-weight:800; font-size:11px; }
-        .landing .miniapp .nm { font-size:11px; font-weight:800; }
-        .landing .miniapp .hero2 { height:60px; margin:0 10px; border-radius:10px; background-size:cover; background-position:center; }
-        .landing .miniapp .cta2 { margin:10px; padding:8px; border-radius:9px; text-align:center; color:#fff; font-size:10px; font-weight:800; }
-
-        .landing .how { background:var(--pista-dd); color:#fff; }
-        .landing .how .center-head h2 { color:#fff; }
-        .landing .how .center-head p { color:#c7d8b6; }
-        .landing .steps { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
-        @media(max-width:820px){ .landing .steps{grid-template-columns:1fr} }
-        .landing .step { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); border-radius:var(--radius); padding:28px 24px; position:relative; }
-        .landing .step .num { width:40px; height:40px; border-radius:11px; background:var(--pista); color:#fff; display:grid; place-items:center; font-weight:900; font-size:18px; margin-bottom:16px; }
-        .landing .step h3 { font-size:19px; }
-        .landing .step p { font-size:14.5px; color:#c7d8b6; margin-top:8px; }
-
-        .landing .show { background:var(--cream); }
-        .landing .showcard { background:#fff; border:1px solid var(--line); border-radius:28px; overflow:hidden; display:grid; grid-template-columns:1fr 1fr; box-shadow:var(--shadow); }
-        @media(max-width:880px){ .landing .showcard{grid-template-columns:1fr} }
-        .landing .show-l { padding:48px; }
-        .landing .show-l .quote { font-size:23px; font-weight:700; letter-spacing:-.01em; line-height:1.35; margin:18px 0 22px; }
-        .landing .show-l .who { display:flex; align-items:center; gap:12px; }
-        .landing .show-l .who .av { width:46px; height:46px; border-radius:50%; background:var(--tint); display:grid; place-items:center; font-size:20px; }
-        .landing .show-l .who b { font-size:14px; }
-        .landing .show-l .who span { font-size:12.5px; color:var(--muted); }
-        .landing .stats { display:flex; gap:30px; margin-top:30px; flex-wrap:wrap; }
-        .landing .stats .s b { font-size:30px; font-weight:800; color:var(--pista-d); }
-        .landing .stats .s span { font-size:12.5px; color:var(--muted); }
-        .landing .show-r { background-size:cover; background-position:center; min-height:280px; }
-
-        .landing .pricing-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:22px; align-items:stretch; }
-        @media(max-width:880px){ .landing .pricing-grid{grid-template-columns:1fr} }
-        .landing .price { background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:30px 26px; display:flex; flex-direction:column; }
-        .landing .price.pop { border:2px solid var(--pista); box-shadow:var(--shadow); position:relative; }
-        .landing .price.pop .badge { position:absolute; top:-12px; left:50%; transform:translateX(-50%); background:var(--pista); color:#fff; font-size:11px; font-weight:800; padding:5px 13px; border-radius:999px; }
-        .landing .price h3 { font-size:19px; }
-        .landing .price .amt { font-size:40px; font-weight:800; margin:10px 0 2px; }
-        .landing .price .amt small { font-size:15px; font-weight:600; color:var(--muted); }
-        .landing .price .desc { font-size:13.5px; color:var(--muted); min-height:42px; }
-        .landing .price ul { list-style:none; margin:20px 0 24px; display:flex; flex-direction:column; gap:11px; padding:0; }
-        .landing .price li { display:flex; gap:10px; font-size:14px; }
-        .landing .price li .ck { color:var(--pista-d); font-weight:900; }
-        .landing .price .btn { width:100%; justify-content:center; margin-top:auto; }
-
-        .landing .cta-band { background:linear-gradient(135deg,var(--pista),var(--pista-d)); color:#fff; border-radius:28px; padding:60px 48px; text-align:center; position:relative; overflow:hidden; }
-        .landing .cta-vid { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0; }
-        .landing .cta-veil { position:absolute; inset:0; z-index:1; background:linear-gradient(135deg, rgba(54,81,31,.85), rgba(21,53,28,.8)); }
-        .landing .cta-band > *:not(.cta-vid):not(.cta-veil) { position:relative; z-index:2; }
-        .landing .cta-band .sp { position:absolute; font-size:200px; opacity:.08; right:-20px; top:-50px; }
-        .landing .cta-band h2 { font-size:38px; font-weight:800; }
-        @media(max-width:700px){ .landing .cta-band h2{font-size:28px} .landing .cta-band{padding:44px 24px} }
-        .landing .cta-band p { font-size:17px; opacity:.92; margin-top:14px; max-width:560px; margin-left:auto; margin-right:auto; }
-        .landing .cta-form { display:flex; gap:10px; justify-content:center; margin-top:28px; flex-wrap:wrap; }
-        .landing .cta-form input { border:none; border-radius:12px; padding:14px 18px; font-size:15px; font-family:inherit; width:300px; max-width:80vw; }
-        .landing .cta-band .btn-white { background:#fff; color:var(--pista-d); }
-        .landing .cta-band .btn-white:hover { background:#eef6e3; }
-        .landing .cta-note { font-size:13px; opacity:.85; margin-top:14px; }
-
-        .landing footer { padding:60px 0 36px; border-top:1px solid var(--line); }
-        .landing .foot-grid { display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr; gap:30px; margin-bottom:40px; }
-        @media(max-width:760px){ .landing .foot-grid{grid-template-columns:1fr 1fr} }
-        .landing .foot-grid p { font-size:14px; color:var(--muted); margin-top:14px; max-width:280px; }
-        .landing .fcol h4 { font-size:13px; font-weight:800; text-transform:uppercase; letter-spacing:.05em; color:var(--ink); margin-bottom:14px; }
-        .landing .fcol a { display:block; font-size:14px; color:var(--muted); margin-bottom:10px; }
-        .landing .fcol a:hover { color:var(--pista-d); }
-        .landing .foot-bot { display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--line); padding-top:24px; font-size:13px; color:var(--muted); flex-wrap:wrap; gap:10px; }
+        @media(prefers-reduced-motion:reduce){
+          .lp .reveal{ opacity:1; transform:none; transition:none; }
+          .lp .enso path, .lp .hero-enso path, .lp .hm-ink{ stroke-dashoffset:0 !important; animation:none !important; transition:none !important; }
+          .lp .hm-spin, .lp .hm-glow, .lp .hm-steam i{ animation:none !important; }
+          .lp .hm-seed{ opacity:.85 !important; animation:none !important; }
+          .lp .logo-track, .lp .brand i.shiny{ animation:none !important; }
+        }
       `}</style>
     </div>
   );

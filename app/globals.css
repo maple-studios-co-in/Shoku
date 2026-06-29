@@ -4,20 +4,31 @@
 
 :root {
   /* ----- White-label brand tokens (RGB channels) ----- */
-  /* Pista green */
-  --brand: 122 176 74;        /* #7AB04A — pistachio */
-  --brand-dark: 54 81 31;     /* #36511F — deep pistachio */
-  --brand-tint: 233 242 222;  /* #E9F2DE */
+  /* Shoku — matcha + clay on warm paper */
+  --brand: 58 107 77;         /* #3A6B4D — matcha */
+  --brand-dark: 36 70 53;      /* #244635 */
+  --brand-tint: 234 241 234;   /* #EAF1EA */
 
-  --canvas: 247 250 242;      /* pale pista cream */
-  --ink: 24 28 22;
-  --muted: 110 118 104;
-  --line: 232 236 226;
+  --accent: 194 100 60;        /* #C2643C — clay / terracotta */
+  --accent-tint: 245 233 224;  /* #F5E9E0 */
+
+  --canvas: 246 242 234;       /* #F6F2EA — warm paper */
+  --ink: 27 24 19;             /* #1B1813 — sumi */
+  --muted: 111 101 87;         /* #6F6557 */
+  --line: 228 221 208;         /* #E4DDD0 */
 
   --font-sans: "Inter", system-ui, sans-serif;
 }
 
 * { -webkit-tap-highlight-color: transparent; }
+
+@layer base {
+  /* Editorial serif (Fraunces) for titles & section heads — matches the Shoku
+     homepage. Utilities like font-bold / tracking-tight still override these. */
+  h1, h2 { font-family: var(--font-serif); letter-spacing: -0.01em; }
+  ::selection { background: rgb(var(--accent) / 0.18); }
+  :focus-visible { outline: 2px solid rgb(var(--brand)); outline-offset: 2px; }
+}
 
 html, body { height: 100%; }
 
@@ -35,11 +46,16 @@ body {
 .app-shell {
   max-width: 480px;
   margin: 0 auto;
-  background: #fff;
+  background: #fffdfa;            /* a hair warmer than pure white, sits on the paper canvas */
   min-height: 100vh;
   position: relative;
-  box-shadow: 0 0 0 1px rgb(var(--line)), 0 30px 80px rgba(16,24,40,.08);
+  box-shadow: 0 0 0 1px rgb(var(--line)), 0 30px 90px rgba(36,28,18,.12);
 }
+
+/* Shoku editorial accents reusable across screens */
+.eyebrow-jp { font-size: 11px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: rgb(var(--brand)); }
+.serif { font-family: var(--font-serif); letter-spacing: -.01em; }
+.kanji { font-family: var(--font-serif); color: rgb(var(--accent)); }
 
 .veg-dot {
   width: 14px; height: 14px; border: 1.5px solid #2e9e54; border-radius: 3px;

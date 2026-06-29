@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1010 430" font-family="Inter, system-ui, sans-serif">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#3A6B4D"/>
+    </marker>
+    <marker id="arrc" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#C2643C"/>
+    </marker>
+    <style>
+      .box{fill:#fff;stroke:#E4DDD0;stroke-width:1.5;rx:12}
+      .t{fill:#1B1813;font-size:12.5px;font-weight:600}
+      .s{fill:#6F6557;font-size:10.5px}
+      .lane{font-size:11px;font-weight:700;letter-spacing:.14em}
+      .arr{stroke:#3A6B4D;stroke-width:2;marker-end:url(#arr)}
+      .arrc{stroke:#C2643C;stroke-width:2;marker-end:url(#arrc)}
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="1010" height="430" rx="20" fill="#F6F2EA"/>
+  <text x="32" y="46" font-family="Georgia, serif" font-size="24" fill="#1B1813">Shoku — Customer &amp; Owner Flows</text>
+  <text x="33" y="66" class="s" font-size="12">食 · how a diner orders, and how a café owner runs the store</text>
+
+  <!-- CUSTOMER LANE -->
+  <text x="32" y="104" class="lane" fill="#3A6B4D">CUSTOMER JOURNEY</text>
+  <g>
+    <!-- accent bars -->
+    <g fill="#3A6B4D">
+      <rect x="24" y="118" width="4" height="58" rx="2"/><rect x="164" y="118" width="4" height="58" rx="2"/>
+      <rect x="304" y="118" width="4" height="58" rx="2"/><rect x="444" y="118" width="4" height="58" rx="2"/>
+      <rect x="584" y="118" width="4" height="58" rx="2"/><rect x="724" y="118" width="4" height="58" rx="2"/>
+      <rect x="864" y="118" width="4" height="58" rx="2"/>
+    </g>
+    <rect class="box" x="24" y="118" width="122" height="58" rx="12"/>
+    <rect class="box" x="164" y="118" width="122" height="58" rx="12"/>
+    <rect class="box" x="304" y="118" width="122" height="58" rx="12"/>
+    <rect class="box" x="444" y="118" width="122" height="58" rx="12"/>
+    <rect class="box" x="584" y="118" width="122" height="58" rx="12"/>
+    <rect class="box" x="724" y="118" width="122" height="58" rx="12"/>
+    <rect class="box" x="864" y="118" width="122" height="58" rx="12"/>
+
+    <text class="t" x="40" y="143">Scan QR</text><text class="s" x="40" y="159">or open link</text>
+    <text class="t" x="180" y="143">Browse</text><text class="s" x="180" y="159">the menu</text>
+    <text class="t" x="320" y="143">Ask</text><text class="s" x="320" y="159">Shoku AI</text>
+    <text class="t" x="460" y="143">Add to</text><text class="s" x="460" y="159">the cart</text>
+    <text class="t" x="600" y="143">Review &amp;</text><text class="s" x="600" y="159">checkout</text>
+    <text class="t" x="740" y="143">Pay</text><text class="s" x="740" y="159">UPI · Razorpay</text>
+    <text class="t" x="880" y="143">Order placed</text><text class="s" x="880" y="159">+ loyalty points</text>
+
+    <line class="arr" x1="148" y1="147" x2="162" y2="147"/>
+    <line class="arr" x1="288" y1="147" x2="302" y2="147"/>
+    <line class="arr" x1="428" y1="147" x2="442" y2="147"/>
+    <line class="arr" x1="568" y1="147" x2="582" y2="147"/>
+    <line class="arr" x1="708" y1="147" x2="722" y2="147"/>
+    <line class="arr" x1="848" y1="147" x2="862" y2="147"/>
+  </g>
+
+  <!-- WhatsApp follow-up note -->
+  <text x="864" y="196" class="s" font-size="10">→ WhatsApp order updates</text>
+
+  <!-- OWNER LANE -->
+  <text x="32" y="262" class="lane" fill="#C2643C">CAFÉ OWNER</text>
+  <g>
+    <g fill="#C2643C">
+      <rect x="24" y="276" width="4" height="58" rx="2"/><rect x="184" y="276" width="4" height="58" rx="2"/>
+      <rect x="344" y="276" width="4" height="58" rx="2"/><rect x="504" y="276" width="4" height="58" rx="2"/>
+      <rect x="664" y="276" width="4" height="58" rx="2"/><rect x="824" y="276" width="4" height="58" rx="2"/>
+    </g>
+    <rect class="box" x="24" y="276" width="142" height="58" rx="12"/>
+    <rect class="box" x="184" y="276" width="142" height="58" rx="12"/>
+    <rect class="box" x="344" y="276" width="142" height="58" rx="12"/>
+    <rect class="box" x="504" y="276" width="142" height="58" rx="12"/>
+    <rect class="box" x="664" y="276" width="142" height="58" rx="12"/>
+    <rect class="box" x="824" y="276" width="142" height="58" rx="12"/>
+
+    <text class="t" x="40" y="301">Sign up</text><text class="s" x="40" y="317">+ onboard</text>
+    <text class="t" x="200" y="301">Set brand</text><text class="s" x="200" y="317">colours &amp; menu</text>
+    <text class="t" x="360" y="301">Go live</text><text class="s" x="360" y="317">own subdomain</text>
+    <text class="t" x="520" y="301">Receive</text><text class="s" x="520" y="317">live orders</text>
+    <text class="t" x="680" y="301">Marketing</text><text class="s" x="680" y="317">WhatsApp · banners</text>
+    <text class="t" x="840" y="301">Analytics</text><text class="s" x="840" y="317">revenue &amp; insights</text>
+
+    <line class="arrc" x1="168" y1="305" x2="182" y2="305"/>
+    <line class="arrc" x1="328" y1="305" x2="342" y2="305"/>
+    <line class="arrc" x1="488" y1="305" x2="502" y2="305"/>
+    <line class="arrc" x1="648" y1="305" x2="662" y2="305"/>
+    <line class="arrc" x1="808" y1="305" x2="822" y2="305"/>
+  </g>
+
+  <text x="32" y="408" class="s" font-size="11">0% commission · white-label (the diner sees the café's brand) · all customer data stays with the café</text>
+</svg>

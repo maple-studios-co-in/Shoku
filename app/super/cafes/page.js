@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { SectionCard, formatINR } from "@/components/AdminUI";
 
 const BASE = process.env.NEXT_PUBLIC_BASE_DOMAIN || "pista.maplestudios.co.in";
-const BLANK = { name: "", slug: "", plan: "growth", address: "", ownerName: "", ownerEmail: "", ownerPassword: "", brandHex: "#7AB04A", darkHex: "#36511F", seedMenu: true };
+const BLANK = { name: "", slug: "", plan: "growth", address: "", ownerName: "", ownerEmail: "", ownerPassword: "", brandHex: "#3A6B4D", darkHex: "#244635", seedMenu: true };
 
 export default function CafesPage() {
   const [rows, setRows] = useState([]);
@@ -16,7 +16,7 @@ export default function CafesPage() {
   function load() {
     fetch("/api/super/tenants").then((r) => (r.ok ? r.json() : [])).then(setRows).catch(() => {});
   }
-  useEffect(load, []);
+  useEffect(() => { load(); }, []);
 
   function autoSlug(name) {
     return name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 30);

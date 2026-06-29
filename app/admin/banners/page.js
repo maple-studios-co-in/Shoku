@@ -11,7 +11,7 @@ export default function BannersPage() {
   const fileRef = useRef(null);
 
   const load = () => fetch("/api/banners?manage=1").then((r) => (r.ok ? r.json() : [])).then(setBanners).catch(() => {});
-  useEffect(load, []);
+  useEffect(() => { load(); }, []);
 
   function onFile(e) {
     const f = e.target.files?.[0];

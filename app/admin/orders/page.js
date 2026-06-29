@@ -20,7 +20,7 @@ export default function AdminOrdersPage() {
       .finally(() => setLoading(false));
   }
 
-  useEffect(load, [filter]);
+  useEffect(() => { load(); }, [filter]);
 
   async function setStatus(id, status) {
     setOrders((arr) => arr.map((o) => (o.id === id ? { ...o, status } : o)));

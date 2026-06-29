@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 const PPTX_MIME = "application/vnd.openxmlformats-officedocument.presentationml.presentation";
 
 function safe(name) {
-  return String(name || "Pista-Pitch-Deck.pptx").replace(/[^\w.\- ]+/g, "_");
+  return String(name || "Shoku-Pitch-Deck.pptx").replace(/[^\w.\- ]+/g, "_");
 }
 
 // Editable .pptx source — superadmin only.
@@ -31,7 +31,7 @@ export async function GET() {
   try {
     const buf = await readFile(path.join(process.cwd(), "public", "pitch-deck.pptx"));
     return new Response(buf, {
-      headers: { "Content-Type": PPTX_MIME, "Content-Disposition": 'attachment; filename="Pista-Pitch-Deck.pptx"' },
+      headers: { "Content-Type": PPTX_MIME, "Content-Disposition": 'attachment; filename="Shoku-Pitch-Deck.pptx"' },
     });
   } catch {
     return NextResponse.json({ error: "No source uploaded yet." }, { status: 404 });

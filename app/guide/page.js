@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { marked } from "marked";
+import { safeMarkdownHtml } from "@/lib/sanitize";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import GuideView from "./GuideView";
@@ -10,15 +11,15 @@ export const dynamic = "force-dynamic";
 function render(file) {
   try {
     const md = fs.readFileSync(path.join(process.cwd(), "content", file), "utf8");
-    return marked.parse(md, { gfm: true });
+    return safeMarkdownHtml(marked.parse(md, { gfm: true }));
   } catch {
     return null;
   }
 }
 
 export const metadata = {
-  title: "Pista — Guide",
-  description: "How to use Pista: a guide for café owners, staff and developers.",
+  title: "Shoku — Guide",
+  description: "How to use Shoku: a guide for café owners, staff and developers.",
 };
 
 export default async function GuidePage() {

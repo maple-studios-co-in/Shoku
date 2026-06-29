@@ -41,7 +41,7 @@ export default function CartPage() {
             <h2 className="text-lg font-bold">Your bag is empty</h2>
             <p className="mt-1 text-sm text-muted">Add something delicious from the menu.</p>
             <Link href="/menu" className="mt-5 inline-block rounded-xl bg-brand px-6 py-3 text-sm font-bold text-white">Browse menu</Link>
-            <Link href="/ai" className="mt-3 block text-sm font-semibold text-brand">or ask Pista AI ✨</Link>
+            <Link href="/ai" className="mt-3 block text-sm font-semibold text-brand">or ask Shoku AI ✨</Link>
           </div>
         </div>
       </AppShell>
@@ -71,7 +71,7 @@ export default function CartPage() {
 
         {showUpsell && (
           <div className="mx-4 my-4 rounded-2xl border border-brand bg-brand-tint p-3.5">
-            <div className="text-[10px] font-extrabold uppercase tracking-wider text-brand-dark">✨ Pista AI · pairs well with this</div>
+            <div className="text-[10px] font-extrabold uppercase tracking-wider text-brand-dark">✨ Shoku AI · pairs well with this</div>
             <div className="mt-2 flex items-center gap-3">
               <img src={upsell.img} alt={upsell.name} className="h-11 w-11 rounded-xl object-cover" />
               <div>

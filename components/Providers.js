@@ -23,9 +23,9 @@ function CartProvider({ children }) {
 
   useEffect(() => {
     try {
-      const saved = localStorage.getItem("pista.cart");
+      const saved = localStorage.getItem("shoku.cart");
       if (saved) setLines(JSON.parse(saved));
-      const t = localStorage.getItem("pista.table");
+      const t = localStorage.getItem("shoku.table");
       if (t) setTableState(JSON.parse(t));
     } catch {}
     setReady(true);
@@ -34,13 +34,13 @@ function CartProvider({ children }) {
   function setTable(t) {
     setTableState(t);
     try {
-      if (t) localStorage.setItem("pista.table", JSON.stringify(t));
-      else localStorage.removeItem("pista.table");
+      if (t) localStorage.setItem("shoku.table", JSON.stringify(t));
+      else localStorage.removeItem("shoku.table");
     } catch {}
   }
 
   useEffect(() => {
-    if (ready) localStorage.setItem("pista.cart", JSON.stringify(lines));
+    if (ready) localStorage.setItem("shoku.cart", JSON.stringify(lines));
   }, [lines, ready]);
 
   function add(item, opts = {}, qty = 1) {
@@ -105,11 +105,11 @@ export function hexToChannels(hex) {
 }
 
 const DEFAULTS = {
-  name: "Pista",
-  brandHex: "#7AB04A",
-  darkHex: "#36511F",
+  name: "Shoku",
+  brandHex: "#3A6B4D",
+  darkHex: "#244635",
   font: "Inter",
-  subdomain: "pista.app",
+  subdomain: "shoku.app",
   aiAssistant: true,
   aiCards: true,
   aiUpsell: true,
@@ -131,7 +131,7 @@ function BrandProvider({ children }) {
   useEffect(() => {
     // instant paint from cache, then sync authoritative value from the DB
     try {
-      const cached = localStorage.getItem("pista.brand");
+      const cached = localStorage.getItem("shoku.brand");
       if (cached) setBrand((b) => ({ ...b, ...JSON.parse(cached) }));
     } catch {}
     fetch("/api/brand")
@@ -143,7 +143,7 @@ function BrandProvider({ children }) {
   useEffect(() => {
     applyTheme(brand);
     try {
-      localStorage.setItem("pista.brand", JSON.stringify(brand));
+      localStorage.setItem("shoku.brand", JSON.stringify(brand));
     } catch {}
   }, [brand]);
 
