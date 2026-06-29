@@ -9,7 +9,7 @@ set -euo pipefail
 
 APP_DIR="${APP_DIR:-/var/www/pista}"
 APP_NAME="${APP_NAME:-pista}"
-BASE_DOMAIN_DEFAULT="${BASE_DOMAIN_DEFAULT:-pista.maplestudios.co.in}"
+BASE_DOMAIN_DEFAULT="${BASE_DOMAIN_DEFAULT:-getshoku.com}"
 DEFAULT_TENANT_SLUG="${DEFAULT_TENANT_SLUG:-cbtl}"
 
 cd "$APP_DIR"
