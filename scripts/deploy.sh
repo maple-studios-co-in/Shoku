@@ -35,11 +35,16 @@ cd "$APP_DIR"
 
 # ---------- 2. env ----------
 if [ ! -f .env ]; then
-  echo "✎ Creating .env (generating NEXTAUTH_SECRET)"
+  echo "✎ Creating .env (generating secrets)"
   cat > .env <<EOF
 DATABASE_URL="file:./dev.db"
 NEXTAUTH_URL="https://$DOMAIN"
 NEXTAUTH_SECRET="$(openssl rand -base64 32)"
+# Multi-tenant: subdomain → tenant. COOKIE_DOMAIN shares login across *.$DOMAIN (needs HTTPS).
+BASE_DOMAIN="$DOMAIN"
+NEXT_PUBLIC_BASE_DOMAIN="$DOMAIN"
+DEFAULT_TENANT_SLUG="${DEFAULT_TENANT_SLUG:-cbtl}"
+COOKIE_DOMAIN=".$DOMAIN"
 EOF
 fi
 
@@ -47,7 +52,10 @@ fi
 npm ci
 if [ ! -f prisma/dev.db ]; then
   echo "⛁ Initialising + seeding database"
-  npm run setup
+  SEED_PW="${SEED_ADMIN_PASSWORD:-$(openssl rand -base64 18)}"
+  SEED_ADMIN_PASSWORD="$SEED_PW" SEED_PASSWORD="$SEED_PW" NODE_ENV=production npm run setup
+  echo "🔑 Superadmin: super@shoku.app  ·  password: $SEED_PW"
+  echo "   ⚠ Save this now — change it after first login."
 else
   echo "⛁ Applying any schema changes (data preserved)"
   npx prisma db push --skip-generate
@@ -62,6 +70,7 @@ else
   echo "▶ Starting PM2 process"
   PORT="$PORT" pm2 start npm --name "$APP_NAME" -- start
 fi
+sudo env PATH="$PATH" pm2 startup systemd -u "$RUN_USER" --hp "$HOME" >/dev/null 2>&1 || true
 pm2 save
 
 # ---------- 5. nginx site ----------
@@ -73,6 +82,7 @@ server {
     listen 80;
     listen [::]:80;
     server_name $DOMAIN;
+    client_max_body_size 30m;
 
     location / {
         proxy_pass http://127.0.0.1:$PORT;

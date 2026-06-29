@@ -1,5 +1,5 @@
 /* eslint-disable */
-// Seed the multi-tenant Pista database: a platform superadmin + two demo cafés.
+// Seed the multi-tenant Shoku database: a platform superadmin + two demo cafés.
 //   npm run seed   (or `npm run setup` to push schema + seed)
 
 const { PrismaClient } = require("@prisma/client");
@@ -90,15 +90,23 @@ async function seedOrders(tenant, buyers) {
 async function ensureUser({ email, name, role, tenantId, points = 120, phone = null }) {
   const found = await prisma.user.findFirst({ where: { email, tenantId: tenantId ?? null } });
   if (found) return found;
-  const password = await bcrypt.hash("password", 10);
+  // Never seed a known default password in production. Provide SEED_ADMIN_PASSWORD
+  // (superadmin/owner) and/or SEED_PASSWORD; in dev these fall back to "password".
+  const isPriv = role === "superadmin" || role === "owner";
+  const raw =
+    (isPriv ? process.env.SEED_ADMIN_PASSWORD : process.env.SEED_PASSWORD) ||
+    process.env.SEED_PASSWORD ||
+    (process.env.NODE_ENV === "production" ? null : "password");
+  if (!raw) throw new Error(`Refusing to seed ${role} <${email}> with a default password in production — set SEED_ADMIN_PASSWORD.`);
+  const password = await bcrypt.hash(raw, 10);
   return prisma.user.create({ data: { email, name, role, tenantId: tenantId ?? null, password, points, phone, waOptIn: true } });
 }
 
 async function main() {
-  console.log("Seeding Pista (multi-tenant)…");
+  console.log("Seeding Shoku (multi-tenant)…");
 
   // Platform superadmin (global)
-  await ensureUser({ email: "super@pista.app", name: "Pista Admin", role: "superadmin", tenantId: null, points: 0 });
+  await ensureUser({ email: "super@shoku.app", name: "Shoku Admin", role: "superadmin", tenantId: null, points: 0 });
 
   // ---- Tenant 1: CBTL (the default/primary café) ----
   const cbtl = await prisma.tenant.upsert({
@@ -107,7 +115,7 @@ async function main() {
     create: { name: "The Coffee Bean & Tea Leaf", slug: "cbtl", storeName: "CBTL · Indiranagar", address: "100 Ft Rd, Indiranagar, Bengaluru", brandHex: "#7AB04A", darkHex: "#36511F", plan: "enterprise", tiers: JSON.stringify(DEFAULT_TIERS) },
   });
   await seedMenu(cbtl, ITEMS);
-  const owner1 = await ensureUser({ email: "demo@pista.app", name: "Maple Studios", role: "owner", tenantId: cbtl.id, points: 1240 });
+  const owner1 = await ensureUser({ email: "demo@shoku.app", name: "Maple Studios", role: "owner", tenantId: cbtl.id, points: 1240 });
   const c1 = [
     await ensureUser({ email: "aarav@example.com", name: "Aarav Sharma", role: "customer", tenantId: cbtl.id, points: 320, phone: "+919800000001" }),
     await ensureUser({ email: "diya@example.com", name: "Diya Patel", role: "customer", tenantId: cbtl.id, points: 540, phone: "+919800000002" }),
@@ -120,7 +128,7 @@ async function main() {
       ],
     });
   }
-  for (const code of [["WELCOME10", 10], ["PISTA15", 15]]) {
+  for (const code of [["WELCOME10", 10], ["SHOKU15", 15]]) {
     const existing = await prisma.discount.findFirst({ where: { code: code[0], tenantId: cbtl.id } });
     if (!existing) await prisma.discount.create({ data: { tenantId: cbtl.id, code: code[0], percent: code[1] } });
   }
@@ -164,8 +172,8 @@ async function main() {
   const o2 = await seedOrders(bt, [owner2, ...c2]);
 
   console.log(`Done.`);
-  console.log(`  Superadmin: super@pista.app / password`);
-  console.log(`  CBTL owner: demo@pista.app / password  (+${o1} orders)`);
+  console.log(`  Superadmin: super@shoku.app / password`);
+  console.log(`  CBTL owner: demo@shoku.app / password  (+${o1} orders)`);
   console.log(`  Blue Tokai owner: owner@bluetokai.app / password  (+${o2} orders)`);
 }
 
