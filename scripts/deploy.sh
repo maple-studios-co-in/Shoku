@@ -11,12 +11,15 @@
 set -euo pipefail
 
 # ---------- config (override via env) ----------
-REPO="${REPO:-https://github.com/maple-studios-co-in/pista.git}"
-APP_DIR="${APP_DIR:-/var/www/pista}"
-DOMAIN="${DOMAIN:-pista.maplestudios.co.in}"
+REPO="${REPO:-https://github.com/maple-studios-co-in/pista.git}"   # GitHub repo (internal name)
+APP_DIR="${APP_DIR:-/var/www/pista}"                              # server path (internal; keep to match the live box)
+DOMAIN="${DOMAIN:-getshoku.com}"
 PORT="${PORT:-3000}"
-APP_NAME="${APP_NAME:-pista}"
-LE_EMAIL="${LE_EMAIL:-admin@maplestudios.co.in}"
+APP_NAME="${APP_NAME:-pista}"                                     # pm2 process name (internal)
+LE_EMAIL="${LE_EMAIL:-admin@getshoku.com}"
+# Behind Cloudflare? Use a Cloudflare Origin Cert + scripts/nginx-shoku.conf and run
+# with MANAGE_NGINX=0 to skip the Let's Encrypt/Nginx steps below.
+MANAGE_NGINX="${MANAGE_NGINX:-1}"
 RUN_USER="$(whoami)"
 
 echo "▶ Deploying '$APP_NAME' → $APP_DIR  (https://$DOMAIN, port $PORT)"
@@ -73,6 +76,7 @@ fi
 sudo env PATH="$PATH" pm2 startup systemd -u "$RUN_USER" --hp "$HOME" >/dev/null 2>&1 || true
 pm2 save
 
+if [ "$MANAGE_NGINX" = "1" ]; then
 # ---------- 5. nginx site ----------
 NGINX_AVAIL="/etc/nginx/sites-available/$DOMAIN"
 if [ ! -f "$NGINX_AVAIL" ]; then
@@ -106,6 +110,9 @@ if [ ! -d "/etc/letsencrypt/live/$DOMAIN" ]; then
   echo "🔒 Issuing Let's Encrypt certificate"
   sudo certbot --nginx -d "$DOMAIN" --non-interactive --agree-tos -m "$LE_EMAIL" --redirect \
     || echo "⚠ certbot failed — run manually:  sudo certbot --nginx -d $DOMAIN"
+fi
+else
+  echo "↷ MANAGE_NGINX=0 — skipping Nginx/SSL (manage manually, e.g. Cloudflare Origin Cert + scripts/nginx-shoku.conf)"
 fi
 
 echo "✓ Done → https://$DOMAIN"
