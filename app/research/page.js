@@ -13,6 +13,8 @@ export const metadata = { title: "Shoku — Research Hub" };
 const DIR = path.join(process.cwd(), "content", "research");
 
 const TITLES = {
+  "pos-deep-dive": "POS deep-dive: Rista, Petpooja & the wedge",
+  "unit-economics": "Unit economics & pricing model",
   "market-trends-2026": "Market trends & reports",
   "competitor-analysis-2026": "Competitor analysis",
   "competitor-intel": "Competitor intel (scraped)",
@@ -22,6 +24,8 @@ const TITLES = {
   "rebranding-and-genz-strategy": "Rebrand & Gen-Z strategy",
 };
 const ORDER = [
+  "pos-deep-dive",
+  "unit-economics",
   "market-trends-2026",
   "competitor-analysis-2026",
   "competitor-intel",
@@ -87,6 +91,24 @@ const INSIGHTS = {
     "F&B-native AI WhatsApp marketing",
   ],
   funding: "$237M",
+  // POS pivot + unit economics (see pos-deep-dive.md / unit-economics.md)
+  posPricing: [
+    { k: "Budget apps", v: 4500 },
+    { k: "Petpooja (real)", v: 22500 },
+    { k: "Rista / DotPe", v: 40000 },
+    { k: "Posist yr-1", v: 55000 },
+  ],
+  unitEcon: [
+    { k: "Starter GP/mo", v: 4049 },
+    { k: "Growth GP/mo", v: 10134 },
+    { k: "POS add-on GP/mo", v: 1400 },
+  ],
+  posKpis: [
+    { v: "$13.4B · 8.3%", l: "Global restaurant-POS market 2026 · CAGR (R&M)" },
+    { v: "65%+", l: "SMB restaurants preferring cloud POS" },
+    { v: "78–81%", l: "Shoku gross margin per café (modelled)" },
+    { v: "≤0.8 mo", l: "CAC payback, inbound Growth café" },
+  ],
 };
 
 function Gate() {
