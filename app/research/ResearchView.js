@@ -72,7 +72,31 @@ export default function ResearchView({ docs, insights }) {
                 <div className="fund">Food-tech funding H1&apos;25: <b>{insights.funding}</b> — a lean, AI-native wedge beats a capital race.</div>
               </div>
             </div>
-            <p className="src">Sources are cited inside each report. Reports: market trends, competitor analysis, scraped competitor intel, Petpooja pivot, food-tech landscape &amp; gaps, community sentiment, rebrand strategy.</p>
+            {insights.posKpis && (
+              <>
+                <div className="eyebrow" style={{ marginTop: 34 }}>POS pivot · unit economics</div>
+                <h1 style={{ fontSize: 24 }}>Becoming the café POS — the numbers</h1>
+                <div className="kpis">
+                  {insights.posKpis.map((k) => (
+                    <div className="kpi" key={k.l}><div className="v">{k.v}</div><div className="l">{k.l}</div></div>
+                  ))}
+                </div>
+                <div className="cards">
+                  <div className="card">
+                    <h3>POS pricing ladder — effective ₹/yr, single outlet</h3>
+                    <p className="note">Real-world spend incl. modules/implementation; Rista/Posist are sales-led quotes (midpoints). Full table in the POS deep-dive.</p>
+                    <HBars data={insights.posPricing} color="#C2643C" fmt={(v) => "₹" + (v / 1000).toFixed(0) + "k"} />
+                  </div>
+                  <div className="card">
+                    <h3>Shoku gross profit per café / month</h3>
+                    <p className="note">Modelled at scenario S2 (~50 cafés), WhatsApp metered. Assumptions &amp; sensitivities in Unit Economics.</p>
+                    <HBars data={insights.unitEcon} fmt={(v) => "₹" + v.toLocaleString("en-IN")} />
+                  </div>
+                </div>
+                <p className="src">Route call: software-only POS add-on (billing + KOT + GST + day-end) beats a hardware-led fight at current scale — full argument in the two new reports.</p>
+              </>
+            )}
+            <p className="src">Sources are cited inside each report. Reports: POS deep-dive, unit economics, market trends, competitor analysis, scraped competitor intel, Petpooja pivot, food-tech landscape &amp; gaps, community sentiment, rebrand strategy.</p>
           </div>
         ) : (
           <article className="prose" dangerouslySetInnerHTML={{ __html: doc ? doc.html : "<p>Select a report.</p>" }} />

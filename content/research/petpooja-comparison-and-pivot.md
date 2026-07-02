@@ -8,6 +8,9 @@
 
 ## 0. Executive summary
 
+> **Revisited — June 2026 (POS pivot decision):** This doc's original call ("don't fight Petpooja head-on; add light billing/KOT later") has now been upgraded into a concrete plan. The **POS deep-dive** report maps the landscape (incl. Rista/DotPe) and the **Unit Economics** report runs the numbers on both routes. Outcome: proceed with the **phased software-only POS** (billing + KOT + GST invoices + day-end reports) as a Shoku add-on for single-outlet cafés — hardware/offline deferred until attach-rate data. The strategic logic below (integrate-don't-imitate on back-of-house depth) still stands.
+
+
 Petpooja is the gravitational center of Indian restaurant tech: 100,000+ outlets, ~7M orders/day, ~25% of Swiggy/Zomato online order volume flowing through it, freshly capitalized with a ₹137 Cr Series C (Sept 2025) explicitly earmarked for **AI automation and product expansion**. It owns the **back-of-house operating system** — billing, KOT, inventory, 200+ integrations, hardware. That is a moat we should not attack head-on with a "light POS."
 
 But Petpooja is weak exactly where we are strong: the **diner-facing experience and growth/marketing layer**. Its CRM, loyalty, and WhatsApp marketing are thin, integration-dependent, and largely heuristic — there is a whole ecosystem of third parties (Reelo, Waakif, OwnChat) plugging the gaps. That ecosystem is proof of demand and proof that Petpooja tolerates a marketing/ordering layer sitting on top of it.
