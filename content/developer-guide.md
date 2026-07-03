@@ -84,6 +84,13 @@ shoku/
 │   ├── segments.js            # SEGMENTS, tenantCustomers(), inSegment(), buildAudience(), segmentCounts()
 │   ├── whatsapp.js            # provider-agnostic sender, waMode(), Meta/Twilio/BSP adapters, demo mode
 │   ├── loyalty.js             # DEFAULT_TIERS, parseTiers(), tierFor()
+│   ├── orders.js              # createOrder (buyerId/skipLoyalty opts, tenant gstRate), settlePaid
+│   ├── pos.js                 # requirePos gate, allocateInvoiceNo, dayEnd (POS add-on)
+│   ├── posMath.js             # pure gstSplit + formatInvoiceNo (unit-tested)
+│   ├── foodImages.js          # keyword → curated food photo (menu importer fallback)
+│   ├── imageGen.js            # AI menu images via /images/generations → public/uploads/menu/
+│   ├── payments.js            # Razorpay REST + HMAC signature verification
+│   ├── rateLimit.js, sanitize.js  # in-memory rate limiting; safeMarkdownHtml
 │   ├── audit.js               # logAudit() (never throws)
 │   ├── starterMenu.js         # STARTER_CATEGORIES + STARTER_ITEMS for provisioning new cafés
 │   └── menu.js                # shared menu helpers
@@ -92,11 +99,12 @@ shoku/
 │   ├── menu/, item/[id]/, cart/, checkout/, success/, ai/   # storefront
 │   ├── login/, register/, set-password/, account/           # customer auth & account
 │   ├── pitch/                 # public pitch-deck viewer
-│   ├── admin/                 # café admin pages (menu, orders, customers, marketing, loyalty, branding, settings, tables, banners, discounts, feedback)
-│   ├── super/                 # super-admin console (cafes, audit) + layout
+│   ├── admin/                 # café admin pages (pos, analytics, menu, orders, customers, marketing, loyalty, branding, settings, tables, banners, discounts, feedback)
+│   ├── print/                 # 80mm print routes: invoice/[id], kot/[id] (outside admin layout)
+│   ├── super/                 # super-admin console (cafes incl. Manage drawer, audit) + layout
 │   └── api/                   # all route handlers (see §7)
 ├── components/                # AppShell, Header, BottomNav, CartBar, ProductCard, AdminUI, Providers
-├── scripts/                   # deploy.sh, update.sh, add-cafe.sh, nginx-shoku-wildcard.conf
+├── scripts/                   # deploy.sh, update.sh, add-cafe.sh, seed-demo-data.js, backup-r2.sh, nginx-shoku-wildcard.conf
 ├── package.json
 └── docs: README.md, DEPLOY.md, DEPLOY_HOSTINGER.md, SUBDOMAINS.md, WILDCARD_TLS.md, GIT_SETUP.md, MULTI_TENANT_PLAN.md
 ```
@@ -134,6 +142,16 @@ The café. Holds white-label config, AI feature flags, loyalty config, and Whats
 | `waConfig` | String = `{}` | **JSON** per-provider credentials |
 | `waTriggers` | Boolean = true | Auto order-confirmation / ready messages |
 | `waNudges` | Boolean = true | Reward-close / win-back nudges (cron) |
+| `locations` | String = `[]` | **JSON** `[{id,label,address}]` — outlets; drives the storefront location picker + per-location analytics |
+| `aiApiKey` | String? | Café-specific LLM key (superadmin-set; null = platform key) |
+| `aiModel` | String? | Model override (null = plan default, see `lib/llm.js`) |
+| `aiBaseUrl` | String? | OpenAI-compatible endpoint override |
+| `posEnabled` | Boolean = false | POS add-on gate (superadmin toggles via the Manage drawer) |
+| `gstin` | String? | 15-char GSTIN printed on invoices |
+| `gstRate` | Int = 5 | GST % applied by `createOrder` |
+| `invoicePrefix` | String = `INV` | Invoice number prefix |
+| `invoiceSeq` | Int = 0 | Last issued invoice number (atomic increment) |
+| `kotAutoPrint` | Boolean = true | Auto-open the KOT print window after billing |
 | `createdAt` | DateTime | |
 
 Relations: `categories`, `items`, `orders`, `discounts`, `users`, `rewards`, `feedback`, `tables`, `banners`, `campaigns`, `messages`.
@@ -194,13 +212,20 @@ The menu item. Several array fields are JSON strings parsed by `parseItem()`.
 | --- | --- | --- |
 | `id` | String (cuid) | PK |
 | `tenantId`, `userId` | String | |
-| `subtotal`, `tax`, `reward` | Int | Money in ₹. `tax` = 5%, `reward` = 5% of subtotal |
+| `subtotal`, `tax`, `reward` | Int | Money in ₹. `tax` = `tenant.gstRate`% (default 5), `reward` = 5% of subtotal |
 | `discount` Int, `discountCode` String? | | Promo code discount |
 | `loyaltyDiscount` Int, `pointsRedeemed` Int, `rewardTitle` String? | | Reward redemption |
 | `total` | Int | `subtotal + tax − reward − discount − loyaltyDiscount` |
 | `fulfilment` | String = `pickup` | `pickup` \| `dinein` \| `delivery` |
 | `payment` | String = `upi` | |
+| `paymentStatus` | String = `paid` | `paid` \| `pending` \| `failed` (Razorpay flow) |
 | `tableId`, `tableLabel` | String? | Dine-in (from table QR) |
+| `source` | String = `online` | `online` \| `pos` — where the order was rung up |
+| `paymentMethod` | String? | POS only: `cash` \| `upi` \| `card` |
+| `invoiceNo` | String? | Sequential GST invoice, e.g. `INV-2026-00042` (POS) |
+| `locationLabel` | String? | Chosen store outlet (from the storefront picker / demo seed) |
+| `cgst`, `sgst` | Int = 0 | GST display split; `cgst + sgst = tax` (sgst gets the odd ₹) |
+| `staffId` | String? | User id of the staff member who billed a POS sale |
 | `status` | String = `preparing` | `preparing` \| `ready` \| `completed` \| `cancelled` |
 | `items` | OrderItem[] | |
 
@@ -404,6 +429,29 @@ await llmComplete(system, user, {   // OpenAI-compatible /chat/completions call
 
 `llmComplete` is the single chokepoint. It returns **`null`** on a missing key, a non-OK response, a parse error, or any exception — so callers simply do `const out = await llmComplete(...); if (out) return out; /* else heuristic */`. Pointing `LLM_BASE_URL` at any OpenAI-compatible endpoint (OpenRouter, Together, a local server, Azure-compatible gateway, etc.) works.
 
+### Per-tenant AI config — `getTenantLLMConfig(tenant)`
+
+AI cost scales with the café's plan, and a café can bring its own key. Resolution order (each field independently):
+
+```js
+getTenantLLMConfig(tenant) // → { key, base, model, imageModel }
+// key   : tenant.aiApiKey  || env key
+// base  : tenant.aiBaseUrl || LLM_BASE_URL
+// model : tenant.aiModel   || PLAN_MODELS[tenant.plan] || LLM_MODEL
+//         PLAN_MODELS: starter/growth → LLM_MODEL_STARTER/GROWTH (default gpt-4o-mini),
+//                      enterprise → LLM_MODEL_ENTERPRISE (default gpt-4o)
+// imageModel: LLM_IMAGE_MODEL (default gpt-image-1)
+```
+
+`llmComplete(system, user, { tenant })` uses this automatically when a `tenant` is passed. Superadmins set the per-café values from **Super → Cafés → Manage** (PATCH `/api/super/tenants/[id]` with `aiApiKey` / `aiModel` / `aiBaseUrl`; empty string clears back to defaults).
+
+### Menu images — `lib/foodImages.js` + `lib/imageGen.js`
+
+Used by the CSV importer (`POST /api/items/import`):
+
+- **`imageFor(name, categoryLabel)`** (`lib/foodImages.js`) — pure keyword→photo matcher over a curated pool of known-good Unsplash photos. Order matters: specific terms (matcha, chai) are listed before generic ones (latte). Always succeeds.
+- **`generateMenuImage(tenant, name, desc)`** (`lib/imageGen.js`) — OpenAI-compatible `POST {base}/images/generations` (b64), saved to `public/uploads/menu/<slug>-<hash>.png`, returns the public path — or **`null` on any failure**, so the importer falls back to `imageFor`. Requires a key via `getTenantLLMConfig`; only attempted when the import request sets `generateImages: true`. Note: writes to the local filesystem, so it assumes the PM2/VPS deployment (not serverless).
+
 ### What an LLM upgrades — and what stays rule-based
 
 | Module | LLM-aware? | Behavior |
@@ -535,9 +583,11 @@ All handlers set `export const dynamic = "force-dynamic"` (no static caching; ev
 | `/api/admin/orders` | GET | All orders (filter `?status=`) with customer + items. |
 | `/api/orders/[id]` | PATCH | Update order status (`preparing`/`ready`/`completed`/`cancelled`), scoped by tenant. |
 | `/api/admin/stats` | GET | Dashboard: revenue, AOV, 14-day series, top items, status breakdown, recent orders, counts. |
+| `/api/admin/analytics` | GET | `?days=7\|30\|90` — KPIs (+half-vs-half growth), revenue by day, orders by hour, POS-vs-online + payment-method splits, top items, revenue by location. Paid orders only. |
 | `/api/admin/customers` | GET | Café users with order count, spend, last-order date. |
 | `/api/admin/feedback` | GET | Feedback list + average + 1–5 star distribution. |
-| `/api/brand` | PUT | Update white-label config (name, colors, font, AI flags, store info). |
+| `/api/brand` | PUT | Update white-label config (name, colors, font, AI flags, store info, `locations` array — validated/JSON-stringified server-side). |
+| `/api/items/import` | POST | **Bulk menu import.** Body `{items:[{name,category,price,desc?,veg?,kcal?,caffeine?,tags?,signature?}], generateImages?}` (≤200 rows). Upserts by deterministic id `<slug>-<name-slug>`, creates missing categories, assigns images (AI via `generateMenuImage` when requested + keyed, else `imageFor`). Returns `{created, updated, aiImages, errors, aiAvailable}`. |
 | `/api/discounts` | GET / POST | List / create promo codes (percent 1–90; unique per tenant). |
 | `/api/discounts/[id]` | PATCH / DELETE | Toggle/edit percent / delete. |
 | `/api/loyalty` | GET / PUT | Get/set earn rate (0–100) and tiers (JSON). |
@@ -552,6 +602,25 @@ All handlers set `export const dynamic = "force-dynamic"` (no static caching; ev
 | `/api/campaigns/segments` | GET | Segment list with live counts + campaign goals. |
 | `/api/campaigns/suggest` | POST | Body `{ goal, segmentLabel, notes }` → AI/heuristic campaign copy. |
 | `/api/wa/settings` | GET / PATCH | Read (secrets masked) / update WhatsApp provider, creds, toggles, mode. |
+| `/api/pos/settings` | GET / PUT | Read POS config (incl. `posEnabled`) / owner-only update of `gstin`, `gstRate` (0–28), `invoicePrefix`, `kotAutoPrint`. `posEnabled` itself is superadmin-only. |
+
+### POS (`requirePos` = `requireAdmin` **+** `tenant.posEnabled`)
+
+The POS module lives in `lib/pos.js` (+ pure helpers in `lib/posMath.js`, unit-tested):
+
+- **`requirePos()`** — the gate; 403 with "POS is not enabled" when the add-on is off.
+- **`allocateInvoiceNo(tenantId)`** — atomic `invoiceSeq: { increment: 1 }` then `formatInvoiceNo(prefix, year, seq)` → `INV-2026-00042`. Safe under concurrent billing terminals.
+- **`gstSplit(tax)`** — `{cgst, sgst}` halves; sgst gets the odd rupee; sum always equals `tax`.
+- **`dayEnd(tenantId, date?)`** — one calendar day's aggregation (bills, gross, GST, byMethod, topItems, POS/online counts).
+
+| Route | Method | Purpose |
+| --- | --- | --- |
+| `/api/pos/orders` | GET | Last 5 POS bills (reprint drawer). |
+| `/api/pos/orders` | POST | **Ring up a counter sale.** Body `{lines, paymentMethod: cash\|upi\|card, customerPhone?, discountCode?}`. Phone-matched customers earn loyalty (`buyerId`); walk-ins bill under the staff user with `skipLoyalty` (no points, no WhatsApp). Creates the order via `createOrder`, then assigns `invoiceNo` + `cgst/sgst`. |
+| `/api/pos/day-end` | GET | `?date=YYYY-MM-DD` (default today) → Z-report JSON. |
+
+Print pages (server components, `requireAdmin`, 80 mm thermal CSS, auto-`window.print()`):
+`/print/invoice/[id]` (GST invoice: GSTIN header, CGST/SGST split, totals) and `/print/kot/[id]` (kitchen ticket: big items + qty, no prices). They live **outside** the admin layout so the sidebar never prints.
 
 ### Super-admin (`requireSuperadmin`)
 
@@ -562,7 +631,7 @@ All handlers set `export const dynamic = "force-dynamic"` (no static caching; ev
 | `/api/super/audit` | GET | Last 250 audit-log entries (meta JSON-parsed). |
 | `/api/super/tenants` | GET | All cafés with counts (orders/users/items) + revenue. |
 | `/api/super/tenants` | POST | **Provision a café.** Creates the tenant, starter categories, optional starter menu (`seedMenu !== false`), default rewards, 6 tables, and an owner (with a password, or an invite link). Audit-logged. |
-| `/api/super/tenants/[id]` | PATCH | Update a café (name, status, plan, brand, store info). |
+| `/api/super/tenants/[id]` | PATCH | Update a café: name, status, plan, brand, store info, **`posEnabled`** (POS add-on), and AI overrides **`aiApiKey` / `aiModel` / `aiBaseUrl`** (empty string clears → plan/env defaults). Drives the **Manage** drawer in `/super/cafes`. |
 
 ### Pitch deck
 
@@ -597,10 +666,15 @@ Copy `.env.example` → `.env` and fill in real values. Never commit `.env`.
 | `OPENAI_API_KEY` | Optional | Enables LLM upgrades for `aiInsights` + `aiMessage`. |
 | `LLM_API_KEY` | Optional | Alternative to `OPENAI_API_KEY` (checked second). |
 | `LLM_BASE_URL` | Optional | OpenAI-compatible base URL. Default `https://api.openai.com/v1`. |
-| `LLM_MODEL` | Optional | Model name. Default `gpt-4o-mini`. |
+| `LLM_MODEL` | Optional | Global default model. Default `gpt-4o-mini`. |
+| `LLM_MODEL_STARTER` / `LLM_MODEL_GROWTH` | Optional | Per-plan default models (both default `gpt-4o-mini`). Overridden per café by `tenant.aiModel`. |
+| `LLM_MODEL_ENTERPRISE` | Optional | Enterprise-plan default model. Default `gpt-4o`. |
+| `LLM_IMAGE_MODEL` | Optional | Image-generation model for the menu importer. Default `gpt-image-1`. |
+| `RAZORPAY_KEY_ID` / `RAZORPAY_KEY_SECRET` | Optional | Enables live Razorpay checkout; unset = demo "paid" flow. |
+| `RAZORPAY_WEBHOOK_SECRET` | Optional | Verifies `/api/payments/razorpay/webhook` signatures. |
 | `CRON_SECRET` | Optional | Bearer for `/api/cron/nudges` (via `?key=` or `x-cron-key`) when no superadmin session. |
 
-Without any LLM variable, all AI features run on their built-in heuristics.
+Without any LLM variable, all AI features run on their built-in heuristics. Per-café AI settings (`tenant.aiApiKey` / `aiModel` / `aiBaseUrl`, superadmin-set) take precedence over all of these — see [§5](#5-the-ai-layer).
 
 ---
 
@@ -630,6 +704,14 @@ npm run seed         # node prisma/seed.js
 | `aarav@example.com`, `diya@example.com` | customers (CBTL) | storefront |
 
 The seed provisions a superadmin + two demo cafés (CBTL = default/enterprise, Blue Tokai = growth) with menus, banners, discounts (`WELCOME10`, `SHOKU15`), rewards, tables, feedback, and ~14 days of synthetic orders.
+
+**Richer demo data** (what makes the Analytics page and POS day-end look real in demos):
+
+```bash
+node scripts/seed-demo-data.js [slug=cbtl] [days=30]
+```
+
+Generates ~350–450 paid orders over the window with café-realistic hourly peaks, a weekend lift, a gentle upward trend, a ~45% POS / 55% online mix (cash/UPI/card), sequential invoice numbers (bumps `invoiceSeq`), and per-location labels when the tenant has `locations`. It refuses to run if the café already has >150 orders in the window, so it won't double-seed.
 
 ### Local subdomains
 
