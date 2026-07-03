@@ -36,6 +36,13 @@ model Tenant {
   waConfig    String   @default("{}") // JSON creds per provider
   waTriggers  Boolean  @default(true)  // auto order-confirmation / ready
   waNudges    Boolean  @default(true)  // reward-close / win-back nudges
+  // POS add-on (billing + KOT + GST invoices + day-end)
+  posEnabled    Boolean @default(false)
+  gstin         String?               // 15-char GSTIN printed on invoices
+  gstRate       Int     @default(5)   // % — restaurant-service norm
+  invoicePrefix String  @default("INV")
+  invoiceSeq    Int     @default(0)   // last issued number (atomic increment)
+  kotAutoPrint  Boolean @default(true)
   createdAt   DateTime @default(now())
 
   categories Category[]
@@ -176,6 +183,13 @@ model Order {
   paymentStatus     String  @default("paid")   // paid | pending | failed
   razorpayOrderId   String?
   razorpayPaymentId String?
+  // POS (source="pos") fields
+  source        String  @default("online") // online | pos
+  paymentMethod String?                    // cash | upi | card
+  invoiceNo     String?                    // e.g. "INV-2026-00042"
+  cgst          Int     @default(0)        // GST display split (cgst+sgst = tax)
+  sgst          Int     @default(0)
+  staffId       String?                    // user who billed it
   tableId      String?
   tableLabel   String?
   table        Table?      @relation(fields: [tableId], references: [id])
