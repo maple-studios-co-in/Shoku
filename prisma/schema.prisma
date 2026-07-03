@@ -48,6 +48,7 @@ model Tenant {
   gstRate       Int     @default(5)   // % — restaurant-service norm
   invoicePrefix String  @default("INV")
   invoiceSeq    Int     @default(0)   // last issued number (atomic increment)
+  invoiceYear   Int     @default(0)   // year of the sequence; 0 = legacy (adopt current year, keep seq)
   kotAutoPrint  Boolean @default(true)
   createdAt   DateTime @default(now())
 

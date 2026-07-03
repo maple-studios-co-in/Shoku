@@ -20,6 +20,7 @@ function toBrand(t) {
     storeName: t.storeName,
     address: t.address,
     locations: safeLocations(t.locations),
+    gstRate: t.gstRate ?? 5, // checkout must display the same rate the server charges
   };
 }
 

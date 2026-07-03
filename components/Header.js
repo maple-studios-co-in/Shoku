@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 import { useBrand, useCart } from "./Providers";
 import { BRAND } from "@/lib/menu";
@@ -10,6 +11,17 @@ export default function Header({ showSearch = true }) {
 
   const locations = brand.locations || [];
   const current = (location && locations.find((l) => l.id === location.id)) || locations[0] || null;
+
+  // Resync the persisted choice when the café's locations change — otherwise a
+  // removed outlet stays in the cart and gets recorded on the next order while
+  // the header displays a different (fallback) one.
+  useEffect(() => {
+    if (!locations.length) return;
+    if (!location || !locations.find((l) => l.id === location.id)) {
+      setLocation({ id: locations[0].id, label: locations[0].label });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [brand.locations]);
 
   return (
     <header className="sticky top-0 z-30 border-b border-line bg-white/85 px-4 pb-3 pt-3 backdrop-blur-md">

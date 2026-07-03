@@ -45,11 +45,11 @@ export default function CheckoutPage() {
     fetch("/api/rewards").then((r) => (r.ok ? r.json() : [])).then(setRewards).catch(() => {});
   }, [status]);
 
-  const taxes = Math.round(subtotal * 0.05);
+  const taxes = Math.round((subtotal * (brand.gstRate ?? 5)) / 100); // same rate the server charges
   const reward = Math.round(subtotal * 0.05);
   const discount = applied ? Math.round((subtotal * applied.percent) / 100) : 0;
   const loyaltyDiscount = redeem && redeem.type === "discount" ? Math.min(redeem.amount, subtotal) : 0;
-  const total = subtotal + taxes - reward - discount - loyaltyDiscount;
+  const total = Math.max(0, subtotal + taxes - reward - discount - loyaltyDiscount); // mirror server floor
 
   async function applyPromo() {
     const code = promo.trim();

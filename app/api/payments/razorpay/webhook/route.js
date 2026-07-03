@@ -29,10 +29,23 @@ export async function POST(req) {
     const order = await prisma.order.findFirst({ where: { razorpayOrderId: rzpOrderId } });
     if (order) await markOrderPaid(order.id, { razorpayPaymentId: paymentId }); // idempotent
   } else if (evt?.event === "payment.failed" && rzpOrderId) {
-    await prisma.order.updateMany({
-      where: { razorpayOrderId: rzpOrderId, paymentStatus: { not: "paid" } },
-      data: { paymentStatus: "failed" },
+    // Mark failed exactly once (guards duplicate webhooks) and refund any
+    // loyalty points that were reserved at order creation.
+    const order = await prisma.order.findFirst({
+      where: { razorpayOrderId: rzpOrderId, paymentStatus: "pending" },
     });
+    if (order) {
+      const flipped = await prisma.order.updateMany({
+        where: { id: order.id, paymentStatus: "pending" },
+        data: { paymentStatus: "failed" },
+      });
+      if (flipped.count === 1 && order.pointsRedeemed > 0) {
+        await prisma.user.update({
+          where: { id: order.userId },
+          data: { points: { increment: order.pointsRedeemed } },
+        });
+      }
+    }
   }
 
   return NextResponse.json({ ok: true });

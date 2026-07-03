@@ -37,8 +37,18 @@ const wRand = (pairs) => {
   if (existing > 150) { console.log(`Already ${existing} orders in window — skipping (delete first to reseed).`); process.exit(0); }
 
   const locations = JSON.parse(tenant.locations || "[]");
-  let seq = tenant.invoiceSeq;
   let made = 0;
+
+  // Allocate invoice numbers via the same atomic increment the live POS uses,
+  // so running this against a busy store can't reuse or skip numbers.
+  async function nextInvoiceNo(year) {
+    const t = await prisma.tenant.update({
+      where: { id: tenant.id },
+      data: { invoiceSeq: { increment: 1 } },
+      select: { invoiceSeq: true },
+    });
+    return `${tenant.invoicePrefix}-${year}-${String(t.invoiceSeq).padStart(5, "0")}`;
+  }
 
   for (let d = DAYS - 1; d >= 0; d--) {
     const day = new Date(); day.setDate(day.getDate() - d);
@@ -68,7 +78,7 @@ const wRand = (pairs) => {
       const customer = !isPos || Math.random() < 0.35 ? pick(customers) : null;
       const buyer = customer || staff;
       const { cgst, sgst } = { cgst: Math.floor(tax / 2), sgst: tax - Math.floor(tax / 2) };
-      const invoiceNo = isPos ? `${tenant.invoicePrefix}-${at.getFullYear()}-${String(++seq).padStart(5, "0")}` : null;
+      const invoiceNo = isPos ? await nextInvoiceNo(at.getFullYear()) : null;
 
       await prisma.order.create({
         data: {
@@ -90,7 +100,7 @@ const wRand = (pairs) => {
       made++;
     }
   }
-  await prisma.tenant.update({ where: { id: tenant.id }, data: { invoiceSeq: seq } });
-  console.log(`✓ created ${made} demo orders over ${DAYS} days for '${SLUG}' (invoiceSeq → ${seq})`);
+  const final = await prisma.tenant.findUnique({ where: { id: tenant.id }, select: { invoiceSeq: true } });
+  console.log(`✓ created ${made} demo orders over ${DAYS} days for '${SLUG}' (invoiceSeq → ${final.invoiceSeq})`);
   process.exit(0);
 })();

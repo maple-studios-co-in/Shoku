@@ -62,7 +62,11 @@ export async function POST(req) {
     }
     if (!img) img = imageFor(name, catLabel);
 
-    const id = `${tenant.slug}-${slugify(name)}`;
+    // Same name in a DIFFERENT category is a distinct item — disambiguate the id
+    // instead of silently overwriting (e.g. "Latte" in Hot Coffee vs Iced).
+    let id = `${tenant.slug}-${slugify(name)}`;
+    const clash = await prisma.item.findUnique({ where: { id } });
+    if (clash && clash.categoryId !== cat.id) id = `${tenant.slug}-${catKey}-${slugify(name)}`;
     const data = {
       tenantId: tenant.id, categoryId: cat.id, name, price, img,
       desc: String(r.desc || "").slice(0, 300),
