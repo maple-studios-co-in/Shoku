@@ -313,48 +313,54 @@ export default function Landing() {
         ))}
       </section>
 
-      {/* CONTINUOUS INNOVATION — illustration + floating feature cards */}
-      <section className="innov">
-        <div className="innov-copy reveal">
-          <h2>Continuous<br />innovation.</h2>
-          <p>We keep improving your branded café app — smarter recommendations, menu updates, loyalty flows and WhatsApp marketing — so your ordering experience keeps getting better, without you lifting a finger.</p>
-        </div>
-        <div className="innov-stage reveal">
-          <img className="innov-illo" src="/img/shoku-barista-illo.webp" alt="A barista checking the Shoku app on her phone" />
-          <div className="fcloud fc-a">
-            <span className="fc-ic">✦</span>
-            <div className="fc-body">
-              <b>AI Recommendation</b>
-              <span className="fc-thumb" />
-              <i className="fc-line" /><i className="fc-line short" />
-            </div>
+      {/* CONTINUOUS INNOVATION — rounded panel; corner-badged floating cards (matches brand banner) */}
+      <section className="innov-wrap">
+        <div className="innov reveal">
+          <div className="innov-copy">
+            <h2>Continuous Innovation</h2>
+            <p>We continuously improve your branded café app with smarter recommendations, menu updates, loyalty flows, and WhatsApp marketing — so your ordering experience keeps getting better.</p>
           </div>
-          <div className="fcloud fc-b">
-            <span className="fc-ic">🎁</span>
-            <div className="fc-body">
+          <div className="innov-stage">
+            <img className="innov-illo" src="/img/shoku-barista-illo.webp" alt="A barista checking the Shoku app on her phone" />
+
+            <div className="fcloud fc-a">
+              <span className="fbadge b-tl">✦</span>
+              <b>AI Recommendation</b>
+              <div className="fc-media">
+                <img src="https://images.unsplash.com/photo-1568649929103-28ffbefaca1e?w=120&h=120&fit=crop" alt="" />
+                <span className="fc-lines"><i className="fc-line" /><i className="fc-line short" /></span>
+              </div>
+            </div>
+
+            <div className="fcloud fc-c">
+              <b>New on the Menu</b>
+              <div className="fc-media">
+                <img src="https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=120&h=120&fit=crop" alt="" />
+                <span className="fc-lines"><i className="fc-line" /><i className="fc-line short" /></span>
+              </div>
+              <small className="clay">Rs 240</small>
+              <span className="fbadge b-br">☕</span>
+            </div>
+
+            <div className="fcloud fc-b">
+              <span className="fbadge b-tl">🎁</span>
               <b>Loyalty Rewards</b>
               <small>You earned <em>150</em> points</small>
               <span className="fc-dots"><i className="on" /><i className="on" /><i className="on" /><i className="on" /><i /></span>
             </div>
-          </div>
-          <div className="fcloud fc-c">
-            <div className="fc-body">
-              <b>New on the Menu</b>
-              <span className="fc-row">🥐 <i className="fc-line" /></span>
-              <small className="clay">₹240</small>
+
+            <div className="fcloud fc-d">
+              <div className="fc-head"><span className="wa-ic">✆</span><b>WhatsApp Campaign</b></div>
+              <div className="fc-media">
+                <span className="fc-lines"><i className="fc-line" /><i className="fc-line short" /></span>
+                <span className="fc-bars"><i style={{ height: 7 }} /><i style={{ height: 12 }} /><i style={{ height: 17 }} /></span>
+              </div>
             </div>
+
+            <span className="spark s1">✦</span>
+            <span className="spark s2">✦</span>
+            <span className="spark s3">✦</span>
           </div>
-          <div className="fcloud fc-d">
-            <span className="fc-ic wa">✆</span>
-            <div className="fc-body">
-              <b>WhatsApp Campaign</b>
-              <i className="fc-line" /><i className="fc-line short" />
-              <span className="fc-bars"><i style={{ height: 6 }} /><i style={{ height: 10 }} /><i style={{ height: 14 }} /></span>
-            </div>
-          </div>
-          <span className="spark s1">✦</span>
-          <span className="spark s2">✧</span>
-          <span className="spark s3">✦</span>
         </div>
       </section>
 
@@ -671,41 +677,59 @@ export default function Landing() {
           background-image:radial-gradient(var(--line) 1.2px, transparent 1.2px); background-size:26px 26px;
           -webkit-mask:radial-gradient(closest-side,#000,transparent 76%); mask:radial-gradient(closest-side,#000,transparent 76%); }
 
-        /* CONTINUOUS INNOVATION — illustration + floating cards */
-        .lp .innov{ max-width:1180px; margin:0 auto; padding:88px 34px; display:grid; grid-template-columns:.85fr 1.15fr; gap:56px; align-items:center; }
-        .lp .innov-copy h2{ font-family:var(--serif); font-size:46px; line-height:1.08; letter-spacing:-.015em; font-weight:500; margin:0 0 18px; }
-        .lp .innov-copy p{ font-size:16.5px; color:var(--mut); max-width:46ch; margin:0; }
-        .lp .innov-stage{ position:relative; min-height:480px; display:grid; place-items:center; }
-        .lp .innov-illo{ width:min(520px,92%); display:block; border-radius:28px; }
-        .lp .fcloud{ position:absolute; display:flex; gap:9px; align-items:flex-start; background:#fff; border:1px solid var(--line);
-          border-radius:16px; padding:12px 14px; box-shadow:0 14px 38px rgba(36,28,18,.12); animation:floaty 6s ease-in-out infinite; }
-        .lp .fc-a{ left:-2%; top:6%; animation-delay:0s; }
-        .lp .fc-b{ left:-4%; bottom:14%; animation-delay:-1.8s; animation-duration:7s; }
-        .lp .fc-c{ right:-2%; top:4%; animation-delay:-3.2s; animation-duration:6.5s; }
-        .lp .fc-d{ right:-4%; bottom:10%; animation-delay:-4.6s; animation-duration:7.5s; }
-        @keyframes floaty{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-11px); } }
-        .lp .fc-ic{ display:grid; place-items:center; width:30px; height:30px; border-radius:50%; background:var(--matcha-d); color:#fff; font-size:13px; flex-shrink:0; }
-        .lp .fc-ic.wa{ background:#1fa855; }
-        .lp .fc-body{ display:flex; flex-direction:column; gap:5px; min-width:132px; }
-        .lp .fc-body b{ font-size:12px; font-weight:700; color:var(--ink); }
-        .lp .fc-body small{ font-size:10.5px; color:var(--mut); } .lp .fc-body small em{ font-style:normal; color:var(--clay); font-weight:700; }
-        .lp .fc-body small.clay{ color:var(--clay); font-weight:800; font-size:12px; }
-        .lp .fc-line{ display:block; height:6px; width:100%; border-radius:999px; background:var(--line); }
-        .lp .fc-line.short{ width:62%; }
-        .lp .fc-thumb{ display:block; width:100%; height:34px; border-radius:8px; background:linear-gradient(135deg,#9ec88f,#4e8f5a); }
-        .lp .fc-row{ display:flex; align-items:center; gap:7px; font-size:15px; } .lp .fc-row .fc-line{ flex:1; }
-        .lp .fc-dots{ display:flex; gap:5px; } .lp .fc-dots i{ width:9px; height:9px; border-radius:50%; background:var(--line); }
-        .lp .fc-dots i.on{ background:var(--clay); }
-        .lp .fc-bars{ display:flex; gap:3px; align-items:flex-end; } .lp .fc-bars i{ width:5px; border-radius:2px 2px 0 0; background:var(--matcha); }
-        .lp .spark{ position:absolute; color:var(--clay); font-size:15px; animation:twinkle 3.4s ease-in-out infinite; }
-        .lp .s1{ top:2%; left:38%; } .lp .s2{ top:26%; right:20%; animation-delay:-1.1s; } .lp .s3{ bottom:6%; left:30%; animation-delay:-2.3s; font-size:11px; }
-        @keyframes twinkle{ 0%,100%{ opacity:.25; transform:scale(.85); } 50%{ opacity:1; transform:scale(1.15); } }
+        /* CONTINUOUS INNOVATION — rounded panel + corner-badged floating cards */
+        .lp .innov-wrap{ max-width:1280px; margin:26px auto; padding:0 34px; }
+        .lp .innov{ background:#FBF7EF; border:1px solid var(--line); border-radius:44px; padding:84px 72px;
+          display:grid; grid-template-columns:.82fr 1.18fr; gap:44px; align-items:center; box-shadow:0 2px 6px rgba(36,28,18,.03); }
+        .lp .innov-copy h2{ font-family:var(--serif); font-size:52px; line-height:1.06; letter-spacing:-.015em; font-weight:600; margin:0 0 20px; }
+        .lp .innov-copy p{ font-size:17px; line-height:1.7; color:var(--mut); max-width:44ch; margin:0; }
+        .lp .innov-stage{ position:relative; min-height:500px; display:grid; place-items:center; }
+        .lp .innov-illo{ width:min(460px,84%); display:block; }
+
+        .lp .fcloud{ position:absolute; background:#fff; border-radius:14px; padding:13px 15px 12px;
+          box-shadow:0 16px 40px rgba(36,28,18,.10), 0 2px 8px rgba(36,28,18,.05); width:196px;
+          display:flex; flex-direction:column; gap:8px; animation:floaty 6s ease-in-out infinite; }
+        .lp .fcloud > b, .lp .fc-head b{ font-size:12.5px; font-weight:700; color:var(--ink); }
+        .lp .fc-a{ left:0; top:5%; animation-delay:0s; }
+        .lp .fc-c{ right:0; top:2%; width:200px; animation-delay:-3.2s; animation-duration:6.6s; }
+        .lp .fc-b{ left:-2%; top:47%; animation-delay:-1.7s; animation-duration:7.2s; }
+        .lp .fc-d{ right:-2%; top:52%; width:212px; animation-delay:-4.6s; animation-duration:7.6s; }
+        @keyframes floaty{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-10px); } }
+
+        /* dark-green circular badge overlapping the card corner */
+        .lp .fbadge{ position:absolute; width:46px; height:46px; border-radius:50%; background:var(--matcha-dd);
+          color:#f4f1ea; display:grid; place-items:center; font-size:18px; box-shadow:0 8px 20px rgba(21,40,30,.28); }
+        .lp .b-tl{ left:-18px; top:-18px; }
+        .lp .b-br{ right:-16px; bottom:-16px; font-size:16px; }
+
+        .lp .fc-media{ display:flex; gap:9px; align-items:center; }
+        .lp .fc-media img{ width:46px; height:46px; border-radius:9px; object-fit:cover; flex-shrink:0; }
+        .lp .fc-lines{ display:flex; flex-direction:column; gap:7px; flex:1; }
+        .lp .fc-line{ display:block; height:7px; width:100%; border-radius:999px; background:#ECE6DB; }
+        .lp .fc-line.short{ width:64%; }
+        .lp .fcloud small{ font-size:11.5px; color:var(--mut); } .lp .fcloud small em{ font-style:normal; color:var(--clay); font-weight:800; }
+        .lp .fcloud small.clay{ color:var(--clay); font-weight:800; font-size:13px; }
+        .lp .fc-dots{ display:flex; gap:6px; align-items:center; }
+        .lp .fc-dots i{ width:11px; height:11px; border-radius:50%; background:var(--clay); position:relative; }
+        .lp .fc-dots i:not(.on){ background:transparent; border:2px solid #E4D5C8; }
+        .lp .fc-dots i.on + i.on::before{ content:""; position:absolute; right:100%; top:50%; width:6px; height:2px; background:#E9D9CC; }
+        .lp .fc-head{ display:flex; align-items:center; gap:8px; }
+        .lp .wa-ic{ display:grid; place-items:center; width:28px; height:28px; border-radius:50%; background:#25A05C; color:#fff; font-size:13px; flex-shrink:0; }
+        .lp .fc-bars{ display:flex; gap:3px; align-items:flex-end; padding-bottom:2px; }
+        .lp .fc-bars i{ width:6px; border-radius:2px 2px 0 0; background:var(--clay); }
+        .lp .fc-bars i:nth-child(2){ background:#E0A184; }
+
+        .lp .spark{ position:absolute; color:var(--clay); font-size:17px; animation:twinkle 3.4s ease-in-out infinite; }
+        .lp .s1{ top:0; left:44%; } .lp .s2{ top:20%; right:26%; animation-delay:-1.1s; font-size:11px; color:var(--ink); }
+        .lp .s3{ bottom:4%; left:33%; animation-delay:-2.3s; font-size:11px; }
+        @keyframes twinkle{ 0%,100%{ opacity:.3; transform:scale(.85) rotate(0deg); } 50%{ opacity:1; transform:scale(1.15) rotate(18deg); } }
 
         @media(max-width:880px){
-          .lp .innov{ grid-template-columns:1fr; gap:20px; text-align:center; padding:64px 22px; }
-          .lp .innov-copy h2{ font-size:32px; } .lp .innov-copy p{ margin-inline:auto; }
-          .lp .innov-stage{ min-height:400px; transform:scale(.86); }
-          .lp .fc-a{ left:-3%; } .lp .fc-b{ left:-5%; } .lp .fc-c{ right:-3%; } .lp .fc-d{ right:-5%; }
+          .lp .innov-wrap{ padding:0 16px; }
+          .lp .innov{ grid-template-columns:1fr; gap:14px; text-align:center; padding:52px 20px; border-radius:30px; }
+          .lp .innov-copy h2{ font-size:34px; } .lp .innov-copy p{ margin-inline:auto; }
+          .lp .innov-stage{ min-height:430px; transform:scale(.84); }
+          .lp .fc-a{ left:-4%; } .lp .fc-b{ left:-6%; } .lp .fc-c{ right:-4%; } .lp .fc-d{ right:-6%; }
           .lp .product{ grid-template-columns:1fr; gap:36px; }
           .lp .life{ grid-template-columns:1fr; gap:30px; text-align:center; }
           .lp .life-media{ order:-1; }
