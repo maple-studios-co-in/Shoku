@@ -313,6 +313,51 @@ export default function Landing() {
         ))}
       </section>
 
+      {/* CONTINUOUS INNOVATION — illustration + floating feature cards */}
+      <section className="innov">
+        <div className="innov-copy reveal">
+          <h2>Continuous<br />innovation.</h2>
+          <p>We keep improving your branded café app — smarter recommendations, menu updates, loyalty flows and WhatsApp marketing — so your ordering experience keeps getting better, without you lifting a finger.</p>
+        </div>
+        <div className="innov-stage reveal">
+          <img className="innov-illo" src="/img/shoku-barista-illo.webp" alt="A barista checking the Shoku app on her phone" />
+          <div className="fcloud fc-a">
+            <span className="fc-ic">✦</span>
+            <div className="fc-body">
+              <b>AI Recommendation</b>
+              <span className="fc-thumb" />
+              <i className="fc-line" /><i className="fc-line short" />
+            </div>
+          </div>
+          <div className="fcloud fc-b">
+            <span className="fc-ic">🎁</span>
+            <div className="fc-body">
+              <b>Loyalty Rewards</b>
+              <small>You earned <em>150</em> points</small>
+              <span className="fc-dots"><i className="on" /><i className="on" /><i className="on" /><i className="on" /><i /></span>
+            </div>
+          </div>
+          <div className="fcloud fc-c">
+            <div className="fc-body">
+              <b>New on the Menu</b>
+              <span className="fc-row">🥐 <i className="fc-line" /></span>
+              <small className="clay">₹240</small>
+            </div>
+          </div>
+          <div className="fcloud fc-d">
+            <span className="fc-ic wa">✆</span>
+            <div className="fc-body">
+              <b>WhatsApp Campaign</b>
+              <i className="fc-line" /><i className="fc-line short" />
+              <span className="fc-bars"><i style={{ height: 6 }} /><i style={{ height: 10 }} /><i style={{ height: 14 }} /></span>
+            </div>
+          </div>
+          <span className="spark s1">✦</span>
+          <span className="spark s2">✧</span>
+          <span className="spark s3">✦</span>
+        </div>
+      </section>
+
       {/* TESTIMONIALS */}
       <section className="sec">
         <div className="center-head reveal">
@@ -626,7 +671,41 @@ export default function Landing() {
           background-image:radial-gradient(var(--line) 1.2px, transparent 1.2px); background-size:26px 26px;
           -webkit-mask:radial-gradient(closest-side,#000,transparent 76%); mask:radial-gradient(closest-side,#000,transparent 76%); }
 
+        /* CONTINUOUS INNOVATION — illustration + floating cards */
+        .lp .innov{ max-width:1180px; margin:0 auto; padding:88px 34px; display:grid; grid-template-columns:.85fr 1.15fr; gap:56px; align-items:center; }
+        .lp .innov-copy h2{ font-family:var(--serif); font-size:46px; line-height:1.08; letter-spacing:-.015em; font-weight:500; margin:0 0 18px; }
+        .lp .innov-copy p{ font-size:16.5px; color:var(--mut); max-width:46ch; margin:0; }
+        .lp .innov-stage{ position:relative; min-height:480px; display:grid; place-items:center; }
+        .lp .innov-illo{ width:min(520px,92%); display:block; border-radius:28px; }
+        .lp .fcloud{ position:absolute; display:flex; gap:9px; align-items:flex-start; background:#fff; border:1px solid var(--line);
+          border-radius:16px; padding:12px 14px; box-shadow:0 14px 38px rgba(36,28,18,.12); animation:floaty 6s ease-in-out infinite; }
+        .lp .fc-a{ left:-2%; top:6%; animation-delay:0s; }
+        .lp .fc-b{ left:-4%; bottom:14%; animation-delay:-1.8s; animation-duration:7s; }
+        .lp .fc-c{ right:-2%; top:4%; animation-delay:-3.2s; animation-duration:6.5s; }
+        .lp .fc-d{ right:-4%; bottom:10%; animation-delay:-4.6s; animation-duration:7.5s; }
+        @keyframes floaty{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-11px); } }
+        .lp .fc-ic{ display:grid; place-items:center; width:30px; height:30px; border-radius:50%; background:var(--matcha-d); color:#fff; font-size:13px; flex-shrink:0; }
+        .lp .fc-ic.wa{ background:#1fa855; }
+        .lp .fc-body{ display:flex; flex-direction:column; gap:5px; min-width:132px; }
+        .lp .fc-body b{ font-size:12px; font-weight:700; color:var(--ink); }
+        .lp .fc-body small{ font-size:10.5px; color:var(--mut); } .lp .fc-body small em{ font-style:normal; color:var(--clay); font-weight:700; }
+        .lp .fc-body small.clay{ color:var(--clay); font-weight:800; font-size:12px; }
+        .lp .fc-line{ display:block; height:6px; width:100%; border-radius:999px; background:var(--line); }
+        .lp .fc-line.short{ width:62%; }
+        .lp .fc-thumb{ display:block; width:100%; height:34px; border-radius:8px; background:linear-gradient(135deg,#9ec88f,#4e8f5a); }
+        .lp .fc-row{ display:flex; align-items:center; gap:7px; font-size:15px; } .lp .fc-row .fc-line{ flex:1; }
+        .lp .fc-dots{ display:flex; gap:5px; } .lp .fc-dots i{ width:9px; height:9px; border-radius:50%; background:var(--line); }
+        .lp .fc-dots i.on{ background:var(--clay); }
+        .lp .fc-bars{ display:flex; gap:3px; align-items:flex-end; } .lp .fc-bars i{ width:5px; border-radius:2px 2px 0 0; background:var(--matcha); }
+        .lp .spark{ position:absolute; color:var(--clay); font-size:15px; animation:twinkle 3.4s ease-in-out infinite; }
+        .lp .s1{ top:2%; left:38%; } .lp .s2{ top:26%; right:20%; animation-delay:-1.1s; } .lp .s3{ bottom:6%; left:30%; animation-delay:-2.3s; font-size:11px; }
+        @keyframes twinkle{ 0%,100%{ opacity:.25; transform:scale(.85); } 50%{ opacity:1; transform:scale(1.15); } }
+
         @media(max-width:880px){
+          .lp .innov{ grid-template-columns:1fr; gap:20px; text-align:center; padding:64px 22px; }
+          .lp .innov-copy h2{ font-size:32px; } .lp .innov-copy p{ margin-inline:auto; }
+          .lp .innov-stage{ min-height:400px; transform:scale(.86); }
+          .lp .fc-a{ left:-3%; } .lp .fc-b{ left:-5%; } .lp .fc-c{ right:-3%; } .lp .fc-d{ right:-5%; }
           .lp .product{ grid-template-columns:1fr; gap:36px; }
           .lp .life{ grid-template-columns:1fr; gap:30px; text-align:center; }
           .lp .life-media{ order:-1; }
@@ -649,7 +728,7 @@ export default function Landing() {
           .lp .enso path, .lp .hero-enso path, .lp .hm-ink{ stroke-dashoffset:0 !important; animation:none !important; transition:none !important; }
           .lp .hm-spin, .lp .hm-glow, .lp .hm-steam i{ animation:none !important; }
           .lp .hm-seed{ opacity:.85 !important; animation:none !important; }
-          .lp .logo-track, .lp .brand i.shiny{ animation:none !important; }
+          .lp .logo-track, .lp .brand i.shiny, .lp .fcloud, .lp .spark{ animation:none !important; }
         }
       `}</style>
     </div>
