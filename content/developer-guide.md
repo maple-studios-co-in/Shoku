@@ -151,6 +151,7 @@ The café. Holds white-label config, AI feature flags, loyalty config, and Whats
 | `gstRate` | Int = 5 | GST % applied by `createOrder` |
 | `invoicePrefix` | String = `INV` | Invoice number prefix |
 | `invoiceSeq` | Int = 0 | Last issued invoice number (atomic increment) |
+| `invoiceYear` | Int = 0 | Year the sequence belongs to; resets `invoiceSeq` on rollover (`0` = legacy, adopts current year without reissuing) |
 | `kotAutoPrint` | Boolean = true | Auto-open the KOT print window after billing |
 | `createdAt` | DateTime | |
 
@@ -215,7 +216,7 @@ The menu item. Several array fields are JSON strings parsed by `parseItem()`.
 | `subtotal`, `tax`, `reward` | Int | Money in ₹. `tax` = `tenant.gstRate`% (default 5), `reward` = 5% of subtotal |
 | `discount` Int, `discountCode` String? | | Promo code discount |
 | `loyaltyDiscount` Int, `pointsRedeemed` Int, `rewardTitle` String? | | Reward redemption |
-| `total` | Int | `subtotal + tax − reward − discount − loyaltyDiscount` |
+| `total` | Int | `max(0, subtotal + tax − reward − discount − loyaltyDiscount)` — floored at 0 so stacked promo + reward can't go negative |
 | `fulfilment` | String = `pickup` | `pickup` \| `dinein` \| `delivery` |
 | `payment` | String = `upi` | |
 | `paymentStatus` | String = `paid` | `paid` \| `pending` \| `failed` (Razorpay flow) |
@@ -228,6 +229,11 @@ The menu item. Several array fields are JSON strings parsed by `parseItem()`.
 | `staffId` | String? | User id of the staff member who billed a POS sale |
 | `status` | String = `preparing` | `preparing` \| `ready` \| `completed` \| `cancelled` |
 | `items` | OrderItem[] | |
+
+**Order-integrity invariants** (all enforced in `lib/orders.js`, the single place totals are computed for both mock and Razorpay checkout):
+- **Line prices come from the catalog, never the request.** `createOrder` resolves each unit price via `resolveUnitPrice(item, size, milk)` (`lib/menu.js`); the client-sent `unit` is ignored, so orders can't be under-priced.
+- **`total` is floored at 0** — a 90%-off promo stacked with a full loyalty reward yields ₹0, never a negative charge.
+- **Redeemed loyalty points are reserved atomically at order creation** (conditional `updateMany` decrement), so two concurrent redemptions of the same balance can't drive it negative. The earn side is credited later, on `settlePaid`. A **failed** Razorpay payment refunds the reserved points exactly once (webhook `payment.failed`).
 
 ### OrderItem
 
@@ -445,6 +451,10 @@ getTenantLLMConfig(tenant) // → { key, base, model, imageModel }
 
 `llmComplete(system, user, { tenant })` uses this automatically when a `tenant` is passed. Superadmins set the per-café values from **Super → Cafés → Manage** (PATCH `/api/super/tenants/[id]` with `aiApiKey` / `aiModel` / `aiBaseUrl`; empty string clears back to defaults).
 
+### Pricing helper — `resolveUnitPrice` (`lib/menu.js`)
+
+`resolveUnitPrice(item, wantSize, wantMilk)` → `{ size, milk, unit }`. The **single source of truth for a line's price**, used by `createOrder`. It reads the price from the item's `sizes` JSON (falling back to the first size / base price for an unknown size) and adds the `MILK_OPTIONS` surcharge for a known milk only. Client-supplied prices are never used — this closes the "buy anything for ₹1" class of tampering. Pure and unit-tested (`lib/menu.test.js`).
+
 ### Menu images — `lib/foodImages.js` + `lib/imageGen.js`
 
 Used by the CSV importer (`POST /api/items/import`):
@@ -587,7 +597,7 @@ All handlers set `export const dynamic = "force-dynamic"` (no static caching; ev
 | `/api/admin/customers` | GET | Café users with order count, spend, last-order date. |
 | `/api/admin/feedback` | GET | Feedback list + average + 1–5 star distribution. |
 | `/api/brand` | PUT | Update white-label config (name, colors, font, AI flags, store info, `locations` array — validated/JSON-stringified server-side). |
-| `/api/items/import` | POST | **Bulk menu import.** Body `{items:[{name,category,price,desc?,veg?,kcal?,caffeine?,tags?,signature?}], generateImages?}` (≤200 rows). Upserts by deterministic id `<slug>-<name-slug>`, creates missing categories, assigns images (AI via `generateMenuImage` when requested + keyed, else `imageFor`). Returns `{created, updated, aiImages, errors, aiAvailable}`. |
+| `/api/items/import` | POST | **Bulk menu import.** Body `{items:[{name,category,price,desc?,veg?,kcal?,caffeine?,tags?,signature?}], generateImages?}` (≤200 rows). Upserts by id `<slug>-<name-slug>`; if that id already exists under a **different category** it disambiguates to `<slug>-<category>-<name-slug>` (so the same name in two categories makes two items, not an overwrite). Creates missing categories, assigns images (AI via `generateMenuImage` when requested + keyed, else `imageFor`). Returns `{created, updated, aiImages, errors, aiAvailable}`. |
 | `/api/discounts` | GET / POST | List / create promo codes (percent 1–90; unique per tenant). |
 | `/api/discounts/[id]` | PATCH / DELETE | Toggle/edit percent / delete. |
 | `/api/loyalty` | GET / PUT | Get/set earn rate (0–100) and tiers (JSON). |
@@ -609,9 +619,9 @@ All handlers set `export const dynamic = "force-dynamic"` (no static caching; ev
 The POS module lives in `lib/pos.js` (+ pure helpers in `lib/posMath.js`, unit-tested):
 
 - **`requirePos()`** — the gate; 403 with "POS is not enabled" when the add-on is off.
-- **`allocateInvoiceNo(tenantId)`** — atomic `invoiceSeq: { increment: 1 }` then `formatInvoiceNo(prefix, year, seq)` → `INV-2026-00042`. Safe under concurrent billing terminals.
+- **`allocateInvoiceNo(tenantId)`** — atomic `invoiceSeq: { increment: 1 }` then `formatInvoiceNo(prefix, year, seq)` → `INV-2026-00042`. Safe under concurrent billing terminals. The sequence **resets each calendar year** (conditional `updateMany` on `invoiceYear`, concurrency-safe); a legacy tenant with `invoiceYear = 0` adopts the current year without resetting `invoiceSeq`, so existing numbers are never reissued.
 - **`gstSplit(tax)`** — `{cgst, sgst}` halves; sgst gets the odd rupee; sum always equals `tax`.
-- **`dayEnd(tenantId, date?)`** — one calendar day's aggregation (bills, gross, GST, byMethod, topItems, POS/online counts).
+- **`dayEnd(tenantId, date?)`** — one calendar day's aggregation (bills, gross, GST, byMethod, topItems, POS/online counts). The returned `date` label is the **local** calendar day (matches the query window), not `toISOString()` — which would report the previous day for timezones ahead of UTC (e.g. IST).
 
 | Route | Method | Purpose |
 | --- | --- | --- |
@@ -748,6 +758,8 @@ Production runs the Next.js app behind **PM2 + Nginx** with **wildcard TLS** for
 | `WILDCARD_TLS.md` | Zero-touch subdomains via one wildcard cert (DNS-01) + one Nginx block. |
 | `GIT_SETUP.md` | Pushing the repo to GitHub. |
 | `MULTI_TENANT_PLAN.md` | The original multi-tenant architecture decisions. |
+| `POS-PHASE1-SPEC.md` | POS Phase 1 build spec (counter billing, KOT, GST invoices, day-end). |
+| `REGRESSION-TEST-PLAN.md` (+ `.pdf`) | Priority-tagged regression suite; §9 pins the nine audit-fix regression cases. |
 
 ### Scripts
 
