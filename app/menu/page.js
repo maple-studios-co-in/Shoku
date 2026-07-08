@@ -9,6 +9,7 @@ import { useCart } from "@/components/Providers";
 
 export default function MenuPage() {
   const [cat, setCat] = useState("all");
+  const [q, setQ] = useState("");
   const [data, setData] = useState({ categories: [], items: [] });
   const [banners, setBanners] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -41,6 +42,20 @@ export default function MenuPage() {
   const picks = items.filter((i) => i.signature || i.rating >= 4.7).slice(0, 6);
   const shownCats = cat === "all" ? categories : categories.filter((c) => c.id === cat);
 
+  // Search: match against name, description, category, tags and ingredients.
+  // Word-boundary matching so "tea" finds "Iced Black Tea" but not "sTEAmed milk".
+  const norm = q.trim().toLowerCase();
+  const searching = norm.length > 0;
+  const qRegex = searching ? new RegExp("\\b" + norm.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i") : null;
+  const matches = (i) =>
+    !searching ||
+    [i.name, i.desc, i.categoryLabel, ...(Array.isArray(i.tags) ? i.tags : []), ...(Array.isArray(i.ingredients) ? i.ingredients : [])]
+      .filter(Boolean)
+      .some((v) => qRegex.test(String(v)));
+  const visibleCats = shownCats
+    .map((c) => ({ ...c, list: items.filter((i) => i.category === c.id && matches(i)) }))
+    .filter((c) => c.list.length > 0);
+
   if (!loading && data.suspended) {
     return (
       <AppShell>
@@ -58,7 +73,7 @@ export default function MenuPage() {
 
   return (
     <AppShell>
-      <Header />
+      <Header searchValue={q} onSearch={setQ} />
 
       {table && (
         <div className="mx-4 mt-3 flex items-center gap-2 rounded-xl bg-brand-tint px-3.5 py-2.5 text-[13px] font-semibold text-brand-dark">
@@ -67,7 +82,7 @@ export default function MenuPage() {
         </div>
       )}
 
-      {banners.length > 0 && (
+      {!searching && banners.length > 0 && (
         <div className="no-scrollbar mt-3.5 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-1">
           {banners.map((b) => {
             const inner = (
@@ -90,6 +105,7 @@ export default function MenuPage() {
         </div>
       )}
 
+      {!searching && (
       <Link href="/ai" className="mx-4 mt-3.5 block">
         <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-brand to-brand-dark p-4 text-white">
           <div className="pointer-events-none absolute -right-2 -top-5 font-serif text-8xl opacity-15">食</div>
@@ -103,6 +119,7 @@ export default function MenuPage() {
           </span>
         </div>
       </Link>
+      )}
 
       <div className="no-scrollbar mt-3.5 flex gap-2 overflow-x-auto px-4 pb-1.5">
         {chips.map((c) => (
@@ -120,7 +137,7 @@ export default function MenuPage() {
 
       {loading && <div className="px-4 py-10 text-center text-sm text-muted">Loading menu…</div>}
 
-      {!loading && cat === "all" && picks.length > 0 && (
+      {!loading && !searching && cat === "all" && picks.length > 0 && (
         <>
           <div className="mb-2.5 mt-4 flex items-baseline justify-between px-4">
             <h3 className="serif text-lg font-semibold">Picked for you</h3>
@@ -135,20 +152,29 @@ export default function MenuPage() {
       )}
 
       {!loading &&
-        shownCats.map((c) => (
+        visibleCats.map((c) => (
           <div key={c.id}>
             <div className="mb-1 mt-5 px-4">
               <h3 className="serif text-lg font-semibold">{c.label}</h3>
             </div>
             <div className="px-4 pb-2">
-              {items
-                .filter((i) => i.category === c.id)
-                .map((item) => (
-                  <ListItem key={item.id} item={item} />
-                ))}
+              {c.list.map((item) => (
+                <ListItem key={item.id} item={item} />
+              ))}
             </div>
           </div>
         ))}
+
+      {!loading && searching && visibleCats.length === 0 && (
+        <div className="px-8 py-14 text-center">
+          <div className="mx-auto mb-3 grid h-16 w-16 place-items-center rounded-full bg-canvas text-3xl">🔍</div>
+          <p className="text-sm font-bold">No matches for “{q.trim()}”</p>
+          <p className="mt-1 text-xs text-muted">Try a drink name, ingredient or craving — e.g. “mocha”, “vegan”, “tea”.</p>
+          <button onClick={() => setQ("")} className="mt-4 rounded-xl bg-brand px-5 py-2.5 text-sm font-bold text-white">
+            Clear search
+          </button>
+        </div>
+      )}
 
       <div className="h-28" />
     </AppShell>

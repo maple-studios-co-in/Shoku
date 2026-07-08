@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useBrand, useCart } from "./Providers";
 import { BRAND } from "@/lib/menu";
 
-export default function Header({ showSearch = true }) {
+export default function Header({ showSearch = true, searchValue = "", onSearch = null }) {
   const { brand } = useBrand();
   const { count, location, setLocation } = useCart();
 
@@ -65,11 +65,29 @@ export default function Header({ showSearch = true }) {
         </Link>
       </div>
 
-      {showSearch && (
-        <div className="mt-3 flex items-center gap-2 rounded-full border border-line bg-canvas px-4 py-2.5 text-sm text-muted">
-          🔍 Search coffee, tea, snacks…
-        </div>
-      )}
+      {showSearch &&
+        (onSearch ? (
+          <label className="mt-3 flex items-center gap-2 rounded-full border border-line bg-canvas px-4 py-2.5 text-sm">
+            <span aria-hidden="true">🔍</span>
+            <input
+              type="search"
+              value={searchValue}
+              onChange={(e) => onSearch(e.target.value)}
+              placeholder="Search coffee, tea, snacks…"
+              aria-label="Search the menu"
+              className="w-full min-w-0 bg-transparent text-ink outline-none placeholder:text-muted [&::-webkit-search-cancel-button]:hidden"
+            />
+            {searchValue && (
+              <button onClick={() => onSearch("")} aria-label="Clear search" className="shrink-0 px-1 font-bold text-muted">
+                ✕
+              </button>
+            )}
+          </label>
+        ) : (
+          <div className="mt-3 flex items-center gap-2 rounded-full border border-line bg-canvas px-4 py-2.5 text-sm text-muted">
+            🔍 Search coffee, tea, snacks…
+          </div>
+        ))}
     </header>
   );
 }

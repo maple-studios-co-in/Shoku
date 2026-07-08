@@ -93,7 +93,8 @@ export default function CartPage() {
         </div>
       </div>
 
-      <div className="fixed inset-x-0 bottom-0 z-40 mx-auto flex max-w-[480px] items-center gap-3.5 border-t border-line bg-white px-4 py-3">
+      {/* bottom-14 clears the sticky BottomNav (~56px) so the two bars stack instead of overlapping */}
+      <div className="fixed inset-x-0 bottom-14 z-40 mx-auto flex max-w-[480px] items-center gap-3.5 border-t border-line bg-white px-4 py-3">
         <div className="text-xs text-muted">
           {lines.reduce((s, l) => s + l.qty, 0)} items<b className="block text-[17px] text-ink">{formatINR(total)}</b>
         </div>
