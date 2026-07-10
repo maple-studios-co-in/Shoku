@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect } from "react";
+import EnquiryForm from "@/components/EnquiryForm";
+import { CONTACT } from "@/lib/contact";
 
 const FEATURES = [
   ["食", "Your own branded app", "Your logo, colours and menu on your own subdomain — a fast mobile web app, no download. Customers see your café, not ours."],
@@ -197,7 +199,7 @@ export default function Landing() {
         <div className="links">
           <a href="#features">Product</a><a href="#how">How it works</a><a href="#pricing">Pricing</a>
         </div>
-        <a className="btn cta" href="#demo">Book a demo</a>
+        <a className="btn cta" href="/demo">Book a demo</a>
       </nav>
 
       {/* HERO */}
@@ -207,7 +209,7 @@ export default function Landing() {
           <h1>Your café.<br />Your brand.<br /><em>Zero commission.</em></h1>
           <p className="lede">Shoku gives every café a branded ordering app — menu, loyalty, AI recommendations and WhatsApp marketing — for a flat fee, not a 20–30% aggregator cut. Own your customers, your data, your margin.</p>
           <div className="c-row">
-            <a className="btn cta lg" href="#demo">Book a demo</a>
+            <a className="btn cta lg" href="/demo">Book a demo</a>
             <a className="btn ghost lg" href="#how">See how it works →</a>
           </div>
           <div className="trust">No commission · Live in days · 100% your customer data</div>
@@ -267,7 +269,7 @@ export default function Landing() {
           <div className="eyebrow">For your guests</div>
           <h2>Your café, in their hands — <em>in seconds.</em></h2>
           <p>Scan the QR on the table, browse your menu, order and pay. No app to download, no aggregator in the middle — just your café and your regular.</p>
-          <a className="btn cta lg" href="#demo">Book a demo</a>
+          <a className="btn cta lg" href="/demo">Book a demo</a>
         </div>
       </section>
 
@@ -396,27 +398,36 @@ export default function Landing() {
               <div className="amt">{price}<span>{per}</span></div>
               <p className="pdesc">{desc}</p>
               <ul>{feats.map((f) => <li key={f}><span className="ck">✓</span>{f}</li>)}</ul>
-              <a className={`btn ${pop ? "cta" : "ghost"} full`} href="#demo">Book a demo</a>
+              <a className={`btn ${pop ? "cta" : "ghost"} full`} href="/demo">Book a demo</a>
             </div>
           ))}
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="cta-band reveal" id="demo">
+      {/* CTA / LIVE DEMO & SALES ENQUIRIES */}
+      <section className="cta-band reveal" id="contact">
         <Enso className="cta-enso" />
         <div className="mk light">食</div>
         <h2>Own your table.</h2>
-        <p>See Shoku on your own menu in a 20-minute demo. We’ll spin up a branded preview for your café.</p>
-        <a className="btn white lg" href="mailto:hello@getshoku.com?subject=Shoku%20demo">Book a demo →</a>
+        <p>Flip through the product brochure, or tell us about your café — we’ll spin up a branded preview and walk you through it in a 20-minute live demo.</p>
+        <a className="btn white lg" href="/demo">View the brochure →</a>
+        <div className="contact-wrap">
+          <EnquiryForm />
+          <div className="direct">
+            <span className="direct-lab">Prefer to talk?</span>
+            <a href={`mailto:${CONTACT.email}`}>✉ {CONTACT.email}</a>
+            <span className="direct-sep">·</span>
+            <a href={`tel:${CONTACT.phoneHref}`}>✆ {CONTACT.phone}</a>
+          </div>
+        </div>
       </section>
 
       <footer className="foot">
         <div className="fbrand"><img src="/shoku-mark.svg" alt="" /> <span>shoku<i>食</i></span></div>
         <div className="fcols">
           <div><h4>Product</h4><a href="#features">Features</a><a href="#pricing">Pricing</a><a href="#how">How it works</a></div>
-          <div><h4>Company</h4><a href="#top">About</a><a href="mailto:hello@getshoku.com">Contact</a><a href="#top">Privacy</a></div>
-          <div><h4>Get started</h4><a href="#demo">Book a demo</a><a href="/login">Sign in</a></div>
+          <div><h4>Company</h4><a href="#top">About</a><a href="#contact">Contact</a><a href="#top">Privacy</a></div>
+          <div><h4>Get started</h4><a href="/demo">View the brochure</a><a href="#contact">Get a live demo</a><a href="/login">Sign in</a></div>
         </div>
         <div className="fbot">© 2026 Shoku · getshoku.com · 食 Own your table</div>
       </footer>
@@ -578,6 +589,12 @@ export default function Landing() {
         .lp .cta-band > *{ position:relative; z-index:1; }
         .lp .cta-band h2{ font-family:var(--serif); font-size:48px; font-weight:500; letter-spacing:-.02em; margin:0 0 12px; }
         .lp .cta-band p{ font-size:16.5px; color:#cfe0d2; max-width:52ch; margin:0 auto 28px; }
+        .lp .contact-wrap{ max-width:640px; margin:46px auto 0; text-align:left; }
+        .lp .direct{ margin-top:22px; display:flex; justify-content:center; align-items:center; gap:12px; flex-wrap:wrap; font-size:14.5px; color:#cfe0d2; }
+        .lp .direct-lab{ font-weight:700; color:var(--mist); }
+        .lp .direct a{ font-weight:700; color:#fff; border-bottom:1px solid rgba(255,255,255,.35); padding-bottom:1px; }
+        .lp .direct a:hover{ color:var(--mist); }
+        .lp .direct-sep{ opacity:.5; }
 
         /* FOOTER */
         .lp .foot{ border-top:1px solid var(--line); padding:60px 34px 44px; max-width:1120px; margin:0 auto; }

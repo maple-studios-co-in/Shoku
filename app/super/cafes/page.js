@@ -13,11 +13,15 @@ export default function CafesPage() {
   const [err, setErr] = useState("");
   const [invite, setInvite] = useState(null);
   const [managing, setManaging] = useState(null); // tenant row being configured
+  const [aiDefaults, setAiDefaults] = useState(null); // platform-wide LLM config
 
   function load() {
     fetch("/api/super/tenants").then((r) => (r.ok ? r.json() : [])).then(setRows).catch(() => {});
   }
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load();
+    fetch("/api/super/ai").then((r) => (r.ok ? r.json() : null)).then(setAiDefaults).catch(() => {});
+  }, []);
 
   function autoSlug(name) {
     return name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 30);
@@ -73,12 +77,13 @@ export default function CafesPage() {
             <thead>
               <tr className="border-b border-line text-left text-[11px] uppercase tracking-wide text-muted">
                 <th className="px-5 py-3">Café</th><th className="px-5 py-3">Subdomain</th><th className="px-5 py-3">Plan</th>
+                <th className="px-5 py-3">AI</th>
                 <th className="px-5 py-3">Items</th><th className="px-5 py-3">Orders</th><th className="px-5 py-3">Revenue</th>
                 <th className="px-5 py-3">Status</th><th className="px-5 py-3">Actions</th>
               </tr>
             </thead>
             <tbody>
-              {rows.length === 0 && <tr><td colSpan={8} className="px-5 py-8 text-center text-muted">No cafés yet — create your first.</td></tr>}
+              {rows.length === 0 && <tr><td colSpan={9} className="px-5 py-8 text-center text-muted">No cafés yet — create your first.</td></tr>}
               {rows.map((t) => (
                 <tr key={t.id} className="border-b border-line last:border-0">
                   <td className="px-5 py-3 font-semibold">
@@ -89,6 +94,7 @@ export default function CafesPage() {
                     <a href={`https://${t.slug}.${BASE}`} target="_blank" rel="noreferrer" className="text-brand-dark underline">{t.slug}.{BASE}</a>
                   </td>
                   <td className="px-5 py-3 capitalize text-muted">{t.plan}</td>
+                  <td className="px-5 py-3"><AIBadge t={t} defaults={aiDefaults} /></td>
                   <td className="px-5 py-3">{t.items}</td>
                   <td className="px-5 py-3">{t.orders}</td>
                   <td className="px-5 py-3 font-bold">{formatINR(t.revenue)}</td>
@@ -158,7 +164,7 @@ export default function CafesPage() {
         </div>
       )}
 
-      {managing && <ManageDrawer t={managing} saving={saving} onClose={() => setManaging(null)} onSave={saveManage} />}
+      {managing && <ManageDrawer t={managing} saving={saving} defaults={aiDefaults} onClose={() => setManaging(null)} onSave={saveManage} />}
 
       {invite && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-6" onClick={() => setInvite(null)}>
@@ -188,19 +194,139 @@ function F({ label, children, full }) {
   );
 }
 
-const PLAN_DEFAULT_MODEL = { starter: "gpt-4o-mini", growth: "gpt-4o-mini", enterprise: "gpt-4o" };
+// Provider presets the superadmin can assign per café. "default" clears all
+// overrides so the café rides on the platform env key. Each provider carries a
+// curated model list ([id, label]) — first entry is the recommended default;
+// the drawer always offers "Custom model…" for anything newer.
+const PROVIDER_PRESETS = [
+  { key: "default", label: "Platform default", base: "", model: "", hint: "", models: [] },
+  {
+    key: "groq", label: "Groq", base: "https://api.groq.com/openai/v1", model: "llama-3.3-70b-versatile", hint: "gsk_…",
+    models: [
+      ["llama-3.3-70b-versatile", "Llama 3.3 70B — best overall (recommended)"],
+      ["llama-3.1-8b-instant", "Llama 3.1 8B — fastest & cheapest"],
+      ["openai/gpt-oss-120b", "GPT-OSS 120B — strong reasoning"],
+      ["moonshotai/kimi-k2-instruct", "Kimi K2 — long context"],
+    ],
+  },
+  {
+    key: "openai", label: "OpenAI", base: "https://api.openai.com/v1", model: "gpt-4o-mini", hint: "sk-…",
+    models: [
+      ["gpt-4o-mini", "GPT-4o mini — fast & affordable (recommended)"],
+      ["gpt-4o", "GPT-4o — flagship"],
+      ["gpt-4.1-mini", "GPT-4.1 mini"],
+      ["gpt-4.1", "GPT-4.1"],
+    ],
+  },
+  {
+    key: "anthropic", label: "Anthropic (Claude)", base: "https://api.anthropic.com", model: "claude-opus-4-8", hint: "sk-ant-…",
+    models: [
+      ["claude-opus-4-8", "Claude Opus 4.8 — recommended"],
+      ["claude-sonnet-5", "Claude Sonnet 5 — speed + quality"],
+      ["claude-haiku-4-5", "Claude Haiku 4.5 — fastest & cheapest"],
+      ["claude-fable-5", "Claude Fable 5 — most capable (premium)"],
+    ],
+  },
+  { key: "custom", label: "Custom (OpenAI-compatible)", base: "", model: "", hint: "", models: [] },
+];
 
-// Per-café control: plan, POS add-on, and AI provider (key/model/base URL).
-function ManageDrawer({ t, saving, onClose, onSave }) {
+function presetFromRow(t) {
+  if (!t.aiBaseUrl && !t.aiModel && !t.aiKeySet) return "default";
+  const base = (t.aiBaseUrl || "").toLowerCase();
+  if (base.includes("groq")) return "groq";
+  if (base.includes("anthropic")) return "anthropic";
+  if (!base || base.includes("api.openai.com")) return "openai";
+  return "custom";
+}
+
+// At-a-glance provider/key status shown in the cafés table.
+function AIBadge({ t, defaults }) {
+  const preset = presetFromRow(t);
+  if (preset === "default") {
+    return defaults?.enabled ? (
+      <div>
+        <span className="rounded-full bg-gray-100 px-2.5 py-1 text-[11px] font-bold text-gray-600">Platform</span>
+        <div className="mt-1 text-[11px] text-muted">{defaults.defaultModel}</div>
+      </div>
+    ) : (
+      <span className="rounded-full bg-amber-50 px-2.5 py-1 text-[11px] font-bold text-amber-700">Rules only</span>
+    );
+  }
+  const label = { groq: "Groq", openai: "OpenAI", anthropic: "Claude", custom: "Custom" }[preset];
+  return (
+    <div>
+      <span className={`rounded-full px-2.5 py-1 text-[11px] font-bold ${t.aiKeySet ? "bg-indigo-50 text-indigo-700" : "bg-amber-50 text-amber-700"}`}>
+        {label}{t.aiKeySet ? " · own key" : " · no key"}
+      </span>
+      {t.aiModel && <div className="mt-1 text-[11px] text-muted">{t.aiModel}</div>}
+    </div>
+  );
+}
+
+// Per-café control: plan, POS add-on, and AI provider (preset/key/model/base URL).
+function ManageDrawer({ t, saving, defaults, onClose, onSave }) {
   const [plan, setPlan] = useState(t.plan);
   const [pos, setPos] = useState(!!t.posEnabled);
+  const [provider, setProvider] = useState(presetFromRow(t));
   const [model, setModel] = useState(t.aiModel || "");
+  // A saved model that isn't in the preset's list opens in "Custom model…" mode.
+  const [customModel, setCustomModel] = useState(() => {
+    const p = PROVIDER_PRESETS.find((x) => x.key === presetFromRow(t));
+    return !!(t.aiModel && p?.models?.length && !p.models.some(([id]) => id === t.aiModel));
+  });
   const [baseUrl, setBaseUrl] = useState(t.aiBaseUrl || "");
   const [apiKey, setApiKey] = useState(""); // write-only; blank = leave unchanged
+  const [testing, setTesting] = useState(false);
+  const [testResult, setTestResult] = useState(null);
+
+  const preset = PROVIDER_PRESETS.find((p) => p.key === provider);
+  const modelList = preset?.models || [];
+
+  function pickProvider(key) {
+    setProvider(key);
+    setTestResult(null);
+    setCustomModel(false);
+    const p = PROVIDER_PRESETS.find((x) => x.key === key);
+    if (key === "default") { setModel(""); setBaseUrl(""); }
+    else if (key !== "custom") { setModel(p.model); setBaseUrl(p.base); }
+  }
+
+  function pickModel(value) {
+    setTestResult(null);
+    if (value === "__custom") { setCustomModel(true); setModel(""); }
+    else { setCustomModel(false); setModel(value); }
+  }
+
+  async function test() {
+    setTesting(true);
+    setTestResult(null);
+    try {
+      const res = await fetch("/api/super/ai", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(
+          provider === "default"
+            ? {} // pure platform config
+            : { tenantId: t.id, apiKey: apiKey.trim(), baseUrl, model }
+        ),
+      });
+      setTestResult(await res.json());
+    } catch {
+      setTestResult({ ok: false, error: "Request failed — is the server running?" });
+    } finally {
+      setTesting(false);
+    }
+  }
 
   const submit = () => {
-    const patch = { plan, posEnabled: pos, aiModel: model, aiBaseUrl: baseUrl };
-    if (apiKey.trim()) patch.aiApiKey = apiKey.trim();
+    const patch = { plan, posEnabled: pos };
+    if (provider === "default") {
+      Object.assign(patch, { aiApiKey: "", aiModel: "", aiBaseUrl: "" });
+    } else {
+      patch.aiModel = model;
+      patch.aiBaseUrl = baseUrl;
+      if (apiKey.trim()) patch.aiApiKey = apiKey.trim();
+    }
     onSave(patch);
   };
 
@@ -227,23 +353,58 @@ function ManageDrawer({ t, saving, onClose, onSave }) {
 
           <div>
             <h3 className="mb-1 text-[12px] font-bold uppercase tracking-wide text-muted">AI provider</h3>
-            <p className="mb-2 text-[12px] text-muted">Leave blank to use the platform default for the <b className="capitalize">{plan}</b> plan (<code>{PLAN_DEFAULT_MODEL[plan]}</code>). Set a café-specific key to bill AI to their own account.</p>
+            <p className="mb-2 text-[12px] text-muted">
+              <b>Platform default</b> uses the shared key{defaults?.enabled ? <> (<code>{defaults.defaultModel}</code>)</> : " (currently not configured — chatbot falls back to rules)"}.
+              Assign a café-specific provider &amp; key to bill AI usage to their own account.
+            </p>
             <div className="grid gap-3">
-              <F label="API key">
-                <input className={inp} type="password" value={apiKey} onChange={(e) => setApiKey(e.target.value)}
-                  placeholder={t.aiKeySet ? "•••••• (set — type to replace)" : "sk-…  (optional)"} />
+              <F label="Provider">
+                <select className={inp} value={provider} onChange={(e) => pickProvider(e.target.value)}>
+                  {PROVIDER_PRESETS.map((p) => <option key={p.key} value={p.key}>{p.label}</option>)}
+                </select>
               </F>
-              <div className="grid gap-3 sm:grid-cols-2">
-                <F label="Model override">
-                  <input className={inp} value={model} onChange={(e) => setModel(e.target.value)} placeholder={PLAN_DEFAULT_MODEL[plan]} />
-                </F>
-                <F label="Base URL (OpenAI-compatible)">
-                  <input className={inp} value={baseUrl} onChange={(e) => setBaseUrl(e.target.value)} placeholder="https://api.openai.com/v1" />
-                </F>
-              </div>
-              {t.aiKeySet && (
-                <button onClick={() => onSave({ aiApiKey: "" })} className="justify-self-start text-[12px] font-bold text-red-500">Clear café key (revert to platform default)</button>
+              {provider !== "default" && (
+                <>
+                  <F label="API key">
+                    <input className={inp} type="password" value={apiKey} onChange={(e) => setApiKey(e.target.value)}
+                      placeholder={t.aiKeySet ? "•••••• (set — type to replace)" : `${preset?.hint || "key"}  (required)`} />
+                  </F>
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <F label="Model">
+                      {modelList.length > 0 ? (
+                        <>
+                          <select className={inp} value={customModel ? "__custom" : model} onChange={(e) => pickModel(e.target.value)}>
+                            {modelList.map(([id, label]) => <option key={id} value={id}>{label}</option>)}
+                            <option value="__custom">Custom model…</option>
+                          </select>
+                          {customModel && (
+                            <input className={`${inp} mt-2`} autoFocus value={model} onChange={(e) => setModel(e.target.value)}
+                              placeholder="exact model id, e.g. a newly released one" />
+                          )}
+                        </>
+                      ) : (
+                        <input className={inp} value={model} onChange={(e) => setModel(e.target.value)} placeholder={preset?.model || "model id"} />
+                      )}
+                    </F>
+                    <F label="Base URL">
+                      <input className={inp} value={baseUrl} onChange={(e) => setBaseUrl(e.target.value)} placeholder={preset?.base || "https://…"} />
+                    </F>
+                  </div>
+                </>
               )}
+
+              <div className="flex items-center gap-3">
+                <button onClick={test} disabled={testing} className="rounded-xl border border-line px-4 py-2 text-[12.5px] font-bold disabled:opacity-50">
+                  {testing ? "Testing…" : "Test connection"}
+                </button>
+                {testResult && (
+                  <span className={`text-[12px] font-semibold ${testResult.ok ? "text-green-700" : "text-red-500"}`}>
+                    {testResult.ok
+                      ? `✓ Connected — ${testResult.provider} · ${testResult.model}`
+                      : `✗ ${testResult.error || "Failed"}`}
+                  </span>
+                )}
+              </div>
             </div>
           </div>
         </div>

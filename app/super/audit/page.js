@@ -12,7 +12,7 @@ function timeAgo(d) {
   return new Date(d).toLocaleDateString("en-IN", { day: "numeric", month: "short" });
 }
 
-const ICON = { create: "🆕", "tenant.create": "🏪", "campaign.send": "📲", suspend: "⛔", "tenant.suspend": "⛔", login: "🔑" };
+const ICON = { create: "🆕", "tenant.create": "🏪", "campaign.send": "📲", suspend: "⛔", "tenant.suspend": "⛔", login: "🔑", "lead.enquiry": "📩", "tenant.ai_config": "✦", "ai.test": "✦" };
 
 export default function AuditLogPage() {
   const [logs, setLogs] = useState(null);

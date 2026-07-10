@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireSuperadmin } from "@/lib/admin";
 import { prisma } from "@/lib/db";
+import { logAudit } from "@/lib/audit";
 
 export const dynamic = "force-dynamic";
 
@@ -23,5 +24,16 @@ export async function PATCH(req, { params }) {
   if ("aiBaseUrl" in b) data.aiBaseUrl = String(b.aiBaseUrl || "").trim() || null;
 
   const tenant = await prisma.tenant.update({ where: { id: params.id }, data });
+
+  // Key material never goes in the audit log — only whether one is set.
+  if (["aiApiKey", "aiModel", "aiBaseUrl"].some((k) => k in b)) {
+    await logAudit({
+      session: gate.session,
+      action: "tenant.ai_config",
+      target: tenant.slug,
+      meta: { model: tenant.aiModel, baseUrl: tenant.aiBaseUrl, keySet: !!tenant.aiApiKey },
+    });
+  }
+
   return NextResponse.json({ id: tenant.id, status: tenant.status, plan: tenant.plan, posEnabled: tenant.posEnabled });
 }
