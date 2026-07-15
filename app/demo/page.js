@@ -51,7 +51,6 @@ export default function BrochurePage() {
         <div className="links">
           <a href="#guests">For guests</a><a href="#console">For operators</a><a href="#reach">Contact</a>
         </div>
-        <a className="btn ghost" href="/pitch-deck.pdf" target="_blank" rel="noreferrer">Pitch deck ↓</a>
         <a className="btn cta" href="/#contact">Enquire →</a>
       </nav>
 
@@ -197,7 +196,6 @@ export default function BrochurePage() {
           <div className="back-tel">or call us directly — <a href={`tel:${CONTACT.phoneHref}`}>{CONTACT.phone}</a></div>
           <div className="back-cta">
             <a className="btn white lg" href="/#contact">Enquire on the website →</a>
-            <a className="btn outline lg" href="/pitch-deck.pdf" target="_blank" rel="noreferrer">Download pitch deck</a>
           </div>
           <div className="back-foot">© 2026 Shoku · getshoku.com · 食 Own your table</div>
         </div>
@@ -220,11 +218,7 @@ export default function BrochurePage() {
         .br .btn{ display:inline-flex; align-items:center; gap:8px; font-weight:600; font-size:14px; padding:12px 20px; border-radius:999px; transition:transform .15s, background .2s, border-color .2s; }
         .br .btn.cta{ background:var(--matcha); color:#fff; box-shadow:0 10px 26px rgba(36,70,53,.26); }
         .br .btn.cta:hover{ background:var(--matcha-d); transform:translateY(-1px); }
-        .br .btn.ghost{ border:1px solid var(--line); background:rgba(255,255,255,.6); }
-        .br .btn.ghost:hover{ border-color:var(--matcha); color:var(--matcha-d); }
         .br .btn.white{ background:var(--paper); color:var(--matcha-d); }
-        .br .btn.outline{ border:1px solid rgba(255,255,255,.35); color:#fff; }
-        .br .btn.outline:hover{ border-color:#fff; }
         .br .btn.lg{ padding:15px 26px; font-size:15px; }
 
         .br .enso{ position:absolute; pointer-events:none; }
@@ -347,7 +341,6 @@ export default function BrochurePage() {
 
         @media(max-width:880px){
           .br .bnav .links{ display:none; }
-          .br .bnav .btn.ghost{ display:none; }
           .br .cover h1{ font-size:42px; }
           .br .chap{ padding:64px 20px; }
           .br .chap-head{ flex-direction:column; gap:8px; }
