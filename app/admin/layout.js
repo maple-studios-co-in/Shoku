@@ -39,12 +39,23 @@ export default function AdminLayout({ children }) {
   }
 
   if (!["owner", "staff", "admin"].includes(session?.user?.role)) {
+    const isSuperadmin = session?.user?.role === "superadmin";
     return (
       <div className="grid min-h-screen place-items-center bg-canvas px-8 text-center">
         <div>
           <div className="mx-auto mb-4 grid h-16 w-16 place-items-center rounded-full bg-red-50 text-3xl">🔒</div>
           <h1 className="text-lg font-bold">Staff only</h1>
-          <p className="mt-1 text-sm text-muted">This area is for {brand.name} staff. You're signed in as a customer.</p>
+          <p className="mt-1 text-sm text-muted">
+            {isSuperadmin
+              ? `This area is for ${brand.name} staff. You're signed in as the platform superadmin.`
+              : `This area is for ${brand.name} staff. You're signed in as a customer.`}
+          </p>
+          {isSuperadmin && (
+            <p className="mt-4 text-sm font-semibold">
+              Own this business?{" "}
+              <Link href="/super" className="font-bold text-brand-dark underline">Login here →</Link>
+            </p>
+          )}
           <Link href="/menu" className="mt-5 inline-block rounded-xl bg-brand px-6 py-3 text-sm font-bold text-white">Back to app</Link>
         </div>
       </div>

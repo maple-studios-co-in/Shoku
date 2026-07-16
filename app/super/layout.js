@@ -23,6 +23,14 @@ export default function SuperLayout({ children }) {
     if (status === "unauthenticated") router.replace("/login?next=/super");
   }, [status, router]);
 
+  async function handleSignOut() {
+    // redirect:false keeps the flow client-side, so logout works even when
+    // NEXTAUTH_URL doesn't match the current host (subdomain deploys, dev).
+    await signOut({ redirect: false });
+    router.replace("/login?next=/super");
+    router.refresh();
+  }
+
   if (status === "loading" || status === "unauthenticated") {
     return <div className="grid min-h-screen place-items-center bg-canvas text-sm text-muted">Loading…</div>;
   }
@@ -61,7 +69,7 @@ export default function SuperLayout({ children }) {
           ))}
         </nav>
         <div className="border-t border-white/10 p-3">
-          <button onClick={() => signOut({ callbackUrl: "/" })} className="flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-[13.5px] font-semibold text-white/70 hover:bg-white/10">↩︎ Sign out</button>
+          <button onClick={handleSignOut} className="flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-[13.5px] font-semibold text-white/70 hover:bg-white/10">↩︎ Sign out</button>
         </div>
       </aside>
 
@@ -71,6 +79,7 @@ export default function SuperLayout({ children }) {
           <div className="text-sm font-bold">Shoku Platform</div>
           <div className="ml-auto flex gap-3 text-xs font-semibold">
             {NAV.map((n) => <Link key={n.href} href={n.href} className={active(n.href) ? "" : "text-white/60"}>{n.label}</Link>)}
+            <button onClick={handleSignOut} className="text-white/60">↩︎ Sign out</button>
           </div>
         </div>
       </div>
