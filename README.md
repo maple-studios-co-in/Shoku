@@ -18,7 +18,7 @@ This build is branded around a coffee chain and grounded in The Coffee Bean & Te
 ## Getting started
 
 ```bash
-cd pista
+cd  Shoku
 npm install          # also runs `prisma generate`
 npm run setup        # creates the SQLite DB (prisma db push) + seeds menu/user
 npm run dev
