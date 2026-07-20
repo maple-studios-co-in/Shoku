@@ -1,8 +1,8 @@
-# Shoku 🟢
+# shoku 🟢
 
 [![CI](https://github.com/maple-studios-co-in/pista/actions/workflows/ci.yml/badge.svg)](https://github.com/maple-studios-co-in/pista/actions/workflows/ci.yml)
 
-**Shoku** is an AI-powered, white-label ordering web app for cafes and restaurant chains — inspired by fudr.in. A chain configures its brand (name, colours, menu) once, and gets a clean, mobile-first ordering experience with AI built in: smart recommendations, "know your cup" food intelligence (origin, ingredients, allergens, nutrition), and smart upsells.
+**shoku** is an AI-powered, white-label ordering web app for cafes and restaurant chains — inspired by fudr.in. A chain configures its brand (name, colours, menu) once, and gets a clean, mobile-first ordering experience with AI built in: smart recommendations, "know your cup" food intelligence (origin, ingredients, allergens, nutrition), and smart upsells.
 
 This build is branded around a coffee chain and grounded in The Coffee Bean & Tea Leaf's menu structure.
 
