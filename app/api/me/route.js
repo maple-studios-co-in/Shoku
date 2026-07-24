@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { parseTiers, tierFor } from "@/lib/loyalty";
+import { caffeineToday, CAFFEINE_DAILY_LIMIT } from "@/lib/foodIntel";
 
 export const dynamic = "force-dynamic";
 
@@ -22,8 +23,21 @@ export async function GET() {
     tier = tierFor(user.points, parseTiers(t?.tiers));
   }
 
+  // Caffeine ledger: sum today's paid orders (mg), from item catalog values.
+  const start = new Date(); start.setHours(0, 0, 0, 0);
+  const todays = await prisma.order.findMany({
+    where: { userId: user.id, paymentStatus: "paid", createdAt: { gte: start } },
+    include: { items: { select: { itemId: true, qty: true } } },
+  });
+  const ids = [...new Set(todays.flatMap((o) => o.items.map((l) => l.itemId)))];
+  const caff = ids.length
+    ? Object.fromEntries((await prisma.item.findMany({ where: { id: { in: ids } }, select: { id: true, caffeine: true } })).map((i) => [i.id, i]))
+    : {};
+  const caffeineMg = caffeineToday(todays, caff);
+
   return NextResponse.json({
     id: user.id, name: user.name, email: user.email, role: user.role,
     tenantId: user.tenantId, points: user.points, orders: user._count.orders, tier,
+    caffeineMg, caffeineLimit: CAFFEINE_DAILY_LIMIT,
   });
 }
