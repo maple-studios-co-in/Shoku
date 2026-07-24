@@ -32,15 +32,26 @@ export async function POST(req) {
     return NextResponse.json({ error: "Paste the full https:// link to your post." }, { status: 400 });
   }
 
-  // One submission per day per diner (pending or otherwise) — keeps it special.
+  // One submission per rolling 24h per diner — keeps it special, matches the copy.
   const dayAgo = new Date(Date.now() - 86_400_000);
   const recent = await prisma.socialPost.count({
     where: { tenantId: tenant.id, userId: session.user.id, createdAt: { gte: dayAgo } },
   });
-  if (recent > 0) return NextResponse.json({ error: "You've already shared today — come back tomorrow! ✨" }, { status: 429 });
+  if (recent > 0) return NextResponse.json({ error: "You've already shared in the last 24 hours — check back later! ✨" }, { status: 429 });
+
+  // Only attach an orderId the diner actually owns at this café (prevents attaching
+  // someone else's / another tenant's order to a share submission).
+  let orderId = null;
+  if (b.orderId) {
+    const owned = await prisma.order.findFirst({
+      where: { id: String(b.orderId), tenantId: tenant.id, userId: session.user.id },
+      select: { id: true },
+    });
+    orderId = owned?.id || null;
+  }
 
   const post = await prisma.socialPost.create({
-    data: { tenantId: tenant.id, userId: session.user.id, orderId: b.orderId ? String(b.orderId) : null, url, note },
+    data: { tenantId: tenant.id, userId: session.user.id, orderId, url, note },
   });
   return NextResponse.json({ ok: true, id: post.id, points: tenant.sharePoints ?? 50 });
 }

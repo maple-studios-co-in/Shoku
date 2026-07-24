@@ -6,21 +6,29 @@ const prisma = new PrismaClient();
 
 // Mirror of lib/foodIntel.classifyDiet (kept dependency-free for plain node).
 const has = (ings, words) => words.some((w) => ings.some((h) => h.includes(w)));
-const DAIRY = ["milk", "butter", "cheese", "cream", "ghee", "paneer", "curd", "yogurt", "yoghurt", "mawa", "khoya"];
-const EGG = ["egg"]; const MEAT = ["chicken", "mutton", "fish", "prawn", "meat", "bacon", "ham", "pepperoni"];
-const HONEY = ["honey"]; const ALLIUM_ROOT = ["onion", "garlic", "potato", "carrot", "beetroot", "radish", "ginger"];
+const EGG = ["egg", "mayonnaise", "mayo", "aioli", "meringue", "albumen"];
+const DAIRY = ["milk", "butter", "cheese", "cream", "ghee", "paneer", "curd", "yogurt", "yoghurt",
+  "mawa", "khoya", "whey", "casein", "custard", "kheer", "condensed", "malai", "buttermilk"];
+const MEAT = ["chicken", "mutton", "fish", "prawn", "meat", "bacon", "ham", "pepperoni", "gelatin", "gelatine",
+  "fish sauce", "anchovy", "lard", "suet", "oyster", "shrimp", "beef", "pork", "sausage", "keema", "rennet"];
+const HONEY = ["honey"];
+const ALLIUM_ROOT = ["onion", "garlic", "potato", "carrot", "beetroot", "radish", "ginger", "leek", "shallot", "spring onion", "scallion"];
 const SWEET = ["dessert", "bake", "cake", "pastry", "sweet"];
+const MANAGED = ["eggless", "vegan", "jain", "diabetic-friendly", "low-sugar", "high-protein"];
+const PLANT_MILK = ["oat milk", "almond milk", "soy milk", "soya milk", "coconut milk", "cashew milk", "rice milk", "macadamia milk", "plant milk", "plant-based milk"];
+const stripPlantMilk = (ings) => ings.map((i) => { let s = String(i).toLowerCase(); for (const pm of PLANT_MILK) s = s.split(pm).join(" "); return s; });
 
 function classify(item, catLabel) {
   let ings = [];
   try { ings = JSON.parse(item.ingredients || "[]").map((s) => String(s).toLowerCase()); } catch {}
   let prev = [];
   try { prev = JSON.parse(item.diet || "[]"); } catch {}
-  const tags = new Set(prev.filter((t) => ["halal-safe", "vrat"].includes(t)));
+  const tags = new Set(prev.filter((t) => !MANAGED.includes(t))); // preserve owner/cultural/custom tags
+  const nonMilk = stripPlantMilk(ings);
   const meaty = !item.veg || has(ings, MEAT);
   if (!meaty) {
     if (!has(ings, EGG)) tags.add("eggless");
-    if (!has(ings, EGG) && !has(ings, DAIRY) && !has(ings, HONEY) && ings.length > 0) tags.add("vegan");
+    if (!has(ings, EGG) && !has(nonMilk, DAIRY) && !has(ings, HONEY) && ings.length > 0) tags.add("vegan");
     if (!has(ings, ALLIUM_ROOT) && !has(ings, EGG) && ings.length > 0) tags.add("jain");
   }
   const cat = String(catLabel || "").toLowerCase();

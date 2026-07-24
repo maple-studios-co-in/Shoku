@@ -166,12 +166,13 @@ model User {
   email     String
   password  String
   role      String   @default("customer") // superadmin | owner | staff | customer
-  points    Int      @default(120)
+  points    Int      @default(0)          // real accounts start at 0; seed sets demo balances explicitly
   phone     String?
   phoneVerified Boolean @default(false) // set by OTP login; POS phone-lookup trusts verified first
   guest     Boolean  @default(false)    // guest checkout account (no password); claimed on first OTP login
   otpHash   String?                     // bcrypt of the active OTP (never the code itself)
   otpExpires DateTime?
+  otpAttempts Int    @default(0)         // failed OTP tries on the current code; locks the code at 5 (cross-node brute-force cap)
   waOptIn   Boolean  @default(true) // WhatsApp marketing consent
   inviteToken   String?   @unique
   inviteExpires DateTime?
@@ -180,8 +181,8 @@ model User {
   socialPosts SocialPost[]
 
   @@unique([tenantId, email])
+  @@unique([tenantId, phone]) // one account per phone per café — prevents the guest-order duplicate-user race
   @@index([tenantId])
-  @@index([tenantId, phone])
 }
 
 // Share-to-earn: a diner submits a social post (Instagram/Snapchat/anything) for

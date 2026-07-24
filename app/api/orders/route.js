@@ -41,6 +41,10 @@ export async function POST(req) {
     }
     const tenant = await getCurrentTenant();
     if (!tenant || tenant.status !== "active") return NextResponse.json({ error: "Store unavailable" }, { status: 403 });
+    // A guest is not an authenticated account holder — they cannot redeem loyalty
+    // points (that would let anyone spend a stranger's balance by typing their
+    // phone). Public promo codes are fine; they don't draw down a user's points.
+    delete body.rewardId;
     const guestUser = await findOrCreatePhoneUser(tenant.id, phone, String(body?.guest?.name || "").trim().slice(0, 60) || null);
     session = { user: { id: guestUser.id, tenantId: tenant.id, role: "customer" } };
   }
