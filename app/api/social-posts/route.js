@@ -61,7 +61,7 @@ export async function GET() {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const posts = await prisma.socialPost.findMany({
-    where: { userId: session.user.id },
+    where: { userId: session.user.id, tenantId: session.user.tenantId ?? undefined },
     orderBy: { createdAt: "desc" },
     take: 10,
     select: { id: true, url: true, status: true, points: true, createdAt: true },

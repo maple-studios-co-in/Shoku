@@ -41,6 +41,16 @@ export async function POST(req) {
     }
     const tenant = await getCurrentTenant();
     if (!tenant || tenant.status !== "active") return NextResponse.json({ error: "Store unavailable" }, { status: 403 });
+    // If this phone already belongs to a CLAIMED account, refuse guest checkout —
+    // otherwise anyone could attribute orders (and unsolicited loyalty points) to a
+    // stranger's account just by typing their number. Make them sign in.
+    const existing = await prisma.user.findUnique({
+      where: { tenantId_phone: { tenantId: tenant.id, phone } },
+      select: { guest: true, phoneVerified: true },
+    });
+    if (existing && (existing.phoneVerified || existing.guest === false)) {
+      return NextResponse.json({ error: "This number already has an account — please sign in to order." }, { status: 409 });
+    }
     // A guest is not an authenticated account holder — they cannot redeem loyalty
     // points (that would let anyone spend a stranger's balance by typing their
     // phone). Public promo codes are fine; they don't draw down a user's points.

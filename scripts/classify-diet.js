@@ -8,9 +8,10 @@ const prisma = new PrismaClient();
 const has = (ings, words) => words.some((w) => ings.some((h) => h.includes(w)));
 const EGG = ["egg", "mayonnaise", "mayo", "aioli", "meringue", "albumen"];
 const DAIRY = ["milk", "butter", "cheese", "cream", "ghee", "paneer", "curd", "yogurt", "yoghurt",
-  "mawa", "khoya", "whey", "casein", "custard", "kheer", "condensed", "malai", "buttermilk"];
+  "mawa", "khoya", "whey", "casein", "lactose", "custard", "kheer", "condensed", "malai", "buttermilk"];
 const MEAT = ["chicken", "mutton", "fish", "prawn", "meat", "bacon", "ham", "pepperoni", "gelatin", "gelatine",
-  "fish sauce", "anchovy", "lard", "suet", "oyster", "shrimp", "beef", "pork", "sausage", "keema", "rennet"];
+  "fish sauce", "anchovy", "lard", "suet", "oyster", "shrimp", "beef", "pork", "sausage", "keema", "rennet",
+  "carmine", "cochineal", "isinglass", "shellac"];
 const HONEY = ["honey"];
 const ALLIUM_ROOT = ["onion", "garlic", "potato", "carrot", "beetroot", "radish", "ginger", "leek", "shallot", "spring onion", "scallion"];
 const SWEET = ["dessert", "bake", "cake", "pastry", "sweet"];
@@ -27,9 +28,9 @@ function classify(item, catLabel) {
   const nonMilk = stripPlantMilk(ings);
   const meaty = !item.veg || has(ings, MEAT);
   if (!meaty) {
-    if (!has(ings, EGG)) tags.add("eggless");
+    if (!has(ings, EGG) && ings.length > 0) tags.add("eggless");
     if (!has(ings, EGG) && !has(nonMilk, DAIRY) && !has(ings, HONEY) && ings.length > 0) tags.add("vegan");
-    if (!has(ings, ALLIUM_ROOT) && !has(ings, EGG) && ings.length > 0) tags.add("jain");
+    if (!has(ings, ALLIUM_ROOT) && !has(ings, EGG) && !has(ings, HONEY) && ings.length > 0) tags.add("jain");
   }
   const cat = String(catLabel || "").toLowerCase();
   if ((item.sugar ?? 99) <= 8 && !SWEET.some((w) => cat.includes(w))) tags.add("diabetic-friendly");
